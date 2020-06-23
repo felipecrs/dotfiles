@@ -1,6 +1,12 @@
-- clean: []
-- link: {}
+- clean:
+    - "~"
+- link:
+  ~/.zshrc: zshrc
+- create:
+    - ~/repos
 - shell:
     - command: sudo apt install zsh
-    - command: '[[ ! -d "$ANTIGEN_DIR" ]] && git clone https://github.com/zsh-users/antigen.git "$HOME/.antigen"'
+    - command: |
+        '[[ -d "$HOME/.antigen" ]] && rm -rf "$HOME"'
+        git clone https://github.com/zsh-users/antigen.git "$HOME/.antigen"'
     - command: chsh -s $(which zsh)
