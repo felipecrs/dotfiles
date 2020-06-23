@@ -5,7 +5,7 @@
 - create:
     - ~/repos
 - shell:
-    - command: sudo apt install zsh
+    - command: sudo apt update && sudo apt install zsh -y
     - command: |
         '[[ -d "$HOME/.antigen" ]] && rm -rf "$HOME"'
         git clone https://github.com/zsh-users/antigen.git "$HOME/.antigen"'
