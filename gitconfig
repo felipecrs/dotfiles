@@ -1,0 +1,36 @@
+[user]
+	name = Felipe Santos
+	email = felipecassiors@gmail.com
+[core]
+    excludesfile = C:/Users/felipesantos/.gitignore_global
+    autocrlf = input
+    safecrlf = false
+    eol = lf
+    editor = code --wait
+[diff]
+    tool = vscode
+[difftool "vscode"]
+    cmd = code --wait --diff $LOCAL $REMOTE
+[merge]
+    tool = vscode
+[mergetool "vscode"]
+    cmd = code --wait $MERGED
+[alias]
+    st = status
+    pdevelop = push origin HEAD:refs/for/develop
+    pmaster = push origin HEAD:refs/for/master
+    rdevelop = reset --hard origin/develop
+    rmaster = reset --hard origin/master
+    psdevelop = !git commit -a --amend --no-edit && git pdevelop
+    psmaster = !git commit -a --amend --no-edit && git pmaster
+    plro = pull --rebase origin
+    plrom = plro master
+    plrod = plro develop
+    prune-tags = !git tag -l | xargs git tag -d && git fetch -t
+    prune-branches = fetch --prune
+    prune = !git prune-branches && git prune-tags
+    set-pro = !git config user.email "felipesantos@inatel.br" && git config user.name 'Felipe de Cássio Rocha Santos'
+    set-personal = !git config user.email "felipecassiors@gmail.com" && git config user.name 'Felipe Santos'
+    hist = log --pretty=format:'%C(yellow)%h%Creset %ad | %s%d %Cgreen[%an]%Creset' --graph --date=short
+[credential]
+    helper = /mnt/c/Program\\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe
