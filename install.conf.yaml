@@ -1,3 +1,6 @@
 - clean: []
 - link: {}
-- shell: []
+- shell:
+    - command: sudo apt install zsh
+    - command: '[[ ! -d "$ANTIGEN_DIR" ]] && git clone https://github.com/zsh-users/antigen.git "$HOME/.antigen"'
+    - command: chsh -s $(which zsh)
