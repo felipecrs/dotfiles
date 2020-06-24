@@ -27,3 +27,5 @@ if [ -d "$HOME/.local/bin" ] ; then
 fi
 
 eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+
+export BROWSER=wslview

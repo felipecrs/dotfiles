@@ -1,5 +1,7 @@
 # Felipe Santos's dotfiles
 
+This dotfiles repository is currently aimed for [Ubuntu on WSL](https://ubuntu.com/wsl). See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10).
+
 ## Convenience script
 
 You can use the [convenience script](./clone_and_install.sh) with:
