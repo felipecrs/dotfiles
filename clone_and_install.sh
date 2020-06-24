@@ -6,7 +6,7 @@ fancy_echo() {
   printf "\033[0;34m--> %s\033[0m\n" "$1"
 }
 
-DOTFILES_USER=${DOTFILES_USER:-felipecassiors}}
+DOTFILES_USER=${DOTFILES_USER:-felipecassiors}
 DOTFILES_REPO="https://github.com/$DOTFILES_USER/dotfiles"
 DOTFILES_BRANCH=${DOTFILES_BRANCH:-master}
 DOTFILES_DIR="$HOME/.dotfiles"
