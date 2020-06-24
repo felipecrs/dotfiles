@@ -8,7 +8,9 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # Load .profile because of Homebrew and ~/bin.
-source "$HOME/.profile"
+if [ -f "$HOME/.profile" ]; then
+  source "$HOME/.profile"
+fi
 
 # Enable Homebrew zsh completions
 if type brew &>/dev/null; then
