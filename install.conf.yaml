@@ -30,7 +30,7 @@
       description: Making zsh the default shell
     - command: sudo apt install build-essential curl file -y
       description: Installing Homebrew dependencies
-    - command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    - command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
       description: Installing Homebrew
     - command: brew install gh
       description: Installing gh
