@@ -23,7 +23,7 @@ The convenience script supports two environment variables:
 - `DOTFILES_REPO`: Default to `felipecassiors`.
 - `DOTFILES_BRANCH`: Default to `master`.
 
-Example:
+#### Examples
 
 - Using the convenience script to clone the dotfiles repository on branch `beta`:
 
