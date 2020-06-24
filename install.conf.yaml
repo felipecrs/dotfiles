@@ -4,7 +4,7 @@
       relink: true
       force: true
 - clean:
-  - "~"
+    - "~"
 - link:
     ~/.profile:
     ~/.bashrc:
@@ -12,25 +12,25 @@
     ~/.p10k.zsh:
     ~/.gitconfig:
 - create:
-  - ~/repos
-  - ~/bin
-  - ~/.local/bin
+    - ~/repos
+    - ~/bin
+    - ~/.local/bin
 - shell:
-  - command: git submodule update --init --recursive
-    description: Installing submodules
-  - command: echo "$USER  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$USER"
-    description: Adding user to sudoers
-  - command: sudo apt update && sudo apt install zsh -y
-    description: Installing zsh
-  - command: rm -rf "$HOME/.antigen"; git clone https://github.com/zsh-users/antigen.git "$HOME/.antigen"
-    description: Installing antigen
-  - command: zsh "$HOME/.zshrc"
-    description: Initializing zshrc
-  - command: sudo chsh -s $(which zsh) "$USER"
-    description: Making zsh the default shell
-  - command: sudo apt install build-essential curl file -y
-    description: Installing Homebrew dependencies
-  - command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-    description: Installing Homebrew
-  - command: eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv) && brew install gh
-    description: Installing gh
+    - command: git submodule update --init --recursive
+      description: Installing submodules
+    - command: echo "$USER  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$USER"
+      description: Adding user to sudoers
+    - command: sudo apt update && sudo apt install zsh -y
+      description: Installing zsh
+    - command: rm -rf "$HOME/.antigen"; git clone https://github.com/zsh-users/antigen.git "$HOME/.antigen"
+      description: Installing antigen
+    - command: sudo chsh -s $(which zsh) "$USER"
+      description: Making zsh the default shell
+    - command: sudo apt install build-essential curl file -y
+      description: Installing Homebrew dependencies
+    - command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+      description: Installing Homebrew
+    # - command: source "$HOME/.zshrc"
+    #   description: Sourcing zshrc
+    - command: brew install gh
+      description: Installing gh

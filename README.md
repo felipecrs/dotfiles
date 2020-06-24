@@ -16,6 +16,21 @@ Or, shorter (and less secure), with:
 curl -L git.io/felipe-dotfiles | sh
 ```
 
+### Environment variables
+
+The convenience script supports two environment variables:
+
+- `DOTFILES_REPO`: Default to `felipecassiors`.
+- `DOTFILES_BRANCH`: Default to `master`.
+
+Example:
+
+- Using the convenience script to clone the dotfiles repository on branch `beta`:
+
+  ```bash
+  DOTFILES_BRANCH=beta sh -c "$(curl -fsSL https://git.io/felipe-dotfiles)"
+  ```
+
 ## Manually
 
 You can also do it manually, it's simple after all.

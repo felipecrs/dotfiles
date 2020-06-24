@@ -21,33 +21,33 @@ source "$HOME/.antigen/antigen.zsh"
 antigen use oh-my-zsh
 
 antigen bundles <<EOBUNDLES
-    # Bundles from the default repo (robbyrussell's oh-my-zsh)
-    git
-    git-extras
-    z
-    docker
-    docker-compose
-    helm
-    kubectl
-    heroku
-    pip
-    lein
-    npm
-    node
-    command-not-found
-    common-aliases
+  # Bundles from the default repo (robbyrussell's oh-my-zsh)
+  git
+  git-extras
+  z
+  docker
+  docker-compose
+  helm
+  kubectl
+  heroku
+  pip
+  lein
+  npm
+  node
+  command-not-found
+  common-aliases
 
-    # Syntax highlighting bundle.
-    zsh-users/zsh-syntax-highlighting
+  # Syntax highlighting bundle.
+  zsh-users/zsh-syntax-highlighting
 
-    # Fish-like auto suggestions
-    zsh-users/zsh-autosuggestions
+  # Fish-like auto suggestions
+  zsh-users/zsh-autosuggestions
 
-    # Extra zsh completions
-    zsh-users/zsh-completions
+  # Extra zsh completions
+  zsh-users/zsh-completions
 
-    # Node Version Manager
-    lukechilds/zsh-nvm
+  # Node Version Manager
+  lukechilds/zsh-nvm
 EOBUNDLES
 
 # Load the theme.
