@@ -21,7 +21,7 @@ curl -L git.io/felipe-dotfiles | sh
 The convenience script supports two environment variables:
 
 - `DOTFILES_REPO`: Default to `felipecassiors`.
-- `DOTFILES_BRANCH`: Default to `master`
+- `DOTFILES_BRANCH`: Default to `master`.
 
 Example:
 
