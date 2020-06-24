@@ -25,7 +25,7 @@ The convenience script supports two environment variables:
 
 Example:
 
-- Cloning from a branch different than master:
+- Using the convenience script to clone the dotfiles repository on branch `beta`:
 
   ```bash
   DOTFILES_BRANCH=beta sh -c "$(curl -fsSL https://git.io/felipe-dotfiles)"
