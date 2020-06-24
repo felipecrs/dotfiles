@@ -1,11 +1,20 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+      force: true
 - clean:
     - "~"
 - link:
+    ~/.profile:
+    ~/.bashrc:
     ~/.zshrc:
     ~/.p10k.zsh:
     ~/.gitconfig:
 - create:
     - ~/repos
+    - ~/bin
+    - ~/.local/bin
 - shell:
     - command: git submodule update --init --recursive
       description: Installing submodules
@@ -19,3 +28,9 @@
       description: Initializing zshrc
     - command: sudo chsh -s $(which zsh) "$USER"
       description: Making zsh the default shell
+    - command: sudo apt install build-essential curl file -y
+      description: Installing Homebrew dependencies
+    - command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+      description: Installing Homebrew
+    - command: eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv) && brew install gh
+      description: Installing gh
