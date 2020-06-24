@@ -13,7 +13,7 @@ sh -c "$(curl -fsSL https://git.io/felipe-dotfiles)"
 Or, shorter (and less secure), with:
 
 ```bash
-curl -L git.io/felipe-dotfiles | s
+curl -L git.io/felipe-dotfiles | sh
 ```
 
 ## Manually
