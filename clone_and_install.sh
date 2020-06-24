@@ -2,17 +2,22 @@
 
 set -eu
 
-DOTFILES_REPO="${1:-https://github.com/felipecassiors/dotfiles}"
+fancy_echo() {
+    printf "\033[0;34m--> %s\n" "$1"
+}
+
+DOTFILES_USER=${1:-${DOTFILES_USER:-felipecassiors}}
+DOTFILES_REPO="https://github.com/$DOTFILES_USER/dotfiles"
 DOTFILES_DIR="$HOME/.dotfiles"
 
 if [ -d "$DOTFILES_DIR" ]; then
-    echo "--> Removing $DOTFILES_DIR"
+    fancy_echo "Removing $DOTFILES_DIR"
     rm -rf "$DOTFILES_DIR"
 fi
 
-echo "--> Cloning $DOTFILES_REPO to $DOTFILES_DIR"
+fancy_echo "Cloning $DOTFILES_REPO to $DOTFILES_DIR"
 git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
 
 INSTALL_BIN="$DOTFILES_DIR/install"
-echo "--> Running $INSTALL_BIN"
+fancy_echo "Running $INSTALL_BIN"
 exec "$INSTALL_BIN"
