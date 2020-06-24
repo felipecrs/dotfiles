@@ -7,10 +7,10 @@ This dotfiles repository is currently aimed for [Ubuntu on WSL](https://ubuntu.c
 You can use the [convenience script](./clone_and_install.sh) with:
 
 ```bash
-sh -c $(curl -fsSL https://git.io/felipe-dotfiles)
+sh -c "$(curl -fsSL https://git.io/felipe-dotfiles)"
 ```
 
-Or, for short (and less secure), with:
+Or, shorter (and less secure), with:
 
 ```bash
 curl -L git.io/felipe-dotfiles | s
