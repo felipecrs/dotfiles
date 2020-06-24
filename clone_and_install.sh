@@ -16,8 +16,8 @@ if [ -d "$DOTFILES_DIR" ]; then
   rm -rf "$DOTFILES_DIR"
 fi
 
-fancy_echo "Cloning $DOTFILES_REPO to $DOTFILES_DIR"
-git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
+fancy_echo "Cloning $DOTFILES_REPO on branch $DOTFILES_BRANCH to $DOTFILES_DIR"
+git clone -b "$DOTFILES_BRANCH" "$DOTFILES_REPO" "$DOTFILES_DIR"
 
 INSTALL_BIN="$DOTFILES_DIR/install"
 fancy_echo "Running $INSTALL_BIN"
