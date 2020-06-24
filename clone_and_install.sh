@@ -3,16 +3,17 @@
 set -eu
 
 fancy_echo() {
-    printf "\033[0;34m--> %s\033[0m\n" "$1"
+  printf "\033[0;34m--> %s\033[0m\n" "$1"
 }
 
-DOTFILES_USER=${1:-${DOTFILES_USER:-felipecassiors}}
+DOTFILES_USER=${DOTFILES_USER:-felipecassiors}}
 DOTFILES_REPO="https://github.com/$DOTFILES_USER/dotfiles"
+DOTFILES_BRANCH=${DOTFILES_BRANCH:-master}
 DOTFILES_DIR="$HOME/.dotfiles"
 
 if [ -d "$DOTFILES_DIR" ]; then
-    fancy_echo "Removing $DOTFILES_DIR"
-    rm -rf "$DOTFILES_DIR"
+  fancy_echo "Removing $DOTFILES_DIR"
+  rm -rf "$DOTFILES_DIR"
 fi
 
 fancy_echo "Cloning $DOTFILES_REPO to $DOTFILES_DIR"
