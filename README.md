@@ -16,12 +16,6 @@ You can use the [convenience script](./clone_and_install.sh) with:
 sh -c "$(curl -fsSL https://git.io/felipe-dotfiles)"
 ```
 
-Or, shorter (and less secure), with:
-
-```bash
-curl -L git.io/felipe-dotfiles | sh
-```
-
 ### Environment variables
 
 The convenience script supports two environment variables:
