@@ -1,5 +1,7 @@
 # Felipe Santos's dotfiles
 
+Bootstrap your Ubuntu on WSL in less than five minutes!
+
 ![Convenience script](https://user-images.githubusercontent.com/29582865/85643227-e51e2200-b669-11ea-9cea-eb2e17c4dc19.gif)
 
 This dotfiles repository is currently aimed for [Ubuntu on WSL](https://ubuntu.com/wsl). See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10).
