@@ -30,7 +30,7 @@
       description: Installing Homebrew dependencies
     - command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
       description: Installing Homebrew
-    - command: source "$HOME/.zshrc"
+    - command: zsh -c "source \"$HOME/.zshrc\""
       description: Sourcing zshrc
     - command: bash -lc 'brew install gh shellcheck jq'
       description: Installing gh, shellcheck, jq
