@@ -27,8 +27,12 @@ if [ -d "$HOME/.local/bin" ]; then
   PATH="$HOME/.local/bin:$PATH"
 fi
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
+  eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
+fi
 
-if [ -z "$WSL_DISTRO_NAME" ] || [ -z "$IS_WSL" ]; then
+if [ -n "$WSL_DISTRO_NAME" ] || [ -n "$IS_WSL" ]; then
   export BROWSER="wslview"
 fi
