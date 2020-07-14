@@ -1,5 +1,7 @@
 # Felipe Santos's dotfiles
 
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/felipecassiors/dotfiles)
+
 Bootstrap your Ubuntu on WSL in less than five minutes!
 
 ![Convenience script](https://user-images.githubusercontent.com/29582865/85643227-e51e2200-b669-11ea-9cea-eb2e17c4dc19.gif)
