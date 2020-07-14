@@ -34,3 +34,10 @@
       description: Sourcing zshrc
     - command: bash -lc 'brew install gh shellcheck jq'
       description: Installing gh, shellcheck, jq
+    - if:
+      command: |
+        if [ -n "$WSL_DISTRO_NAME" ] || [ -n "$IS_WSL" ]; then
+          cp -rf "$(wslpath "$(wslvar USERPROFILE)")/.ssh/." "$HOME/.ssh"
+          chmod 600 "$HOME/.ssh/id_rsa"
+        fi
+      description: Syncing ~/.ssh folder
