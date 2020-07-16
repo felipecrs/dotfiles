@@ -36,3 +36,7 @@ fi
 if [ -n "$WSL_DISTRO_NAME" ] || [ -n "$IS_WSL" ]; then
   export BROWSER="wslview"
 fi
+
+if [ "$(command -v code)" ]; then
+  export EDITOR="code"
+fi
