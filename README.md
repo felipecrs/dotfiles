@@ -4,6 +4,12 @@
 
 Bootstrap your Ubuntu on WSL in less than five minutes!
 
+![Convenience script](https://user-images.githubusercontent.com/29582865/85643227-e51e2200-b669-11ea-9cea-eb2e17c4dc19.gif)
+
+This dotfiles repository is currently aimed for [Ubuntu on WSL](https://ubuntu.com/wsl). See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10).
+
+## Summary <!-- omit in toc -->
+
 - [Get started](#get-started)
   - [Using the convenience script](#using-the-convenience-script)
     - [Usage](#usage)
@@ -15,9 +21,7 @@ Bootstrap your Ubuntu on WSL in less than five minutes!
     - [Examples](#examples-1)
     - [Demo](#demo)
 
-![Convenience script](https://user-images.githubusercontent.com/29582865/85643227-e51e2200-b669-11ea-9cea-eb2e17c4dc19.gif)
-
-This dotfiles repository is currently aimed for [Ubuntu on WSL](https://ubuntu.com/wsl). See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10).
+## Get started
 
 The current state of this dotfiles uses the zsh theme [Powerlevel10k](https://github.com/romkatv/powerlevel10k), so it requires you to install a font on your host machine with support for [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts). Currently I use `FiraCode NF`, and you can install it on Windows with [Chocolatey](https://chocolatey.org/install):
 
@@ -25,7 +29,7 @@ The current state of this dotfiles uses the zsh theme [Powerlevel10k](https://gi
 choco install firacodenf
 ```
 
-## Get started
+Now you will learn how to bootstrap this repository on your machine.
 
 ### Using the convenience script
 
