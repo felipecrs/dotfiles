@@ -63,7 +63,7 @@ git clone https://github.com/felipecassiors/dotfiles "$HOME/.dotfiles"
 "$HOME/.dotfiles/install"
 ```
 
-## `scripts/`
+## [`scripts/`](scripts/)
 
 ### [`create_alternative_chrome_shortcut.sh`](scripts/create_alternative_chrome_shortcut.sh)
 
