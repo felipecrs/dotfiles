@@ -81,7 +81,7 @@ bash -c "$(curl -fsSL "https://raw.githubusercontent.com/felipecassiors/dotfiles
 
 #### Usage
 
-``` text
+```sh-session
 $ scripts/create_alternative_chrome_shortcut.sh --help
 Usage: scripts/create_alternative_chrome_shortcut.sh [-f|--(no-)force] [-h|--help] [<display-name>]
         <display-name>: The name which will be displayed in the app launcher (default: 'Alternative')
@@ -93,7 +93,7 @@ different user data directory. This lets you have different icons for different
 instances of Google Chrome.
 
 Please check the following URL for more information:
-  https://github.com/felipecassiors/dotfiles
+  https://github.com/felipecassiors/dotfiles#create_alternative_chrome_shortcutsh
 ```
 
 #### Examples
