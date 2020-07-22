@@ -1,6 +1,6 @@
 # Felipe Santos's dotfiles
 
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/felipecassiors/dotfiles)
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/felipecassiors/dotfiles#scripts)
 
 Bootstrap your Ubuntu on WSL in less than five minutes!
 
@@ -45,3 +45,26 @@ You can also do it manually, it's simple after all.
 git clone https://github.com/felipecassiors/dotfiles "$HOME/.dotfiles"
 "$HOME/.dotfiles/install"
 ```
+
+## Scripts
+
+### [scripts/create_alternative_chrome_shortcut.sh](scripts/create_alternative_chrome_shortcut.sh)
+
+``` text
+$ scripts/create_alternative_chrome_shortcut.sh --help
+Usage: scripts/create_alternative_chrome_shortcut.sh [-f|--(no-)force] [-h|--help] [<display-name>]
+        <display-name>: The name which will be displayed in the app launcher (default: 'Alternative')
+        -f, --force, --no-force: Do not ask for confirmation (off by default)
+        -h, --help: Prints help
+
+This script creates a new shortcut for Google Chrome which opens using a
+different user data directory. This lets you have different icons for different
+instances of Google Chrome.
+
+Please check the following URL for more information:
+  https://github.com/felipecassiors/dotfiles
+```
+
+### Demo
+
+![Opening two Chrome instances using different icons](./docs/images/create_alternative_chrome_shortcut.gif)
