@@ -65,6 +65,18 @@ git clone https://github.com/felipecassiors/dotfiles "$HOME/.dotfiles"
 
 ## [`scripts/`](scripts/)
 
+If you already have this repository [bootstrapped](#get-started) in your machine, you can use the scripts right away. Or, if you want to run it directly, you can use:
+
+```bash
+bash -c "$(curl -fsSL "https://raw.githubusercontent.com/felipecassiors/dotfiles/master/scripts/<script-name>")" -- <arguments>
+```
+
+Just replace `<script-name>` and `<arguments>` with the desired values. Example:
+
+```bash
+bash -c "$(curl -fsSL "https://raw.githubusercontent.com/felipecassiors/dotfiles/master/scripts/create_alternative_chrome_shortcut.sh")" -- --force
+```
+
 ### [`create_alternative_chrome_shortcut.sh`](scripts/create_alternative_chrome_shortcut.sh)
 
 #### Usage
