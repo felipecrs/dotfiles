@@ -6,7 +6,7 @@ different user data directory. This lets you have different icons for different
 instances of Google Chrome.
 
 Please check the following URL for more information:
-  https://github.com/felipecassiors/dotfiles#scripts/create_alternative_chrome_shortcut.sh
+  https://github.com/felipecassiors/dotfiles#create_alternative_chrome_shortcutsh
 EOM
 
 # ARG_POSITIONAL_SINGLE([display-name],[The name which will be displayed in the app launcher],[Alternative])

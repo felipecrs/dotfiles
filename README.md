@@ -1,8 +1,19 @@
-# Felipe Santos's dotfiles
+# Felipe Santos's dotfiles <!-- omit in toc -->
 
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/felipecassiors/dotfiles#scripts)
 
 Bootstrap your Ubuntu on WSL in less than five minutes!
+
+- [Get started](#get-started)
+  - [Using the convenience script](#using-the-convenience-script)
+    - [Usage](#usage)
+    - [Examples](#examples)
+  - [Manually](#manually)
+- [`scripts/`](#scripts)
+  - [`create_alternative_chrome_shortcut.sh`](#create_alternative_chrome_shortcutsh)
+    - [Usage](#usage-1)
+    - [Examples](#examples-1)
+    - [Demo](#demo)
 
 ![Convenience script](https://user-images.githubusercontent.com/29582865/85643227-e51e2200-b669-11ea-9cea-eb2e17c4dc19.gif)
 
@@ -14,7 +25,9 @@ The current state of this dotfiles uses the zsh theme [Powerlevel10k](https://gi
 choco install firacodenf
 ```
 
-## Convenience script
+## Get started
+
+### Using the convenience script
 
 You can use the [convenience script](./clone_and_install.sh) with:
 
@@ -22,7 +35,7 @@ You can use the [convenience script](./clone_and_install.sh) with:
 sh -c "$(curl -fsSL https://git.io/felipe-dotfiles)"
 ```
 
-### Environment variables
+#### Usage
 
 The convenience script supports two environment variables:
 
@@ -37,7 +50,7 @@ The convenience script supports two environment variables:
   DOTFILES_BRANCH=beta sh -c "$(curl -fsSL https://git.io/felipe-dotfiles)"
   ```
 
-## Manually
+### Manually
 
 You can also do it manually, it's simple after all.
 
@@ -46,9 +59,11 @@ git clone https://github.com/felipecassiors/dotfiles "$HOME/.dotfiles"
 "$HOME/.dotfiles/install"
 ```
 
-## Scripts
+## `scripts/`
 
-### [scripts/create_alternative_chrome_shortcut.sh](scripts/create_alternative_chrome_shortcut.sh)
+### [`create_alternative_chrome_shortcut.sh`](scripts/create_alternative_chrome_shortcut.sh)
+
+#### Usage
 
 ``` text
 $ scripts/create_alternative_chrome_shortcut.sh --help
@@ -65,6 +80,12 @@ Please check the following URL for more information:
   https://github.com/felipecassiors/dotfiles
 ```
 
-### Demo
+#### Examples
+
+```bash
+scripts/create_alternative_chrome_shortcut.sh Personal
+```
+
+#### Demo
 
 ![Opening two Chrome instances using different icons](./docs/images/create_alternative_chrome_shortcut.gif)
