@@ -13,7 +13,7 @@ DOTFILES_REPO="https://github.com/$DOTFILES_USER/dotfiles"
 DOTFILES_BRANCH=${DOTFILES_BRANCH:-master}
 DOTFILES_DIR="$HOME/.dotfiles"
 
-if [ "$(command -v git)" ]; then
+if [ ! "$(command -v git)" ]; then
   echo "Git not found"
   if ! sudo -n true 2>/dev/null; then
     echo_task "Prompting for sudo password to install Git"
