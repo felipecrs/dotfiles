@@ -1,0 +1,25 @@
+
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  clone-and-install:
+    runs-on: ubuntu-latest
+    environment:
+      DOTFILES_DIR: ${{ env.HOME }}/.dotfiles
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: ${{ env.DOTFILES_DIR }}
+      - run: $DOTFILES_DIR/install
+
+  convenience-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: sh -c "$(wget -qO- 'https://raw.githubusercontent.com/felipecassiors/dotfiles/$GITHUB_SHA/scripts/install_dotfiles.sh')"
