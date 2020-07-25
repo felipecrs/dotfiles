@@ -12,9 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          path: ../../.dotfiles
-      - run: $HOME/.dotfiles/install
+      - run: ./install
 
   convenience-script:
     runs-on: ubuntu-latest
