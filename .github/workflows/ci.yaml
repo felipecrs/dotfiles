@@ -10,13 +10,11 @@ on:
 jobs:
   clone-and-install:
     runs-on: ubuntu-latest
-    env:
-      DOTFILES_DIR: ${{ env.HOME }}/.dotfiles
     steps:
       - uses: actions/checkout@v2
         with:
-          path: ${{ env.DOTFILES_DIR }}
-      - run: $DOTFILES_DIR/install
+          path: ${{ env.HOME }}/.dotfiles
+      - run: $HOME/.dotfiles/install
 
   convenience-script:
     runs-on: ubuntu-latest
