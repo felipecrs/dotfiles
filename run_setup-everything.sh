@@ -63,7 +63,7 @@ zsh -c "source '$HOME/.zshrc' && antigen cleanup && antigen update"
 echo_task "Installing gh, shellcheck, jq, chezmoi"
 brew install gh shellcheck jq yq chezmoi
 
-if [ -n "$WSL_DISTRO_NAME" ] || [ -n "$IS_WSL" ]; then
+if [ -n "${WSL_DISTRO_NAME+x}" ] || [ -n "${IS_WSL+x}" ]; then
   echo_task "Syncing .ssh folder from Windows to WSL"
   USERPROFILE="$(wslpath "$(wslvar USERPROFILE)")"
   if [ -f "$USERPROFILE/.ssh/id_rsa" ]; then
