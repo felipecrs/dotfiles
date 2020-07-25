@@ -1,6 +1,6 @@
 [user]
-	name = Felipe Santos
-	email = felipecassiors@gmail.com
+	name = {{ .name }}
+	email = {{ .email }}
 [core]
     excludesfile = C:/Users/felipesantos/.gitignore_global
     autocrlf = input
@@ -15,8 +15,15 @@
     tool = vscode
 [mergetool "vscode"]
     cmd = code --wait $MERGED
+{{- if .is_work }}
+[pull]
+    rebase = true
+{{- end }}
 [alias]
-    st = status
+    c = commit
+    ca = commit --amend
+    cane = commit --amend --no-edit
+    s = status
     pdevelop = push origin HEAD:refs/for/develop
     pmaster = push origin HEAD:refs/for/master
     rdevelop = reset --hard origin/develop
@@ -33,4 +40,8 @@
     set-personal = !git config user.email "felipecassiors@gmail.com" && git config user.name 'Felipe Santos'
     hist = log --pretty=format:'%C(yellow)%h%Creset %ad | %s%d %Cgreen[%an]%Creset' --graph --date=short
 [credential]
+    {{- if .is_wsl }}
     helper = /mnt/c/Program\\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe
+    {{- else if .is_gnome }}
+    helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
+    {{- end }}

@@ -1,0 +1,16 @@
+{{- $isWork := contains "inatel" .chezmoi.hostname -}}
+{{- $isPersonal := not $isWork -}}
+{{- $isWsl := not (not (or (env "WSL_DISTRO_NAME") (env "IS_WSL"))) -}}
+{{- $isGnome := contains "GNOME" (env "XDG_CURRENT_DESKTOP") -}}
+
+[data]
+  {{- if $isWork }}
+  email = "felipesantos@inatel.br"
+  {{- else }}
+  email = "felipecassiors@gmail.com"
+  name = "Felipe Santos"
+  {{- end }}
+  is_personal = {{ $isPersonal }}
+  is_work = {{ $isWork }}
+  is_wsl = {{ $isWsl }}
+  is_gnome = {{ $isGnome }}
