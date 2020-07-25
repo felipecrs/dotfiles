@@ -22,4 +22,4 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: sh -c "$(wget -qO- 'https://raw.githubusercontent.com/felipecassiors/dotfiles/$GITHUB_SHA/scripts/install_dotfiles.sh')"
+      - run: sh -c "$(wget -qO- 'https://raw.githubusercontent.com/felipecassiors/dotfiles/${{ github.sha }}/scripts/install_dotfiles.sh')"
