@@ -2,7 +2,7 @@
 
 set -eu
 
-fancy_echo() {
+echo_task() {
   printf "\033[0;34m--> %s\033[0m\n" "$1"
 }
 
@@ -14,13 +14,17 @@ DOTFILES_BRANCH=${DOTFILES_BRANCH:-master}
 DOTFILES_DIR="$HOME/.dotfiles"
 
 if [ -d "$DOTFILES_DIR" ]; then
-  fancy_echo "Removing $DOTFILES_DIR"
-  rm -rf "$DOTFILES_DIR"
+  echo "Cleaning existing $(realpath "$DOTFILES_DIR")"
+  cd "$DOTFILES_DIR"
+  git fetch origin "$DOTFILES_BRANCH"
+  git reset --hard FETCH_HEAD
+  git clean -fdx
+  cd - >/dev/null
 fi
 
-fancy_echo "Cloning $DOTFILES_REPO on branch $DOTFILES_BRANCH to $DOTFILES_DIR"
+echo_task "Cloning $DOTFILES_REPO on branch $DOTFILES_BRANCH to $DOTFILES_DIR"
 git clone -b "$DOTFILES_BRANCH" "$DOTFILES_REPO" "$DOTFILES_DIR"
 
 INSTALL_BIN="$DOTFILES_DIR/install"
-fancy_echo "Running $INSTALL_BIN"
+echo_task "Running $INSTALL_BIN"
 exec "$INSTALL_BIN"

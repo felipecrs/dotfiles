@@ -22,4 +22,5 @@ echo_task "Initializing chezmoi"
 script_dir="$(cd "${BASH_SOURCE[0]%/*}" && pwd)"
 cmd="$chezmoi init --apply --source $script_dir"
 echo "$cmd"
-$cmd
+# shellcheck disable=SC2086
+exec $cmd
