@@ -1,0 +1,21 @@
+
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  clone-and-install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: ./install
+
+  convenience-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: sh -c "$(wget -qO- 'https://raw.githubusercontent.com/felipecassiors/dotfiles/${{ github.sha }}/scripts/install_dotfiles.sh')"
