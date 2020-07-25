@@ -14,7 +14,7 @@ DOTFILES_BRANCH=${DOTFILES_BRANCH:-master}
 DOTFILES_DIR="$HOME/.dotfiles"
 
 if [ ! "$(command -v git)" ]; then
-  echo "Git not found"
+  echo "Git does not seems to be installed"
   if ! sudo -n true 2>/dev/null; then
     echo_task "Prompting for sudo password to install Git"
     sudo true
