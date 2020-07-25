@@ -18,4 +18,4 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: sh -c "$(wget -qO- 'https://raw.githubusercontent.com/felipecassiors/dotfiles/${{ github.sha }}/scripts/install_dotfiles.sh')"
+      - run: DOTFILES_BRANCH="${GITHUB_REF#refs/heads/}" sh -c "$(wget -qO- 'https://raw.githubusercontent.com/felipecassiors/dotfiles/${{ github.sha }}/scripts/install_dotfiles.sh')"
