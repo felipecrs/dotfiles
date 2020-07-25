@@ -13,8 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          path: ${{ env.HOME }}/.dotfiles
-      - run: $HOME/.dotfiles/install
+          path: /home/runner/.dotfiles
+      - run: /home/runner/.dotfiles/install
 
   convenience-script:
     runs-on: ubuntu-latest
