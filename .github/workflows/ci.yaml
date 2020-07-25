@@ -10,7 +10,7 @@ on:
 jobs:
   clone-and-install:
     runs-on: ubuntu-latest
-    environment:
+    env:
       DOTFILES_DIR: ${{ env.HOME }}/.dotfiles
     steps:
       - uses: actions/checkout@v2
