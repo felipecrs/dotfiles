@@ -1,4 +1,20 @@
 #!/usr/bin/env bash
 
+fancy_echo() {
+  printf "\033[0;34m--> %s\033[0m\n" "$1"
+}
+
 set -euo pipefail
 
+if [ ! "$(command -v chezmoi)" ]; then
+  bin_dir="$HOME/.local/bin"
+  chezmoi="$bin_dir/chezmoi"
+  fancy_echo "Installing chezmoi to $chezmoi"
+  sh -c "$(curl -fsSL https://git.io/chezmoi)" -- --bindir "$bin_dir"
+else
+  chezmoi=$(which chezmoi)
+  fancy_echo "The chezmoi is already installed to $chezmoi"
+fi
+
+fancy_echo "Running chezmoi init"
+$chezmoi init --source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )" --apply
