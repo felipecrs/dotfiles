@@ -89,4 +89,7 @@ if ! is_wsl; then
   sudo apt update
   sudo apt install -y libsecret-1-0 libsecret-1-dev
   sudo make --directory /usr/share/doc/git/contrib/credential/libsecret
+
+  echo_task "Adding 'Open Code here' in Nautilus context menu"
+  bash -c "$(wget -qO- https://raw.githubusercontent.com/harry-cpp/code-nautilus/master/install.sh)"
 fi
