@@ -7,9 +7,6 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  CONVENIENCE_SCRIPT: sh -c "$(wget -qO- 'https://raw.githubusercontent.com/felipecassiors/dotfiles/${{ github.sha }}/scripts/install_dotfiles.sh')"
-
 jobs:
   clone-and-install:
     runs-on: ubuntu-latest
@@ -21,10 +18,4 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: $CONVENIENCE_SCRIPT
-
-  convenience-script-for-work:
-    runs-on: ubuntu-latest
-
-    steps:
-      - run: HOSTNAME=inatel $CONVENIENCE_SCRIPT
+      - run: sh -c "$(wget -qO- 'https://raw.githubusercontent.com/felipecassiors/dotfiles/${{ github.sha }}/scripts/install_dotfiles.sh')"
