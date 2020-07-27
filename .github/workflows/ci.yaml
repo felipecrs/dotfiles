@@ -8,7 +8,7 @@ on:
     branches: [master]
 
 env:
-  CONVENIENCE_SCRIPT: sh -c "$(wget -qO- https://raw.githubusercontent.com/felipecassiors/dotfiles/${{ github.sha }}/scripts/install_dotfiles.sh)"
+  CONVENIENCE_SCRIPT: 'sh -c "$(wget -qO- https://raw.githubusercontent.com/felipecassiors/dotfiles/${{ github.sha }}/scripts/install_dotfiles.sh)"'
 
 jobs:
   clone-and-install:
