@@ -2,11 +2,11 @@
 
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/felipecassiors/dotfiles#scripts)
 
-Bootstrap your Ubuntu on WSL in less than five minutes!
+Bootstrap your Ubuntu in less a few minutes!
 
-![Convenience script](https://user-images.githubusercontent.com/29582865/85643227-e51e2200-b669-11ea-9cea-eb2e17c4dc19.gif)
+This dotfiles repository is currently aimed for [**Ubuntu for WSL**](https://ubuntu.com/wsl), **Ubuntu Server** and **Ubuntu Desktop**, tested only in **Ubuntu 20.04**. See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10).
 
-This dotfiles repository is currently aimed for [Ubuntu on WSL](https://ubuntu.com/wsl). See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10).
+This repository is managed with [`chezmoi`](https://chezmoi.io).
 
 ## Summary <!-- omit in toc -->
 
