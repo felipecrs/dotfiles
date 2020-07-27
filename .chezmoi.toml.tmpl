@@ -2,6 +2,8 @@
 {{- $isPersonal := not $isWork -}}
 {{- $isWsl := not (not (or (env "WSL_DISTRO_NAME") (env "IS_WSL"))) -}}
 
+sourceDir = "{{ .chezmoi.sourceDir }}"
+
 [data]
   {{- if $isWork }}
   email = "felipesantos@inatel.br"
@@ -13,6 +15,3 @@
   is_personal = {{ $isPersonal }}
   is_work = {{ $isWork }}
   is_wsl = {{ $isWsl }}
-
-[chezmoi]
-  sourceDir = "{{ .chezmoi.sourceDir }}"

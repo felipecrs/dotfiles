@@ -82,6 +82,16 @@ function is_ubuntu() {
   fi
 }
 
+function is_gnome() {
+  # This is not the best way of doing it, but at least it works inside the
+  # Visual Studio Code integrated terminal, which is enough for me now.
+  if [ "$(command -v gnome-shell)" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 if is_wsl; then
   echo_task "Performing WSL specific steps"
 
@@ -102,14 +112,16 @@ else
   sudo apt install -y libsecret-1-0 libsecret-1-dev
   sudo make --directory /usr/share/doc/git/contrib/credential/libsecret
 
-  echo_task "Adding 'Open Code here' in Nautilus context menu"
-  bash -c "$(wget -qO- https://raw.githubusercontent.com/harry-cpp/code-nautilus/master/install.sh)"
+  if is_gnome; then
+    echo_task "Adding 'Open Code here' in Nautilus context menu"
+    bash -c "$(wget -qO- https://raw.githubusercontent.com/harry-cpp/code-nautilus/master/install.sh)"
 
-  if is_ubuntu 20.04; then
-    echo_task "Setting up dark theme"
-    sudo apt install -y gnome-shell-extensions
-    gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
-    gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
-    gsettings set org.gnome.shell.extensions.user-theme name "Yaru-dark"
+    if is_ubuntu 20.04; then
+      echo_task "Setting up dark theme"
+      sudo apt install -y gnome-shell-extensions
+      gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
+      gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
+      gsettings set org.gnome.shell.extensions.user-theme name "Yaru-dark"
+    fi
   fi
 fi
