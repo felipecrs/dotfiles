@@ -51,18 +51,14 @@ sudo apt install build-essential curl file -y
 echo_task "Installing Homebrew"
 CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 set +euo pipefail
-if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
-  eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
-fi
+source "$HOME/.bashrc"
 set -euo pipefail
 
 echo_task "Sourcing .zshrc to initialize antigen"
 zsh -c "source '$HOME/.zshrc' && antigen cleanup && antigen update"
 
-echo_task "Installing gh, shellcheck, jq, chezmoi"
-brew install gh shellcheck jq yq chezmoi
+echo_task "Installing Homebrew bundle"
+brew bundle install --global
 
 function is_wsl() {
   if [ -n "${WSL_DISTRO_NAME+x}" ] || [ -n "${IS_WSL+x}" ]; then
