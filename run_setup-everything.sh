@@ -73,6 +73,8 @@ function is_wsl() {
 }
 
 if is_wsl; then
+  echo_task "Performing WSL specific steps"
+
   echo_task "Syncing .ssh folder from Windows to WSL"
   USERPROFILE="$(wslpath "$(wslvar USERPROFILE)")"
   if [ -f "$USERPROFILE/.ssh/id_rsa" ]; then
@@ -82,9 +84,9 @@ if is_wsl; then
     echo "No keys to sync"
   fi
   unset USERPROFILE
-fi
+else
+  echo_task "Performing NOT WSL specific steps"
 
-if ! is_wsl; then
   echo_task "Setting up Git credential helper to Gnome keyring"
   sudo apt update
   sudo apt install -y libsecret-1-0 libsecret-1-dev
