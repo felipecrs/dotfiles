@@ -10,7 +10,10 @@ if [ ! "$(command -v chezmoi)" ]; then
   bin_dir="$HOME/.local/bin"
   chezmoi="$bin_dir/chezmoi"
   echo_task "Installing chezmoi to $chezmoi"
-  sh -c "$(wget -qO- https://git.io/chezmoi)" -- -b "$bin_dir"
+  mkdir -p "$bin_dir"
+  cd "$(dirname "${bin_dir}")"
+  sh -c "$(wget -qO- https://git.io/chezmoi)"
+  cd - >/dev/null
 else
   chezmoi=$(which chezmoi)
 fi
