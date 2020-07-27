@@ -42,6 +42,6 @@
 [credential]
     {{- if .is_wsl }}
     helper = /mnt/c/Program\\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe
-    {{- else if .is_gnome }}
+    {{- else }}
     helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
     {{- end }}

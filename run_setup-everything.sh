@@ -15,7 +15,8 @@ echo_task "Adding user to sudoers"
 echo "$USER  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$USER"
 
 echo_task "Installing Zsh"
-sudo apt update && sudo apt install zsh -y
+sudo apt update
+sudo apt install -y zsh
 
 echo_task "Installing antigen"
 function git_clean() {
@@ -63,7 +64,15 @@ zsh -c "source '$HOME/.zshrc' && antigen cleanup && antigen update"
 echo_task "Installing gh, shellcheck, jq, chezmoi"
 brew install gh shellcheck jq yq chezmoi
 
-if [ -n "${WSL_DISTRO_NAME+x}" ] || [ -n "${IS_WSL+x}" ]; then
+function is_wsl() {
+  if [ -n "${WSL_DISTRO_NAME+x}" ] || [ -n "${IS_WSL+x}" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+if is_wsl; then
   echo_task "Syncing .ssh folder from Windows to WSL"
   USERPROFILE="$(wslpath "$(wslvar USERPROFILE)")"
   if [ -f "$USERPROFILE/.ssh/id_rsa" ]; then
@@ -73,4 +82,11 @@ if [ -n "${WSL_DISTRO_NAME+x}" ] || [ -n "${IS_WSL+x}" ]; then
     echo "No keys to sync"
   fi
   unset USERPROFILE
+fi
+
+if ! is_wsl; then
+  echo_task "Setting up Git credential helper to Gnome keyring"
+  sudo apt update
+  sudo apt install -y libsecret-1-0 libsecret-1-dev
+  sudo make --directory /usr/share/doc/git/contrib/credential/libsecret
 fi
