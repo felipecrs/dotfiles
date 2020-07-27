@@ -1,0 +1,26 @@
+#!/bin/sh
+
+echo_task() {
+  printf "\033[0;34m--> %s\033[0m\n" "$@"
+}
+
+set -e
+
+echo_task "Upgrading Apt"
+sudo apt update -qq
+sudo apt full-upgrade -yq
+sudo apt autoremove -q
+
+if [ "$(command -v snap)" ]; then
+  echo_task "Upgrading Snap"
+  sudo snap refresh
+fi
+
+echo_task "Upgrading Homebrew"
+brew upgrade
+
+echo_task "Upgrading Antigen"
+zsh -c 'source "$HOME/.zshrc" &&
+  antigen selfupdate &&
+  antigen update &&
+  antigen cleanup'
