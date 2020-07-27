@@ -4,61 +4,27 @@ echo_task() {
   printf "\033[0;34m--> %s\033[0m\n" "$@"
 }
 
-set -euo pipefail
-
-if ! sudo -n true 2>/dev/null; then
-  echo_task "Prompting for sudo password"
-  sudo true
-fi
-
-echo_task "Adding user to sudoers"
-echo "$USER  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$USER"
-
-echo_task "Installing Zsh"
-sudo apt update
-sudo apt install -y zsh
-
-echo_task "Installing antigen"
-function git_clean() {
-  echo "Cleaning $(realpath "$1")"
-  cd "$1"
-  git fetch origin master
-  git reset --hard FETCH_HEAD
-  git clean -fdx
-  cd - >/dev/null
+echo_sub_task() {
+  printf "\033[0;34m----> %s\033[0m\n" "$@"
 }
-antigen_dir="$HOME/.antigen"
-if [ ! -d "$antigen_dir" ]; then
-  git clone https://github.com/zsh-users/antigen.git "$antigen_dir"
-else
-  cd "$antigen_dir"
-  git_clean .
-  for bundle in bundles/*; do
-    if [ -d "$bundle" ]; then
-      git_clean "$bundle"
-    fi
-  done
-  cd - >/dev/null
-fi
-unset antigen_dir
 
-echo_task "Making zsh the default shell"
-sudo chsh -s "$(which zsh)" "$USER"
+function get_default_branch() {
+  local path=$1
+  git -C "$path" remote show origin | grep 'HEAD branch' | cut -d' ' -f5
+}
 
-echo_task "Installing Homebrew dependencies"
-sudo apt install build-essential curl file -y
-
-echo_task "Installing Homebrew"
-CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-set +euo pipefail
-source "$HOME/.bashrc"
-set -euo pipefail
-
-echo_task "Sourcing .zshrc to initialize antigen"
-zsh -c "source '$HOME/.zshrc' && antigen cleanup && antigen update"
-
-echo_task "Installing Homebrew bundle"
-brew bundle install --global
+function git_clean() {
+  local path
+  path=$(realpath "$1")
+  local branch
+  branch="$(get_default_branch "$path")"
+  echo_sub_task "Cleaning $path with branch $branch"
+  local git="git -C $path"
+  $git checkout "$branch"
+  $git fetch origin "$branch"
+  $git reset --hard FETCH_HEAD
+  $git clean -fdx
+}
 
 function is_wsl() {
   if [ -n "${WSL_DISTRO_NAME+x}" ] || [ -n "${IS_WSL+x}" ]; then
@@ -87,6 +53,54 @@ function is_gnome() {
     return 1
   fi
 }
+
+set -euo pipefail
+
+if ! sudo -n true 2>/dev/null; then
+  echo_task "Prompting for sudo password"
+  sudo true
+fi
+
+echo_task "Adding user to sudoers"
+echo "$USER  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$USER"
+
+echo_task "Installing Zsh"
+sudo apt update
+sudo apt install -y zsh
+
+echo_task "Installing antigen"
+antigen_dir="$HOME/.antigen"
+if [ ! -d "$antigen_dir" ]; then
+  git clone https://github.com/zsh-users/antigen.git "$antigen_dir"
+else
+  cd "$antigen_dir"
+  git_clean .
+  for bundle in bundles/*/*; do
+    if [ -d "$bundle" ]; then
+      git_clean "$bundle"
+    fi
+  done
+  cd - >/dev/null
+fi
+unset antigen_dir
+
+echo_task "Making zsh the default shell"
+sudo chsh -s "$(which zsh)" "$USER"
+
+echo_task "Installing Homebrew dependencies"
+sudo apt install build-essential curl file -y
+
+echo_task "Installing Homebrew"
+CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+set +euo pipefail
+source "$HOME/.bashrc"
+set -euo pipefail
+
+echo_task "Sourcing .zshrc to initialize antigen"
+zsh -c "source '$HOME/.zshrc' && antigen cleanup && antigen update"
+
+echo_task "Installing Homebrew bundle"
+brew bundle install --global
 
 if is_wsl; then
   echo_task "Performing WSL specific steps"
