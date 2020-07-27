@@ -6,7 +6,24 @@ echo_task() {
   printf "\033[0;34m--> %s\033[0m\n" "$@"
 }
 
-cd "$HOME"
+get_default_branch() {
+  path=$1
+  git -C "$path" remote show origin | grep 'HEAD branch' | cut -d' ' -f5
+}
+
+git_clean() {
+  path=$(realpath "$1")
+  branch="$(get_default_branch "$path")"
+  echo_task "Cleaning $path with branch $branch"
+  git="git -C $path"
+  $git checkout "$branch"
+  $git fetch origin "$branch"
+  $git reset --hard FETCH_HEAD
+  $git clean -fdx
+  unset path
+  unset branch
+  unset git
+}
 
 DOTFILES_USER=${DOTFILES_USER:-felipecassiors}
 DOTFILES_REPO="https://github.com/$DOTFILES_USER/dotfiles"
@@ -25,12 +42,7 @@ if [ ! "$(command -v git)" ]; then
 fi
 
 if [ -d "$DOTFILES_DIR" ]; then
-  echo_task "Cleaning existing $(realpath "$DOTFILES_DIR")"
-  cd "$DOTFILES_DIR"
-  git fetch origin "$DOTFILES_BRANCH"
-  git reset --hard FETCH_HEAD
-  git clean -fdx
-  cd - >/dev/null
+  git_clean "$DOTFILES_DIR"
 else
   echo_task "Cloning $DOTFILES_REPO on branch $DOTFILES_BRANCH to $DOTFILES_DIR"
   git clone -b "$DOTFILES_BRANCH" "$DOTFILES_REPO" "$DOTFILES_DIR"
