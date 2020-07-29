@@ -7,9 +7,9 @@ echo_task() {
 set -e
 
 echo_task "Upgrading Apt"
-sudo apt update -qq
-sudo apt full-upgrade -yq
-sudo apt autoremove -q
+sudo apt update -y
+sudo apt full-upgrade -y
+sudo apt autoremove -y
 
 if [ "$(command -v snap)" ]; then
   echo_task "Upgrading Snap"
