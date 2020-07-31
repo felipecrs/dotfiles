@@ -2,7 +2,7 @@
 
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/felipecassiors/dotfiles#scripts)
 
-Bootstrap your Ubuntu in less a few minutes!
+Bootstrap your Ubuntu in a few minutes!
 
 This dotfiles repository is currently aimed for [**Ubuntu for WSL**](https://ubuntu.com/wsl), **Ubuntu Server** and **Ubuntu Desktop**, tested only in **Ubuntu 20.04**. See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10).
 
