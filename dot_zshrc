@@ -12,6 +12,11 @@ if [ -f "$HOME/.profile" ]; then
   source "$HOME/.profile"
 fi
 
+# Load bash aliases
+if [ -f "$HOME/.bash_aliases" ]; then
+  source "$HOME/.bash_aliases"
+fi
+
 # Enable Homebrew zsh completions
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
