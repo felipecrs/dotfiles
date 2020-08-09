@@ -1,0 +1,36 @@
+{{if .is_wsl -}}
+#!/usr/bin/env bash
+
+function get_docker_in_path() {
+  which -a docker | grep -v "$0" | head -1
+}
+
+function is_docker_from_desktop() {
+  if [ "$(get_docker_in_path)" == "/mnt/c/Program Files/Docker/Docker/resources/bin/docker" ]; then
+    return 0
+  fi
+  return 1
+}
+
+if is_docker_from_desktop; then
+  printf "\033[0;34m%s\033[0m" "Starting Docker Desktop..."
+  powershell.exe 'Start "C:\Program Files\Docker\Docker\Docker Desktop.exe"'
+
+  seconds=30
+  for ((i = 0; i < seconds; i++)); do
+    sleep 1
+    "$(get_docker_in_path)" version &>/dev/null
+    exit_code=$?
+    [ $exit_code -eq 0 ] && break
+  done
+
+  if [ $exit_code -eq 0 ]; then
+    printf "\033[0;32m%s\033[0m\n" " started successfully." >&2
+  else
+    printf "\033[0;31m%s\033[0m\n" " not able to start in $seconds seconds." >&2
+    exit $exit_code
+  fi
+fi
+
+exec "$(get_docker_in_path)" "$@"
+{{ end -}}
