@@ -26,6 +26,8 @@ function echo_red_nl() {
 
 if is_docker_from_desktop; then
   echo_blue "Starting Docker Desktop..."
+
+  # Using `powershell.exe` because of https://github.com/microsoft/WSL/issues/3769
   powershell.exe 'Start "C:\Program Files\Docker\Docker\Docker Desktop.exe"'
 
   seconds=30
