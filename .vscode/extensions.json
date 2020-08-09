@@ -3,6 +3,7 @@
     "mads-hartmann.bash-ide-vscode",
     "timonwong.shellcheck",
     "foxundermoon.shell-format",
-    "EditorConfig.EditorConfig"
+    "EditorConfig.EditorConfig",
+    "casualjim.gotemplate"
   ]
 }

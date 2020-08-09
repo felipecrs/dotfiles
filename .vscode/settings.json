@@ -1,15 +1,15 @@
 {
-    "cSpell.words": [
-      "DISTRO",
-      "NOPASSWD",
-      "USERPROFILE",
-      "chmod",
-      "chsh",
-      "dotfiles",
-      "shellcheck",
-      "submodule",
-      "sudoers",
-      "wslpath",
-      "wslvar"
-    ]
+  "cSpell.words": [
+    "DISTRO",
+    "NOPASSWD",
+    "USERPROFILE",
+    "chmod",
+    "chsh",
+    "dotfiles",
+    "shellcheck",
+    "submodule",
+    "sudoers",
+    "wslpath",
+    "wslvar"
+  ]
 }
