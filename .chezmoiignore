@@ -5,4 +5,4 @@ scripts/
 docs/
 {{ if .is_wsl -}}
 dot_local/bin/executable_docker
-{{ end -}}
+{{- end}}

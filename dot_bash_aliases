@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# shellcheck disable=SC2142
-alias refreshenv='$0; exit'
-alias python=python3

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# This file is automatically sourced by bash, and it's also sourced in .zshrc
+# in order to keep the same aliases on both shells. So keep in mind that any
+# code here must be compatible with bash and zsh.
+
+function mcd() {
+  mkdir -p "$1"
+  cd "$1" || return
+}
+
+{{ if .is_wsl -}}
+function gsudo() {
+  local command_line
+  command_line=("$(sh -c 'ps -p $$ -o ppid=' | xargs -I'{}' readlink -f '/proc/{}/exe')")
+  if [ $# -gt 0 ]; then
+    command_line+=("-c" "$*")
+  fi
+  gsudo.exe wsl -d "$WSL_DISTRO_NAME" -e "${command_line[@]}"
+}
+{{- end }}
+
+# shellcheck disable=SC2142
+alias refreshenv='$0; exit'
+alias python=python3
