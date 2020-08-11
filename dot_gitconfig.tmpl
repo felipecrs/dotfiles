@@ -20,10 +20,13 @@
     rebase = true
 {{- end }}
 [alias]
+    s = status
     c = commit
     ca = commit --amend
     cane = commit --amend --no-edit
-    s = status
+    co = checkout
+    cob = checkout -b
+    cz = !npx git-cz
     fully-clean = "!f() { set -v; branch="$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)"; git checkout $branch; git fetch origin $branch; git clean -fd; }; f"
     pdevelop = push origin HEAD:refs/for/develop
     pmaster = push origin HEAD:refs/for/master
