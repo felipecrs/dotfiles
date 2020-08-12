@@ -13,6 +13,7 @@
 # if not coming from .bashrc and running in bash and .bashrc exists
 if [ -z "$COMING_FROM_BASHRC" ] && [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then
   export COMING_FROM_PROFILE="true"
+  # shellcheck source=./dot_bashrc
   . "$HOME/.bashrc"
   unset COMING_FROM_PROFILE
 fi
@@ -22,15 +23,15 @@ if [ -d "$HOME/bin" ]; then
   PATH="$HOME/bin:$PATH"
 fi
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.local/bin" ]; then
-  PATH="$HOME/.local/bin:$PATH"
-fi
-
 if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
   eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ]; then
+  PATH="$HOME/.local/bin:$PATH"
 fi
 
 if [ -n "$WSL_DISTRO_NAME" ] || [ -n "$IS_WSL" ]; then

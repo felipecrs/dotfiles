@@ -11,5 +11,8 @@
     "sudoers",
     "wslpath",
     "wslvar"
+  ],
+  "shellcheck.customArgs": [
+    "-x"
   ]
 }
