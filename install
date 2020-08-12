@@ -20,7 +20,7 @@ if [ ! "$(command -v chezmoi)" ]; then
   elif [ "$(command -v wget)" ]; then
     sh -c "$(wget -qO- https://git.io/chezmoi)" -- -b "$bin_dir"
   else
-    error "To install chezmoi, you must have either curl or wget installed."
+    error "To install chezmoi, you must have curl or wget installed."
   fi
 else
   chezmoi=chezmoi
