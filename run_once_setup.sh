@@ -57,8 +57,12 @@ echo_task "Adding user to sudoers"
 echo "$USER  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$USER"
 
 echo_task "Installing Zsh"
-sudo apt update
-sudo apt install -y zsh
+if [ ! "$(command -v zsh)" ]; then
+  sudo apt update
+  sudo apt install -y zsh
+else
+  echo "zsh already installed"
+fi
 
 echo_task "Installing antigen"
 mkdir -p "$HOME/.antigen"
