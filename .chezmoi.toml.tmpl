@@ -1,6 +1,8 @@
 {{- $isWork := contains "inatel" .chezmoi.hostname -}}
 {{- $isPersonal := not $isWork -}}
 {{- $isWsl := not (not (or (env "WSL_DISTRO_NAME") (env "IS_WSL"))) -}}
+{{- $isDevcontainer := not (not (or (env "REMOTE_CONTAINERS_IPC") (env "REMOTE_CONTAINERS_SOCKETS"))) -}}
+{{- $isGnome := not ( not (lookPath "gnome-shell")) -}}
 
 sourceDir = "{{ .chezmoi.sourceDir }}"
 
@@ -15,3 +17,5 @@ sourceDir = "{{ .chezmoi.sourceDir }}"
   is_personal = {{ $isPersonal }}
   is_work = {{ $isWork }}
   is_wsl = {{ $isWsl }}
+  is_devcontainer = {{ $isDevcontainer }}
+  is_gnome = {{ $isGnome }}
