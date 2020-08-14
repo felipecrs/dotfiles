@@ -17,13 +17,14 @@ function is_wsl() {
 }
 
 function is_devcontainer() {
-  if [ -n "${REMOTE_CONTAINERS_IPC+x}" ] || [ -n "${REMOTE_CONTAINERS_SOCKETS+x}" ]; then
+  # This is the way to go until we have something better
+  # See: https://github.com/microsoft/vscode-dev-containers/issues/491
+  if [ -n "${REMOTE_CONTAINERS_IPC+x}" ] || [ -n "${REMOTE_CONTAINERS_SOCKETS+x}" ] || [ -n "${VSCODE_REMOTE_CONTAINERS_SESSION+x}" ]; then
     return 0
   else
     return 1
   fi
 }
-
 
 function is_ubuntu() {
   local version=${1-'20.04'}
