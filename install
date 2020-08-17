@@ -9,7 +9,9 @@ error() {
   exit 1
 }
 
-set -eu # -e: exit on error, -u: exit on unset variables
+# -e: exit on error
+# -u: exit on unset variables
+set -eu
 
 if [ ! "$(command -v chezmoi)" ]; then
   bin_dir="$HOME/.local/bin"
@@ -20,7 +22,7 @@ if [ ! "$(command -v chezmoi)" ]; then
   elif [ "$(command -v wget)" ]; then
     sh -c "$(wget -qO- https://git.io/chezmoi)" -- -b "$bin_dir"
   else
-    error "To install chezmoi, you must have curl or wget installed."
+    error "To install chezmoi, you must have curl or wget."
   fi
 else
   chezmoi=chezmoi
@@ -28,7 +30,6 @@ fi
 
 # POSIX way to get script's dir: https://stackoverflow.com/a/29834779/12156188
 script_dir="$(cd -P -- "$(dirname -- "$(command -v -- "$0")")" && pwd -P)"
-cmd="$chezmoi init --apply --clone=false --source $script_dir"
-echo_task "Running $cmd"
-# shellcheck disable=SC2086
-exec $cmd # replace current process with chezmoi init
+echo_task "Running chezmoi init"
+# replace current process with chezmoi init
+exec "$chezmoi" init --apply --source "$script_dir"

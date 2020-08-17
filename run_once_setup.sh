@@ -87,6 +87,15 @@ if ! is_devcontainer; then
   echo_task "Installing Homebrew bundle"
   brew bundle install --global
 
+  # Uninstalling previously installed chezmoi because it was already installed
+  # by brew.
+  local_bin_chezmoi="$HOME/.local/bin/chezmoi"
+  if [ -f "$local_bin_chezmoi" ]; then
+    echo_task "Uninstalling chezmoi at $local_bin_chezmoi"
+    rm -f "$local_bin_chezmoi"
+  fi
+  unset local_bin_chezmoi
+
   if is_wsl; then
     echo_task "Performing WSL specific steps"
 

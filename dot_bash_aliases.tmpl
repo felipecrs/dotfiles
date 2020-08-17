@@ -23,3 +23,5 @@ function gsudo() {
 # shellcheck disable=SC2142
 alias refreshenv='$0; exit'
 alias python=python3
+# See: https://github.com/twpayne/chezmoi/issues/854#issuecomment-675160348
+alias chezmoi-re-run-scripts='rm -rf $HOME/.config/chezmoi/chezmoistate.boltdb && chezmoi init --apply'
