@@ -116,7 +116,7 @@ if ! is_devcontainer; then
       echo_task "Installing Java 8" &&
       identifier="$(sdk ls java | grep -o '8.0.*.hs-adpt' | awk '{print $NF}')" &&
       {
-        output="$(sdk i java "$identifier" | tee /dev/tty)" ||
+        output="$(yes | sdk i java "$identifier" | tee /dev/tty)" ||
           echo "$output" | grep -q "already installed"
       }
   )
