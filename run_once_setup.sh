@@ -48,6 +48,11 @@ function is_gnome() {
 
 set -euo pipefail
 
+# See: https://github.com/microsoft/vscode-remote-release/issues/3531#issuecomment-675278804
+if [ -z "${USER+x}" ]; then
+  USER="$(id -un)"
+fi
+
 if ! sudo -n true 2>/dev/null; then
   echo_task "Prompting for sudo password"
   sudo true
