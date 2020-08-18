@@ -29,6 +29,11 @@ elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
   eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
 fi
 
+if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
+  export SDKMAN_DIR="$HOME/.sdkman"
+  . "$HOME/.sdkman/bin/sdkman-init.sh"
+fi
+
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.local/bin" ]; then
   PATH="$HOME/.local/bin:$PATH"

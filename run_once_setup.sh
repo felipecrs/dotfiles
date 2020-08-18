@@ -80,12 +80,14 @@ if ! is_devcontainer; then
 
   echo_task "Installing Homebrew"
   CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-  set +euo pipefail
-  source "$HOME/.bashrc"
-  set -euo pipefail
 
   echo_task "Installing Homebrew bundle"
-  brew bundle install --global
+  (
+    set +euo pipefail
+    source "$HOME/.bashrc"
+    set -euo pipefail
+    brew bundle install --global
+  )
 
   # Uninstalling previously installed chezmoi because it was already installed
   # by brew.
@@ -95,6 +97,24 @@ if ! is_devcontainer; then
     rm -f "$local_bin_chezmoi"
   fi
   unset local_bin_chezmoi
+
+  echo_task "Installing SDKMAN!"
+  sudo apt update
+  sudo apt install -y zip
+  bash -c "$(curl -fsSL "https://get.sdkman.io/?rcupdate=false")"
+  (
+    set +euo pipefail
+    source "$HOME/.bashrc" &&
+      mkdir -p "$SDKMAN_DIR" &&
+      echo -e "sdkman_auto_answer=true\n" >"$SDKMAN_DIR/etc/config" &&
+      sdk selfupdate force &&
+      echo_task "Installing Java 8" &&
+      identifier="$(sdk ls java | grep -o '8.0.*.hs-adpt' | awk '{print $NF}')" &&
+      {
+        output="$(sdk i java "$identifier" | tee /dev/tty)" ||
+          echo "$output" | grep -q "already installed"
+      }
+  )
 
   if is_wsl; then
     echo_task "Performing WSL specific steps"
