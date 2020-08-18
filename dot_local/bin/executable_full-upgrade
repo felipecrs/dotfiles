@@ -20,7 +20,5 @@ echo_task "Upgrading Homebrew"
 brew upgrade
 
 echo_task "Upgrading Antigen"
-zsh -c 'source "$HOME/.zshrc" &&
-  antigen selfupdate &&
-  antigen update &&
-  antigen cleanup'
+curl -fsSL https://git.io/antigen >"$HOME/.antigen/antigen.zsh"
+zsh -c 'source "$HOME/.zshrc" && antigen update'
