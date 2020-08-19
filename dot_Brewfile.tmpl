@@ -1,9 +1,9 @@
 brew "chezmoi"
 brew "gh"
+brew "asciinema"
 brew "jq"
 brew "yq"
 brew "shellcheck"
-brew "docker-compose"
 brew "helm"
 brew "kind"
 {{- if .is_work }}
@@ -11,4 +11,7 @@ brew "jfrog-cli"
 {{- end }}
 {{- if .is_gnome }}
 brew "onedrive"
+{{- end }}
+{{- if not .is_wsl }}
+brew "docker-compose"
 {{- end }}
