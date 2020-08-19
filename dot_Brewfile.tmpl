@@ -1,5 +1,4 @@
 brew "chezmoi"
-brew "onedrive"
 brew "gh"
 brew "jq"
 brew "yq"
@@ -9,4 +8,7 @@ brew "helm"
 brew "kind"
 {{- if .is_work }}
 brew "jfrog-cli"
+{{- end }}
+{{- if .is_gnome }}
+brew "onedrive"
 {{- end }}
