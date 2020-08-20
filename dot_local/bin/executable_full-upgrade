@@ -23,7 +23,17 @@ fi
 
 echo_task "Updating Homebrew packages"
 function brew() {
-  bash -i -c "brew $*"
+  bash <<EOM
+  if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+    eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  elif [ -f "\$HOME/.linuxbrew/bin/brew" ]; then
+    eval "\$("\$HOME/.linuxbrew/bin/brew" shellenv)"
+  else
+    echo "Homebrew is not installed." >&2
+    exit 1
+  fi
+  brew $@
+EOM
 }
 brew upgrade
 
