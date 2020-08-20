@@ -16,7 +16,7 @@ sudo apt update -y
 sudo apt full-upgrade -y
 sudo apt autoremove -y
 
-if snap --version &>/dev/null; then
+if snap warnings &>/dev/null; then
   echo_task "Updating Snap packages"
   sudo snap refresh
 fi
