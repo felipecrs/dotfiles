@@ -97,8 +97,7 @@ else
 fi
 
 echo_task "Installing antigen"
-mkdir -p "$HOME/.antigen"
-curl -fsSL https://git.io/antigen >"$HOME/.antigen/antigen.zsh"
+curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
 
 echo_task "Making zsh the default shell"
 sudo chsh -s "$(which zsh)" "$USER"

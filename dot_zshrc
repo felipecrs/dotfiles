@@ -22,47 +22,10 @@ if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
 fi
 
-source "$HOME/.antigen/antigen.zsh"
-
-# Load the oh-my-zsh's library.
-antigen use oh-my-zsh
-
-antigen bundles <<EOBUNDLES
-  # Bundles from the default repo (robbyrussell's oh-my-zsh)
-  git
-  git-extras
-  z
-  docker
-  docker-compose
-  helm
-  kubectl
-  heroku
-  pip
-  lein
-  npm
-  node
-  command-not-found
-  common-aliases
-
-  # Syntax highlighting bundle.
-  zsh-users/zsh-syntax-highlighting
-
-  # Fish-like auto suggestions
-  zsh-users/zsh-autosuggestions
-
-  # Extra zsh completions
-  zsh-users/zsh-completions
-
-  # Node Version Manager
-  lukechilds/zsh-nvm
-EOBUNDLES
-
-# Load the theme.
-# antigen theme denysdovhan/spaceship-prompt
-antigen theme romkatv/powerlevel10k
-
-# Tell Antigen that you're done.
-antigen apply
+# Load Antigen configuration
+if [ -f "$HOME/.antigenrc" ]; then
+  source "$HOME/.antigenrc"
+fi
 
 ### Fix for slowness of pastes
 pasteinit() {
