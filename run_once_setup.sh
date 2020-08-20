@@ -104,7 +104,7 @@ echo_task "Making zsh the default shell"
 sudo chsh -s "$(which zsh)" "$USER"
 
 echo_task "Initializing ZSH"
-zsh -i -c 'exit'
+zsh -is <<<'' 2>/dev/null
 
 if ! is_devcontainer; then
   echo_task "Installing Homebrew"
