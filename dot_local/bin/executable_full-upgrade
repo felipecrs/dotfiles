@@ -11,7 +11,7 @@ sudo apt update -y
 sudo apt full-upgrade -y
 sudo apt autoremove -y
 
-if [ "$(command -v snap)" ]; then
+if [ "$(snap --version)" ]; then
   echo_task "Upgrading Snap"
   sudo snap refresh
 fi
@@ -21,4 +21,8 @@ brew upgrade
 
 echo_task "Upgrading Antigen"
 curl -fsSL https://git.io/antigen >"$HOME/.antigen/antigen.zsh"
-zsh -c 'source "$HOME/.zshrc" && antigen update'
+zsh -i -c 'antigen update'
+
+echo_task "Upgrading SDKMAN!"
+sdk selfupdate
+sdk update

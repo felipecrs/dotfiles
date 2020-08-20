@@ -18,9 +18,9 @@ if [ ! "$(command -v chezmoi)" ]; then
   chezmoi="$bin_dir/chezmoi"
   echo_task "Installing chezmoi to $chezmoi"
   if [ "$(command -v curl)" ]; then
-    sh -c "$(curl -fsSL https://git.io/chezmoi)" -- -b "$bin_dir"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/twpayne/chezmoi/master/scripts/install.sh)" -- -b "$bin_dir"
   elif [ "$(command -v wget)" ]; then
-    sh -c "$(wget -qO- https://git.io/chezmoi)" -- -b "$bin_dir"
+    sh -c "$(wget -qO- https://raw.githubusercontent.com/twpayne/chezmoi/master/scripts/install.sh)" -- -b "$bin_dir"
   else
     error "To install chezmoi, you must have curl or wget."
   fi

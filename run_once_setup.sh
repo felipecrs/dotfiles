@@ -46,6 +46,27 @@ function is_gnome() {
   fi
 }
 
+function brew() {
+  bash <<EOM
+  if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+    eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  elif [ -f "\$HOME/.linuxbrew/bin/brew" ]; then
+    eval "\$("\$HOME/.linuxbrew/bin/brew" shellenv)"
+  fi
+  brew $@
+EOM
+}
+
+function sdk() {
+  bash <<EOM
+  if [ -f "\$HOME/.sdkman/bin/sdkman-init.sh" ]; then
+    export SDKMAN_DIR="\$HOME/.sdkman"
+    . "\$HOME/.sdkman/bin/sdkman-init.sh"
+  fi
+  sdk $@
+EOM
+}
+
 set -euo pipefail
 
 # See: https://github.com/microsoft/vscode-remote-release/issues/3531#issuecomment-675278804
@@ -76,23 +97,22 @@ curl -fsSL https://git.io/antigen >"$HOME/.antigen/antigen.zsh"
 echo_task "Making zsh the default shell"
 sudo chsh -s "$(which zsh)" "$USER"
 
-echo_task "Sourcing .zshrc to initialize antigen"
-zsh -c 'source "$HOME/.zshrc"'
+echo_task "Initializing ZSH"
+zsh -i -c 'exit'
 
 if ! is_devcontainer; then
-  echo_task "Installing Homebrew dependencies"
-  sudo apt install build-essential curl file -y
+  if [ ! "$(brew --version)" ]; then
+    echo_task "Installing Homebrew dependencies"
+    sudo apt install build-essential curl file -y
 
-  echo_task "Installing Homebrew"
-  CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    echo_task "Installing Homebrew"
+    CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+  else
+    echo "Homebrew is already installed."
+  fi
 
   echo_task "Installing Homebrew bundle"
-  (
-    set +euo pipefail
-    source "$HOME/.bashrc"
-    set -euo pipefail
-    brew bundle install --global
-  )
+  brew bundle install --global
 
   # Uninstalling previously installed chezmoi because it was already installed
   # by brew.
@@ -103,23 +123,21 @@ if ! is_devcontainer; then
   fi
   unset local_bin_chezmoi
 
-  echo_task "Installing SDKMAN!"
-  sudo apt update
-  sudo apt install -y zip
-  bash -c "$(curl -fsSL "https://get.sdkman.io/?rcupdate=false")"
-  (
-    set +euo pipefail
-    source "$HOME/.bashrc" &&
-      mkdir -p "$SDKMAN_DIR" &&
-      echo -e "sdkman_auto_answer=true\n" >"$SDKMAN_DIR/etc/config" &&
-      sdk selfupdate force &&
-      echo_task "Installing Java 8" &&
-      identifier="$(sdk ls java | grep -o '8.0.*.hs-adpt' | awk '{print $NF}')" &&
-      {
-        output="$(yes | sdk i java "$identifier" | tee /dev/tty)" ||
-          echo "$output" | grep -q "already installed"
-      }
-  )
+  if [ ! "$(sdk version)" ]; then
+    echo_task "Installing SDKMAN!"
+    sudo apt install -y zip
+    bash -c "$(curl -fsSL "https://get.sdkman.io/?rcupdate=false")"
+  else
+    echo "SDKMAN! is already installed."
+  fi
+
+  echo_task "Installing Java 8"
+  # get the identifier for java 8
+  identifier="$(sdk ls java | grep -m 1 -o ' 8.*.hs-adpt ' | awk '{print $NF}')"
+  # supress sdk error if it's already installed
+  output="$(sdk i java "$identifier" | tee /dev/tty)" ||
+    echo "$output" | grep -q "already installed"
+  unset identifier output
 
   if is_wsl; then
     echo_task "Performing WSL specific steps"
