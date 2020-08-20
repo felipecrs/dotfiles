@@ -1,4 +1,4 @@
-{{- $isWork := or (contains "inatel" .chezmoi.fullHostname) (contains "ICCSO" .chezmoi.fullHostname) -}}
+{{- $isWork := or (contains "inatel" .chezmoi.fullHostname) (contains "ICCSO" .chezmoi.fullHostname) (contains "seli" .chezmoi.fullHostname) (contains "vmx" .chezmoi.fullHostname) -}}
 {{- $isPersonal := not $isWork -}}
 {{- $isWsl := not (not (or (env "WSL_DISTRO_NAME") (env "IS_WSL"))) -}}
 {{- $isDevcontainer := not (not (or (env "REMOTE_CONTAINERS_IPC") (env "REMOTE_CONTAINERS_SOCKETS"))) -}}
