@@ -28,13 +28,13 @@ function brew() {
 brew upgrade
 
 echo_task "Updating Antigen packages"
-curl -fsSL https://git.io/antigen >"$HOME/.antigen/antigen.zsh"
+curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
 antigen() {
   zsh <<EOM
-  if [ -f "\$HOME/.zshrc" ]; then
-    . "\$HOME/.zshrc"
+  if [ -f "\$HOME/.antigenrc" ]; then
+    source "\$HOME/.antigenrc"
   else
-    echo "Antigen is not installed." >&2
+    echo "The .antigenrc was not found." >&2
     exit 1
   fi
   antigen $@

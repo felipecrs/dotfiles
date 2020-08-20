@@ -96,13 +96,10 @@ else
   echo "ZSH already installed"
 fi
 
-echo_task "Installing antigen"
-curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
-
 echo_task "Making zsh the default shell"
 sudo chsh -s "$(which zsh)" "$USER"
 
-echo_task "Initializing ZSH"
+echo_task "Initializing ZSH (with Antigen and Powerlevel10k)"
 zsh -is <<<'' 2>/dev/null
 
 if ! is_devcontainer; then

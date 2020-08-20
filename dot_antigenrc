@@ -1,10 +1,22 @@
 #!/bin/zsh
 
 if [ ! -f "$HOME/.antigen/antigen.zsh" ]; then
-  curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
+  if [ "$(command -v curl)" ]; then
+    curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
+  elif [ "$(command -v wget)" ]; then
+    mkdir -p "$HOME/.antigen"
+    wget -q https://git.io/antigen -o "$HOME/.antigen/antigen.zsh"
+  else
+    echo "Not able to install Antigen since we have no curl or wget." >&2
+  fi
 fi
 
-source "$HOME/.antigen/antigen.zsh"
+if [ -f "$HOME/.antigen/antigen.zsh" ]; then
+  source "$HOME/.antigen/antigen.zsh"
+else
+  # Does not load Antigen if it was not succesfully installed
+  return
+fi
 
 # Load the oh-my-zsh's library.
 antigen use oh-my-zsh
