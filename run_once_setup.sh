@@ -82,12 +82,12 @@ fi
 echo_task "Adding user to sudoers"
 echo "$USER  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$USER"
 
-echo_task "Installing Zsh"
+echo_task "Installing ZSH"
 if [ ! "$(command -v zsh)" ]; then
   sudo apt update
   sudo apt install -y zsh
 else
-  echo "zsh already installed"
+  echo "ZSH already installed"
 fi
 
 echo_task "Installing antigen"
@@ -134,10 +134,10 @@ if ! is_devcontainer; then
   echo_task "Installing Java 8"
   # get the identifier for java 8
   identifier="$(sdk ls java | grep -m 1 -o ' 8.*.hs-adpt ' | awk '{print $NF}')"
-  # supress sdk error if it's already installed
-  output="$(sdk i java "$identifier" | tee /dev/tty)" ||
-    echo "$output" | grep -q "already installed"
-  unset identifier output
+  # ignore SDKMAN! error because often it's just already installed, at least
+  # until https://github.com/sdkman/sdkman-cli/pull/777 does not get merged.
+  sdk i java "$identifier" || true
+  unset identifier
 
   if is_wsl; then
     echo_task "Performing WSL specific steps"
