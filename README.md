@@ -36,12 +36,12 @@ Now you will learn how to bootstrap this repository on your machine.
 You can use the [convenience script](./clone_and_install.sh) with, it will install Git in case you don't have it already:
 
 ```bash
-sh -c "$(wget -qO- https://git.io/felipecassiors-dotfiles)"
+sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
 ```
 
 > 💡 We use `wget` here because not all systems comes with `curl` installed. But the `curl` version of it is:
 > ```bash
->  sh -c "$(curl -fsSL https://git.io/felipecassiors-dotfiles)"
+>  sh -c "$(curl -fsSL https://git.io/felipecrs-dotfiles)"
 > ```
 
 #### Usage
@@ -56,7 +56,7 @@ The convenience script supports two environment variables:
 - Using the convenience script to clone the dotfiles repository on branch `beta`:
 
   ```bash
-  DOTFILES_BRANCH=beta sh -c "$(wget -qO- https://git.io/felipecassiors-dotfiles)"
+  DOTFILES_BRANCH=beta sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
   ```
 
 ### Manually
