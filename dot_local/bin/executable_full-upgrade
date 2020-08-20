@@ -8,7 +8,8 @@ set -e
 
 if chezmoi --version &>/dev/null; then
   echo_task "Updating dotfiles"
-  chezmoi update
+  chezmoi update --apply=false
+  chezmoi init --apply
 fi
 
 echo_task "Updating APT packages"
