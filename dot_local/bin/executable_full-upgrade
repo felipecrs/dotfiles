@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo_task() {
   printf "\033[0;34m--> %s\033[0m\n" "$@"
@@ -6,23 +6,37 @@ echo_task() {
 
 set -e
 
-echo_task "Upgrading Apt"
+if chezmoi --version &>/dev/null; then
+  echo_task "Updating dotfiles"
+  chezmoi update
+fi
+
+echo_task "Updating APT packages"
 sudo apt update -y
 sudo apt full-upgrade -y
 sudo apt autoremove -y
 
-if [ "$(snap --version)" ]; then
-  echo_task "Upgrading Snap"
+if snap --version &>/dev/null; then
+  echo_task "Updating Snap packages"
   sudo snap refresh
 fi
 
-echo_task "Upgrading Homebrew"
+echo_task "Updating Homebrew packages"
+function brew() {
+  bash -i -c "brew $*"
+}
 brew upgrade
 
-echo_task "Upgrading Antigen"
+echo_task "Updating Antigen packages"
 curl -fsSL https://git.io/antigen >"$HOME/.antigen/antigen.zsh"
-zsh -i -c 'antigen update'
+antigen() {
+  zsh -i -c "antigen $*"
+}
+antigen update
 
-echo_task "Upgrading SDKMAN!"
+echo_task "Upgrading SDKMAN! packages"
+sdk() {
+  bash -i -c "sdk $*"
+}
 sdk selfupdate
 sdk update

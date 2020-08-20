@@ -52,6 +52,9 @@ function brew() {
     eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   elif [ -f "\$HOME/.linuxbrew/bin/brew" ]; then
     eval "\$("\$HOME/.linuxbrew/bin/brew" shellenv)"
+  else
+    echo "Homebrew is not installed." >&2
+    exit 1
   fi
   brew $@
 EOM
@@ -62,6 +65,9 @@ function sdk() {
   if [ -f "\$HOME/.sdkman/bin/sdkman-init.sh" ]; then
     export SDKMAN_DIR="\$HOME/.sdkman"
     . "\$HOME/.sdkman/bin/sdkman-init.sh"
+  else
+    echo "SDKMAN! is not installed." >&2
+    exit 1
   fi
   sdk $@
 EOM
@@ -83,7 +89,7 @@ echo_task "Adding user to sudoers"
 echo "$USER  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$USER"
 
 echo_task "Installing ZSH"
-if [ ! "$(command -v zsh)" ]; then
+if ! zsh --version &>/dev/null; then
   sudo apt update
   sudo apt install -y zsh
 else
@@ -101,11 +107,9 @@ echo_task "Initializing ZSH"
 zsh -i -c 'exit'
 
 if ! is_devcontainer; then
-  if [ ! "$(brew --version)" ]; then
-    echo_task "Installing Homebrew dependencies"
+  echo_task "Installing Homebrew"
+  if ! brew --version &>/dev/null; then
     sudo apt install build-essential curl file -y
-
-    echo_task "Installing Homebrew"
     CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   else
     echo "Homebrew is already installed."
@@ -123,8 +127,8 @@ if ! is_devcontainer; then
   fi
   unset local_bin_chezmoi
 
-  if [ ! "$(sdk version)" ]; then
-    echo_task "Installing SDKMAN!"
+  echo_task "Installing SDKMAN!"
+  if ! sdk version &>/dev/null; then
     sudo apt install -y zip
     bash -c "$(curl -fsSL "https://get.sdkman.io/?rcupdate=false")"
   else
