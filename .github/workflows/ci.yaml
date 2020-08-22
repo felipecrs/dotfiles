@@ -1,4 +1,3 @@
-
 name: ci
 
 on:
@@ -10,12 +9,15 @@ on:
 jobs:
   clone-and-install:
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/vscode/devcontainers/base:ubuntu
     steps:
       - uses: actions/checkout@v2
       - run: ./install
+      - run: '"$HOME/.local/bin/chezmoi" data'
 
   convenience-script:
     runs-on: ubuntu-latest
-
+    container: mcr.microsoft.com/vscode/devcontainers/base:ubuntu
     steps:
       - run: sh -c "$(wget -qO- 'https://raw.githubusercontent.com/felipecassiors/dotfiles/${{ github.sha }}/scripts/install_dotfiles.sh')"
+      - run: '"$HOME/.local/bin/chezmoi" data'
