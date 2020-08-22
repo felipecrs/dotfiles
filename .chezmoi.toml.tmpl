@@ -1,6 +1,6 @@
 {{- $isWork := or (contains "inatel" .chezmoi.fullHostname) (contains "ICCSO" .chezmoi.fullHostname) (contains "seli" .chezmoi.fullHostname) (contains "vmx" .chezmoi.fullHostname) -}}
 {{- $isPersonal := not $isWork -}}
-{{- $isWsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") -}}
+{{- $isWsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
 {{- $isRemoteContainers := env "VSCODE_REMOTE_CONTAINERS_SESSION" | not | not -}}
 {{- $isGnome := lookPath "gnome-shell" | not | not -}}
 
