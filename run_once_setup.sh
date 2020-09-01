@@ -103,8 +103,9 @@ echo_task "Initializing ZSH (with Antigen and Powerlevel10k)"
 zsh -is <<<'' 2>/dev/null
 
 if ! is_remote_containers; then
-  echo_task "Updating APT lists"
-  sudo apt update
+  echo_task "Installing latest Git"
+  sudo add-apt-repository -y ppa:git-core/ppa
+  sudo apt install -y git
 
   echo_task "Installing Homebrew"
   if ! brew --version &>/dev/null; then
