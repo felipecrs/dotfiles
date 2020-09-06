@@ -3,6 +3,7 @@ LICENSE
 install
 scripts/
 docs/
+.vscode/
 {{ if not .is_wsl -}}
 dot_local/bin/executable_docker
 {{- end}}
