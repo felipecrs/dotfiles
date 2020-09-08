@@ -1,7 +1,7 @@
 {{- $isWork := or (contains "inatel" .chezmoi.fullHostname) (contains "ICCSO" .chezmoi.fullHostname) (contains "seli" .chezmoi.fullHostname) (contains "vmx" .chezmoi.fullHostname) -}}
 {{- $isPersonal := not $isWork -}}
 {{- $isWsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
-{{- $isRemoteContainers := env "VSCODE_REMOTE_CONTAINERS_SESSION" | not | not -}}
+{{- $isDevcontainer := or (env "VSCODE_REMOTE_CONTAINERS_SESSION") (env "CODESPACES") | not | not -}}
 {{- $isGnome := lookPath "gnome-shell" | not | not -}}
 
 sourceDir = "{{ .chezmoi.sourceDir }}"
@@ -26,5 +26,5 @@ sourceDir = "{{ .chezmoi.sourceDir }}"
   is_personal = {{ $isPersonal }}
   is_work = {{ $isWork }}
   is_wsl = {{ $isWsl }}
-  is_remotecontainers = {{ $isRemoteContainers }}
+  is_devcontainer = {{ $isDevcontainer }}
   is_gnome = {{ $isGnome }}

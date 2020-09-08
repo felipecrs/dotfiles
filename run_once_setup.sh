@@ -16,10 +16,10 @@ function is_wsl() {
   fi
 }
 
-function is_remote_containers() {
+function is_devcontainer() {
   # This is the way to go until we have something better
   # See: https://github.com/microsoft/vscode-dev-containers/issues/491
-  if [ -n "${VSCODE_REMOTE_CONTAINERS_SESSION+x}" ]; then
+  if [ -n "${VSCODE_REMOTE_CONTAINERS_SESSION+x}" ] || [ -n "${CODESPACES+x}" ]; then
     return 0
   else
     return 1
@@ -102,7 +102,7 @@ sudo chsh -s "$(which zsh)" "$USER"
 echo_task "Initializing ZSH (with Antigen and Powerlevel10k)"
 zsh -is <<<'' 2>/dev/null
 
-if ! is_remote_containers; then
+if ! is_devcontainer; then
   echo_task "Updating APT lists"
   sudo apt update
 
