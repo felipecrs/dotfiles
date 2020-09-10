@@ -7,17 +7,35 @@ on:
     branches: [master]
 
 jobs:
-  clone-and-install:
+  prepare:
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/vscode/devcontainers/base:ubuntu
+    outputs:
+      uid-gid: ${{ steps.get-uid-gid.outputs.uid-gid }}
+    steps:
+      - id: get-uid-gid
+        run: echo "::set-output name=uid-gid::$(id -u):$(id -g)"
+
+  clone-and-install:
+    needs: prepare
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/vscode/devcontainers/base:ubuntu
+      options: --user ${{ needs.prepare.outputs.uid-gid }}
+      env:
+        CODESPACES: true
     steps:
       - uses: actions/checkout@v2
       - run: ./install
       - run: '"$HOME/.local/bin/chezmoi" data'
 
   convenience-script:
+    needs: prepare
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/vscode/devcontainers/base:ubuntu
+    container:
+      image: mcr.microsoft.com/vscode/devcontainers/base:ubuntu
+      options: --user ${{ needs.prepare.outputs.uid-gid }}
+      env:
+        CODESPACES: true
     steps:
       - run: sh -c "$(wget -qO- 'https://raw.githubusercontent.com/felipecassiors/dotfiles/${{ github.sha }}/scripts/install_dotfiles.sh')"
       - run: '"$HOME/.local/bin/chezmoi" data'
