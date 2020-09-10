@@ -14,10 +14,8 @@ sourceDir = "{{ .chezmoi.sourceDir }}"
   email = "felipecassiors@gmail.com"
   name = "Felipe Santos"
   {{- end }}
-  {{- if lookPath "code" }}
-  editor = "code"
-  {{- else if lookPath "code-insiders" }}
-  editor = "code-insiders"
+  {{- if or (lookPath "code") (lookPath "code-insiders") }}
+  editor = "code --wait"
   {{- else if lookPath "nano" }}
   editor = "nano"
   {{- else }}
