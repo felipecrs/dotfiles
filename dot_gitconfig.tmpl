@@ -2,52 +2,51 @@
 	name = {{ .name }}
 	email = {{ .email }}
 [core]
-    excludesfile = C:/Users/felipesantos/.gitignore_global
-    autocrlf = input
-    safecrlf = false
-    eol = lf
-    editor = code --wait
+  autocrlf = input
+  safecrlf = false
+  eol = lf
+  editor = {{ .editor }}
 [diff]
-    tool = vscode
+  tool = vscode
 [difftool "vscode"]
-    cmd = code --wait --diff $LOCAL $REMOTE
+  cmd = code --wait --diff $LOCAL $REMOTE
 [merge]
-    tool = vscode
+  tool = vscode
 [mergetool "vscode"]
-    cmd = code --wait $MERGED
-{{- if .is_work }}
+  cmd = code --wait $MERGED
 [pull]
-    rebase = true
-{{- end }}
+  {{- if .is_work }}
+  rebase = true
+  {{- end }}
 [alias]
-    s = status
-    c = commit
-    ca = commit --amend
-    caa = ca -a
-    cane = ca --no-edit
-    caane = cane -a
-    co = checkout
-    cob = checkout -b
-    cz = !npx git-cz
-    fully-clean = "!f() { set -v; branch="$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)"; git checkout $branch; git fetch origin $branch; git clean -fd; }; f"
-    pdevelop = push origin HEAD:refs/for/develop
-    pmaster = push origin HEAD:refs/for/master
-    rdevelop = reset --hard origin/develop
-    rmaster = reset --hard origin/master
-    psdevelop = !git commit -a --amend --no-edit && git pdevelop
-    psmaster = !git commit -a --amend --no-edit && git pmaster
-    plro = pull --rebase origin
-    plrom = plro master
-    plrod = plro develop
-    prune-tags = !git tag -l | xargs git tag -d && git fetch -t
-    prune-branches = fetch --prune
-    prune = !git prune-branches && git prune-tags
-    set-pro = !git config user.email "felipesantos@inatel.br" && git config user.name 'Felipe de Cássio Rocha Santos'
-    set-personal = !git config user.email "felipecassiors@gmail.com" && git config user.name 'Felipe Santos'
-    hist = log --pretty=format:'%C(yellow)%h%Creset %ad | %s%d %Cgreen[%an]%Creset' --graph --date=short
+  s = status
+  c = commit
+  ca = commit --amend
+  caa = ca -a
+  cane = ca --no-edit
+  caane = cane -a
+  co = checkout
+  cob = checkout -b
+  cz = !npx -p commitizen cz
+  fully-clean = "!f() { set -v; branch="$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)"; git checkout $branch; git fetch origin $branch; git clean -fd; }; f"
+  pdevelop = push origin HEAD:refs/for/develop
+  pmaster = push origin HEAD:refs/for/master
+  rdevelop = reset --hard origin/develop
+  rmaster = reset --hard origin/master
+  psdevelop = !git commit -a --amend --no-edit && git pdevelop
+  psmaster = !git commit -a --amend --no-edit && git pmaster
+  plro = pull --rebase origin
+  plrom = plro master
+  plrod = plro develop
+  prune-tags = !git tag -l | xargs git tag -d && git fetch -t
+  prune-branches = fetch --prune
+  prune = !git prune-branches && git prune-tags
+  set-pro = !git config user.email "felipesantos@inatel.br" && git config user.name 'Felipe de Cássio Rocha Santos'
+  set-personal = !git config user.email "felipecassiors@gmail.com" && git config user.name 'Felipe Santos'
+  hist = log --pretty=format:'%C(yellow)%h%Creset %ad | %s%d %Cgreen[%an]%Creset' --graph --date=short
 [credential]
-    {{- if .is_wsl }}
-    helper = /mnt/c/Program\\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe
-    {{- else }}
-    helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
-    {{- end }}
+  {{- if .is_wsl }}
+  helper = /mnt/c/Program\\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe
+  {{- else if .is_gnome  }}
+  helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
+  {{- end }}
