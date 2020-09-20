@@ -4,6 +4,7 @@ install
 scripts/
 docs/
 .vscode/
+windows-terminal/
 {{ if not .is_wsl -}}
 dot_local/bin/executable_docker
 {{- end}}
