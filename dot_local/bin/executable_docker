@@ -1,3 +1,4 @@
+{{- if .is_wsl -}}
 #!/usr/bin/env bash
 
 function get_docker_in_path() {
@@ -46,4 +47,4 @@ if is_docker_from_desktop; then
 fi
 
 exec "$(get_docker_in_path)" "$@"
-{{ end -}}
+{{- end }}
