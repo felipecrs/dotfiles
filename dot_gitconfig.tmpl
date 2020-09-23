@@ -18,6 +18,14 @@
   {{- if .is_work }}
   rebase = true
   {{- end }}
+[rebase]
+  autostash = true
+[credential]
+  {{- if .is_wsl }}
+  helper = /mnt/c/Program\\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe
+  {{- else if .is_gnome  }}
+  helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
+  {{- end }}
 [alias]
   s = status
   c = commit
@@ -44,9 +52,3 @@
   set-pro = !git config user.email "felipesantos@inatel.br" && git config user.name 'Felipe de Cássio Rocha Santos'
   set-personal = !git config user.email "felipecassiors@gmail.com" && git config user.name 'Felipe Santos'
   hist = log --pretty=format:'%C(yellow)%h%Creset %ad | %s%d %Cgreen[%an]%Creset' --graph --date=short
-[credential]
-  {{- if .is_wsl }}
-  helper = /mnt/c/Program\\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe
-  {{- else if .is_gnome  }}
-  helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
-  {{- end }}
