@@ -102,6 +102,7 @@ echo_task "Making zsh the default shell"
 sudo chsh -s "$(which zsh)" "$USER"
 
 echo_task "Initializing ZSH (with Antigen and Powerlevel10k)"
+# We need to emulate a TTY be on a git repository so Powerlevel10k fully initializes
 script -c "cd \"$script_dir\" && bash -c \"zsh -is <<<''\"" /dev/null
 printf '\n%s\n' 'Info: You can safely ignore the weird output from the last command.'
 
