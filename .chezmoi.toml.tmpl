@@ -1,7 +1,7 @@
 {{- $isWork := or (contains "work" (lower (lower .chezmoi.fullHostname)))  (contains "inatel" (lower .chezmoi.fullHostname)) (contains "iccso" (lower .chezmoi.fullHostname)) (contains "seli" (lower .chezmoi.fullHostname)) (contains "vmx" (lower .chezmoi.fullHostname)) -}}
 {{- $isPersonal := not $isWork -}}
 {{- $isWsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
-{{- $isDevcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") | not | not -}}
+{{- $isDevcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "REMOTE_CONTAINERS") | not | not -}}
 {{- $isGnome := lookPath "gnome-shell" | not | not -}}
 
 sourceDir = "{{ .chezmoi.sourceDir }}"

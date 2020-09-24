@@ -17,7 +17,9 @@ function is_wsl() {
 }
 
 function is_devcontainer() {
-  if [ -n "${REMOTE_CONTAINERS+x}" ] || [ -n "${CODESPACES+x}" ]; then
+  # VSCODE_REMOTE_CONTAINERS_SESSION:
+  # https://github.com/microsoft/vscode-remote-release/issues/3517#issuecomment-698617749
+  if [ -n "${REMOTE_CONTAINERS+x}" ] || [ -n "${CODESPACES+x}" ] || [ -n "${VSCODE_REMOTE_CONTAINERS_SESSION+x}" ]; then
     return 0
   else
     return 1
