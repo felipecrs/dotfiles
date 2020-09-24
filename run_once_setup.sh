@@ -17,9 +17,7 @@ function is_wsl() {
 }
 
 function is_devcontainer() {
-  # This is the way to go until we have something better
-  # See: https://github.com/microsoft/vscode-dev-containers/issues/491
-  if [ -n "${VSCODE_REMOTE_CONTAINERS_SESSION+x}" ] || [ -n "${CODESPACES+x}" ]; then
+  if [ -n "${REMOTE_CONTAINERS+x}" ] || [ -n "${CODESPACES+x}" ]; then
     return 0
   else
     return 1
@@ -75,6 +73,8 @@ EOM
 
 set -euo pipefail
 
+script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 # See: https://github.com/microsoft/vscode-remote-release/issues/3531#issuecomment-675278804
 if [ -z "${USER+x}" ]; then
   USER="$(id -un)"
@@ -100,7 +100,8 @@ echo_task "Making zsh the default shell"
 sudo chsh -s "$(which zsh)" "$USER"
 
 echo_task "Initializing ZSH (with Antigen and Powerlevel10k)"
-zsh -is <<<'' 2>/dev/null
+script -c "cd \"$script_dir\" && bash -c \"zsh -is <<<''\"" /dev/null
+printf '\n%s\n' 'Info: You can safely ignore the weird output from the last command.'
 
 if ! is_devcontainer; then
   echo_task "Updating APT lists"
