@@ -75,8 +75,6 @@ EOM
 
 set -euo pipefail
 
-script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
 # See: https://github.com/microsoft/vscode-remote-release/issues/3531#issuecomment-675278804
 if [ -z "${USER+x}" ]; then
   USER="$(id -un)"
@@ -102,9 +100,14 @@ echo_task "Making zsh the default shell"
 sudo chsh -s "$(which zsh)" "$USER"
 
 echo_task "Initializing ZSH (with Antigen and Powerlevel10k)"
-# We need to emulate a TTY be on a git repository so Powerlevel10k fully initializes
-script -qc "cd \"$script_dir\" && bash -c \"zsh -is <<<''\"" /dev/null
-printf '\n%s\n' 'Info: You can safely ignore the weird output from the last command.'
+(
+  # We need to be in a git repository, so gitstatusd initiliazes
+  script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+  cd "$script_dir"
+  # We also need to emulate a TTY
+  script -qec "zsh -is </dev/null" /dev/null
+)
+printf '\n\033[0;34m%s\033[0m\n' 'Info: You can safely ignore the weird output from the last command.'
 
 if ! is_devcontainer; then
   echo_task "Updating APT lists"
