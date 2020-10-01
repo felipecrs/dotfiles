@@ -110,6 +110,9 @@ echo_task "Initializing ZSH (with Antigen and Powerlevel10k)"
 printf '\n\033[0;34m%s\033[0m\n' 'Info: You can safely ignore the weird output from the last command.'
 
 if ! is_devcontainer; then
+  echo_task "Installing deno"
+  sh -c "$(curl -fsSL https://deno.land/x/install/install.sh)"
+
   echo_task "Updating APT lists"
   sudo apt update
 
