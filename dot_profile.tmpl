@@ -44,6 +44,10 @@ if [ -d "$HOME/.local/bin" ]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
+if [ -d "$HOME/development/flutter/bin" ]; then
+  export PATH="$HOME/development/flutter/bin:$PATH"
+fi
+
 if [ -n "$WSL_DISTRO_NAME" ] || [ -n "$IS_WSL" ]; then
   export BROWSER="wslview"
 fi
