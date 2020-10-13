@@ -33,8 +33,9 @@ antigen bundles <<EOBUNDLES
   heroku
   pip
   lein
-  npm
+  nvm
   node
+  npm
   command-not-found
   common-aliases
 
@@ -46,9 +47,6 @@ antigen bundles <<EOBUNDLES
 
   # Extra zsh completions
   zsh-users/zsh-completions
-
-  # Node Version Manager
-  lukechilds/zsh-nvm
 EOBUNDLES
 
 # Load the theme.

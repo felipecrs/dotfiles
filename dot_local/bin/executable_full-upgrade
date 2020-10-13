@@ -1,47 +1,51 @@
 #!/bin/bash
 
+set -euo pipefail
+
 echo_task() {
   printf "\033[0;34m--> %s\033[0m\n" "$@"
 }
 
-set -euo pipefail
-
-if chezmoi --version &>/dev/null; then
-  echo_task "Updating dotfiles"
-  chezmoi update --apply=false
-  chezmoi init --apply
-fi
-
-echo_task "Updating APT packages"
-sudo apt update -y
-sudo apt full-upgrade -y
-sudo apt autoremove -y
-
-if snap warnings &>/dev/null; then
-  echo_task "Updating Snap packages"
-  sudo snap refresh
-fi
-
-echo_task "Updating Homebrew packages"
-function brew() {
+brew() {
   bash <<EOM
   if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
     eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   elif [ -f "\$HOME/.linuxbrew/bin/brew" ]; then
     eval "\$("\$HOME/.linuxbrew/bin/brew" shellenv)"
   else
-    echo "Homebrew is not installed." >&2
-    exit 1
+    echo "brew is not installed" >&2
+    exit 127
   fi
   brew $@
 EOM
 }
-brew upgrade
 
-echo_task "Updating Antigen"
-curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
+nvm() {
+  bash <<EOM
+  export NVM_DIR="\$([ -z "\${XDG_CONFIG_HOME-}" ] && printf %s "\${HOME}/.nvm" || printf %s "\${XDG_CONFIG_HOME}/nvm")"
+  if [ -f "\$NVM_DIR/nvm.sh" ]; then
+    . "\$NVM_DIR/nvm.sh"
+  else
+    echo "nvm is not installed" >&2
+    exit 127
+  fi
+  nvm $@
+EOM
+}
 
-echo_task "Updating Antigen packages"
+sdk() {
+  bash <<EOM
+  export SDKMAN_DIR="\$HOME/.sdkman"
+  if [ -f "\$SDKMAN_DIR/bin/sdkman-init.sh" ]; then
+    . "\$SDKMAN_DIR/bin/sdkman-init.sh"
+  else
+    echo "sdk is not installed" >&2
+    exit 127
+  fi
+  sdk $@
+EOM
+}
+
 antigen() {
   zsh <<EOM
   if [ -f "\$HOME/.antigenrc" ]; then
@@ -53,27 +57,46 @@ antigen() {
   antigen $@
 EOM
 }
+
+if chezmoi --version &>/dev/null; then
+  echo_task "Updating dotfiles"
+  chezmoi update --apply=false
+  chezmoi init --apply
+fi
+
+echo_task "Updating apt packages"
+sudo apt update -y
+sudo apt full-upgrade -y
+sudo apt autoremove -y
+
+if snap warnings &>/dev/null; then
+  echo_task "Updating snap packages"
+  sudo snap refresh
+fi
+
+echo_task "Updating brew packages"
+brew upgrade
+
+echo_task "Updating antigen"
+curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
+
+echo_task "Updating antigen packages"
 antigen update
+
+echo_task "Updating nvm"
+PROFILE=/dev/null bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"
+
+echo_task "Updating node"
+nvm install 'lts/*' --latest-npm --reinstall-packages-from=current
+nvm alias default 'lts/*'
 
 echo_task "Updating npm packages"
 npm update --global
 
-echo_task "Updating SDKMAN!"
-function sdk() {
-  bash <<EOM
-  if [ -f "\$HOME/.sdkman/bin/sdkman-init.sh" ]; then
-    export SDKMAN_DIR="\$HOME/.sdkman"
-    . "\$HOME/.sdkman/bin/sdkman-init.sh"
-  else
-    echo "SDKMAN! is not installed." >&2
-    exit 1
-  fi
-  sdk $@
-EOM
-}
+echo_task "Updating sdk"
 sdk selfupdate
 
-echo_task "Updating SDKMAN! packages"
+echo_task "Updating sdk packages"
 sdk update
 
 echo_task "Updating deno"

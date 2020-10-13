@@ -135,3 +135,6 @@ if type brew &>/dev/null; then
     done
   fi
 fi
+
+# Enable bash completions for nvm
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
