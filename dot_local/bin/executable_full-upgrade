@@ -4,7 +4,7 @@ echo_task() {
   printf "\033[0;34m--> %s\033[0m\n" "$@"
 }
 
-set -e
+set -euo pipefail
 
 if chezmoi --version &>/dev/null; then
   echo_task "Updating dotfiles"
@@ -68,3 +68,6 @@ EOM
 }
 sdk selfupdate
 sdk update
+
+echo_task "Updating deno"
+deno upgrade
