@@ -1,12 +1,13 @@
 README.md
 LICENSE
 install
-.gitpod.*
 scripts/
 docs/
+miscellaneous/
+.gitpod.*
+.github/
 .vscode/
 .devcontainer/
-windows-terminal/
 {{ if not .is_wsl -}}
 dot_local/bin/executable_docker
 {{- end}}
