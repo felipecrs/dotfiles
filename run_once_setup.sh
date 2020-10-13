@@ -110,12 +110,19 @@ echo_task "Initializing ZSH (with Antigen and Powerlevel10k)"
 printf '\n\033[0;34m%s\033[0m\n' 'Info: You can safely ignore the weird output from the last command.'
 
 if ! is_devcontainer; then
+  echo_task "Adding git apt repository"
+  # This will perform an apt update automatically
+  sudo add-apt-repository -y ppa:git-core/ppa
+
   echo_task "Installing common dependencies"
-  sudo apt update
   sudo apt install -y build-essential curl file git zip
 
   echo_task "Installing deno"
-  sh -c "$(curl -fsSL https://deno.land/x/install/install.sh)"
+  if ! deno --version &>/dev/null; then
+    sh -c "$(curl -fsSL https://deno.land/x/install/install.sh)"
+  else
+    echo "deno is already installed."
+  fi
 
   echo_task "Installing Homebrew"
   if ! brew --version &>/dev/null; then
@@ -128,7 +135,7 @@ if ! is_devcontainer; then
   brew bundle install --global
 
   # Uninstalling previously installed chezmoi because it was already installed
-  # by brew.
+  # by Homebrew.
   local_bin_chezmoi="$HOME/.local/bin/chezmoi"
   if [ -f "$local_bin_chezmoi" ]; then
     echo_task "Uninstalling chezmoi at $local_bin_chezmoi"
