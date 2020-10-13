@@ -38,8 +38,10 @@ EOM
 }
 brew upgrade
 
-echo_task "Updating Antigen packages"
+echo_task "Updating Antigen"
 curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
+
+echo_task "Updating Antigen packages"
 antigen() {
   zsh <<EOM
   if [ -f "\$HOME/.antigenrc" ]; then
@@ -53,7 +55,10 @@ EOM
 }
 antigen update
 
-echo_task "Upgrading SDKMAN! packages"
+echo_task "Updating npm packages"
+npm update --global
+
+echo_task "Updating SDKMAN!"
 function sdk() {
   bash <<EOM
   if [ -f "\$HOME/.sdkman/bin/sdkman-init.sh" ]; then
@@ -67,6 +72,8 @@ function sdk() {
 EOM
 }
 sdk selfupdate
+
+echo_task "Updating SDKMAN! packages"
 sdk update
 
 echo_task "Updating deno"
