@@ -123,12 +123,13 @@ echo_task "Initializing zsh"
 echo "Done."
 
 if ! is_devcontainer; then
-  echo_task "Adding git apt repository"
-  # This will perform an apt update automatically
-  sudo add-apt-repository -y ppa:git-core/ppa
+  echo_task "Installing common packages"
+  sudo apt update
+  sudo apt install -y software-properties-common build-essential curl wget tree parallel file zip
 
-  echo_task "Installing common dependencies"
-  sudo apt install -y build-essential curl file git zip
+  echo_task "Installing git"
+  sudo add-apt-repository -y ppa:git-core/ppa
+  sudo apt install -y git
 
   echo_task "Installing brew"
   if ! brew --version &>/dev/null; then
@@ -188,24 +189,26 @@ if ! is_devcontainer; then
       echo "No keys to sync"
     fi
     unset USERPROFILE
-  else
+
+    echo_task "Setting up Git credential helper"
+    sudo git config --system credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe"
+  elif is_gnome; then
     echo_task "Performing GNOME specific steps"
 
-    echo_task "Setting up Git credential helper to Gnome keyring"
+    echo_task "Setting up Git credential helper"
     sudo apt install -y libsecret-1-0 libsecret-1-dev
     sudo make --directory /usr/share/doc/git/contrib/credential/libsecret
+    sudo git config --system credential.helper /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
 
-    if is_gnome; then
-      echo_task "Adding 'Open Code here' in Nautilus context menu"
-      bash -c "$(wget -qO- https://raw.githubusercontent.com/harry-cpp/code-nautilus/master/install.sh)"
+    echo_task "Adding 'Open Code here' in Nautilus context menu"
+    bash -c "$(wget -qO- https://raw.githubusercontent.com/harry-cpp/code-nautilus/master/install.sh)"
 
-      if is_ubuntu 20.04; then
-        echo_task "Setting up dark theme"
-        sudo apt install -y gnome-shell-extensions
-        gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
-        gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
-        gsettings set org.gnome.shell.extensions.user-theme name "Yaru-dark"
-      fi
+    if is_ubuntu 20.04; then
+      echo_task "Setting up dark theme"
+      sudo apt install -y gnome-shell-extensions
+      gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
+      gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
+      gsettings set org.gnome.shell.extensions.user-theme name "Yaru-dark"
     fi
   fi
 fi
