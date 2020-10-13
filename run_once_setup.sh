@@ -102,7 +102,7 @@ sudo chsh -s "$(which zsh)" "$USER"
 echo_task "Initializing ZSH (with Antigen and Powerlevel10k)"
 (
   # We need to be in a git repository, so gitstatusd initiliazes
-  script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
   cd "$script_dir"
   # We also need to emulate a TTY
   script -qec "zsh -is </dev/null" /dev/null
@@ -110,15 +110,15 @@ echo_task "Initializing ZSH (with Antigen and Powerlevel10k)"
 printf '\n\033[0;34m%s\033[0m\n' 'Info: You can safely ignore the weird output from the last command.'
 
 if ! is_devcontainer; then
+  echo_task "Installing common dependencies"
+  sudo apt update
+  sudo apt install -y build-essential curl file git zip
+
   echo_task "Installing deno"
   sh -c "$(curl -fsSL https://deno.land/x/install/install.sh)"
 
-  echo_task "Updating APT lists"
-  sudo apt update
-
   echo_task "Installing Homebrew"
   if ! brew --version &>/dev/null; then
-    sudo apt install build-essential curl file -y
     CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   else
     echo "Homebrew is already installed."
@@ -138,7 +138,6 @@ if ! is_devcontainer; then
 
   echo_task "Installing SDKMAN!"
   if ! sdk version &>/dev/null; then
-    sudo apt install -y zip
     bash -c "$(curl -fsSL "https://get.sdkman.io/?rcupdate=false")"
   else
     echo "SDKMAN! is already installed."
@@ -147,9 +146,7 @@ if ! is_devcontainer; then
   echo_task "Installing Java 8"
   # get the identifier for java 8
   identifier="$(sdk ls java | grep -m 1 -o ' 8.*.hs-adpt ' | awk '{print $NF}')"
-  # ignore SDKMAN! error because often it's just already installed, at least
-  # until https://github.com/sdkman/sdkman-cli/pull/777 does not get merged.
-  sdk i java "$identifier" || true
+  sdk i java "$identifier"
   unset identifier
 
   if is_wsl; then
@@ -165,10 +162,9 @@ if ! is_devcontainer; then
     fi
     unset USERPROFILE
   else
-    echo_task "Performing NOT WSL specific steps"
+    echo_task "Performing GNOME specific steps"
 
     echo_task "Setting up Git credential helper to Gnome keyring"
-    sudo apt update
     sudo apt install -y libsecret-1-0 libsecret-1-dev
     sudo make --directory /usr/share/doc/git/contrib/credential/libsecret
 
