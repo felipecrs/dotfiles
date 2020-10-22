@@ -1,7 +1,7 @@
 #!/bin/sh
 
 get_in_path_except_current() {
-  which -a "$1" | grep -v "$0" | head -1
+  which -a "$1" | grep -A1 "$0" | grep -v "$0"
 }
 
 code="$(get_in_path_except_current code)"
