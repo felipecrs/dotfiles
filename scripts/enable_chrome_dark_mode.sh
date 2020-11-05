@@ -8,7 +8,7 @@ this:
   google-chrome --enable-features=WebUIDarkMode --force-dark-mode
 
 Please check the following URL for more information:
-  https://github.com/felipecassiors/dotfiles#enable_chrome_dark_modesh
+  https://github.com/felipecrs/dotfiles#enable_chrome_dark_modesh
 EOM
 
 # ARG_OPTIONAL_BOOLEAN([force],[f],[Do not ask for confirmation])

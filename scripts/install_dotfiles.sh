@@ -25,7 +25,7 @@ git_clean() {
   unset git
 }
 
-DOTFILES_USER=${DOTFILES_USER:-felipecassiors}
+DOTFILES_USER=${DOTFILES_USER:-felipecrs}
 DOTFILES_REPO="https://github.com/$DOTFILES_USER/dotfiles"
 DOTFILES_BRANCH=${DOTFILES_BRANCH:-master}
 DOTFILES_DIR="$HOME/.dotfiles"

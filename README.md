@@ -1,6 +1,6 @@
 # Felipe Santos's dotfiles <!-- omit in toc -->
 
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/felipecassiors/dotfiles#scripts)
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/felipecrs/dotfiles#scripts)
 
 Bootstrap your Ubuntu in a few minutes!
 
@@ -48,7 +48,7 @@ sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
 
 The convenience script supports two environment variables:
 
-- `DOTFILES_REPO`: Default to `felipecassiors`.
+- `DOTFILES_REPO`: Default to `felipecrs`.
 - `DOTFILES_BRANCH`: Default to `master`.
 
 #### Examples
@@ -64,7 +64,7 @@ The convenience script supports two environment variables:
 You can also do it manually, it's simple after all.
 
 ```bash
-git clone https://github.com/felipecassiors/dotfiles "$HOME/.dotfiles"
+git clone https://github.com/felipecrs/dotfiles "$HOME/.dotfiles"
 "$HOME/.dotfiles/install"
 ```
 
@@ -73,13 +73,13 @@ git clone https://github.com/felipecassiors/dotfiles "$HOME/.dotfiles"
 If you already have this repository [bootstrapped](#get-started) in your machine, you can use the scripts right away. Or, if you want to run it directly, you can use:
 
 ```bash
-bash -c "$(curl -fsSL "https://raw.githubusercontent.com/felipecassiors/dotfiles/master/scripts/<script-name>")" -- <arguments>
+bash -c "$(curl -fsSL "https://raw.githubusercontent.com/felipecrs/dotfiles/master/scripts/<script-name>")" -- <arguments>
 ```
 
 Just replace `<script-name>` and `<arguments>` with the desired values. Example:
 
 ```bash
-bash -c "$(curl -fsSL "https://raw.githubusercontent.com/felipecassiors/dotfiles/master/scripts/create_alternative_chrome_shortcut.sh")" -- --force
+bash -c "$(curl -fsSL "https://raw.githubusercontent.com/felipecrs/dotfiles/master/scripts/create_alternative_chrome_shortcut.sh")" -- --force
 ```
 
 ### [`create_alternative_chrome_shortcut.sh`](scripts/create_alternative_chrome_shortcut.sh)
@@ -98,7 +98,7 @@ different user data directory. This lets you have different icons for different
 instances of Google Chrome.
 
 Please check the following URL for more information:
-  https://github.com/felipecassiors/dotfiles#create_alternative_chrome_shortcutsh
+  https://github.com/felipecrs/dotfiles#create_alternative_chrome_shortcutsh
 ```
 
 #### Examples
