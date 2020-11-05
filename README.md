@@ -74,11 +74,11 @@ git clone https://github.com/felipecrs/dotfiles "$HOME/.dotfiles"
 
 If you are forking this repository, you'll have to edit the following areas:
 
-- `[README.md](./README.md)`
+- [`README.md`](./README.md)
   - Change `https://git.io/felipecrs-dotfiles` to `https://raw.githubusercontent.com/<your-username>/dotfiles/master/scripts/install_dotfiles.sh`
-- `[scripts/install_dotfiles.sh](./scripts/install_dotfiles.sh)`
+- [`scripts/install_dotfiles.sh`](./scripts/install_dotfiles.sh)
   - Change `felipecrs` to `<your-username>`
-- `[.chezmoi.toml.tmpl](./.chezmoi.toml.tmpl)`
+- [`.chezmoi.toml.tmpl`](./.chezmoi.toml.tmpl)
   - Change personal and work name and email to yours.
 
 Where `<your-username>` is your GitHub username or organization name.
