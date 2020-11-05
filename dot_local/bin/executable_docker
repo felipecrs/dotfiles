@@ -1,30 +1,31 @@
-{{ if .is_wsl -}}
 #!/usr/bin/env bash
 
-function get_docker_in_path() {
-  which -a docker | grep -v "$0" | head -1
+get_in_path_except_current() {
+  which -a "$1" | grep -A1 "$0" | grep -v "$0"
 }
 
-function is_docker_from_desktop() {
-  if [ "$(get_docker_in_path)" == "/mnt/c/Program Files/Docker/Docker/resources/bin/docker" ]; then
-    return 0
+is_docker_from_desktop() {
+  if [ "$1" != "/mnt/c/Program Files/Docker/Docker/resources/bin/docker" ] &&
+    [ "$1" != "/mnt/c/ProgramData/DockerDesktop/version-bin/docker" ]; then
+    return 1
   fi
-  return 1
 }
 
-function echo_blue() {
+echo_blue() {
   printf "\033[0;34m%s\033[0m" "$*" >&2
 }
 
-function echo_green_nl() {
+echo_green_nl() {
   printf "\033[0;32m%s\033[0m\n" "$*" >&2
 }
 
-function echo_red_nl() {
+echo_red_nl() {
   printf "\033[0;31m%s\033[0m\n" "$*" >&2
 }
 
-if is_docker_from_desktop; then
+docker="$(get_in_path_except_current docker)"
+
+if is_docker_from_desktop "$docker"; then
   echo_blue "Starting Docker Desktop..."
 
   # Using `powershell.exe` because of https://github.com/microsoft/WSL/issues/3769
@@ -33,9 +34,14 @@ if is_docker_from_desktop; then
   seconds=30
   for ((i = 0; i < seconds; i++)); do
     sleep 1
-    "$(get_docker_in_path)" version &>/dev/null
+
+    docker="$(get_in_path_except_current docker)"
+    "$docker" info &>/dev/null
+
     exit_code=$?
-    [ $exit_code -eq 0 ] && break
+    if [ $exit_code -eq 0 ]; then
+      break
+    fi
   done
 
   if [ $exit_code -eq 0 ]; then
@@ -46,5 +52,4 @@ if is_docker_from_desktop; then
   fi
 fi
 
-exec "$(get_docker_in_path)" "$@"
-{{- end }}
+exec "$docker" "$@"

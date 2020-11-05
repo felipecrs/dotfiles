@@ -11,3 +11,6 @@ miscellaneous/
 {{ if not .is_wsl -}}
 dot_local/bin/executable_docker
 {{- end}}
+{{ if not .is_devcontainer -}}
+dot_local/bin/executable_code
+{{- end}}
