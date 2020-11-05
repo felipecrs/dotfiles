@@ -1,4 +1,6 @@
-{{- $personalName := "Felipe Santos" -}}
+# The following variables are only available within this file
+
+{{ $personalName := "Felipe Santos" -}}
 {{- $personalEmail := "felipecassiors@gmail.com" -}}
 
 {{- $workName := "Felipe de Cássio Rocha Santos" -}}
@@ -14,6 +16,8 @@
 sourceDir = "{{ .chezmoi.sourceDir }}"
 
 [data]
+  # Here we "export" the variables, so we can access them outside this file
+
   personal_name = "{{ $personalName }}"
   personal_email = "{{ $personalEmail }}"
 
