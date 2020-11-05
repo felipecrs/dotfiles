@@ -15,6 +15,7 @@ This repository is managed with [`chezmoi`](https://chezmoi.io).
     - [Usage](#usage)
     - [Examples](#examples)
   - [Manually](#manually)
+- [Forking guide](#forking-guide)
 - [`scripts/`](#scripts)
   - [`create_alternative_chrome_shortcut.sh`](#create_alternative_chrome_shortcutsh)
     - [Usage](#usage-1)
@@ -40,6 +41,7 @@ sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
 ```
 
 > 💡 We use `wget` here because not all systems comes with `curl` installed. But the `curl` version of it is:
+>
 > ```bash
 >  sh -c "$(curl -fsSL https://git.io/felipecrs-dotfiles)"
 > ```
@@ -67,6 +69,19 @@ You can also do it manually, it's simple after all.
 git clone https://github.com/felipecrs/dotfiles "$HOME/.dotfiles"
 "$HOME/.dotfiles/install"
 ```
+
+## Forking guide
+
+If you are forking this repository, you'll have to edit the following areas:
+
+- `[README.md](./README.md)`
+  - Change `https://git.io/felipecrs-dotfiles` to `https://raw.githubusercontent.com/<your-username>/dotfiles/master/scripts/install_dotfiles.sh`
+- `[scripts/install_dotfiles.sh](./scripts/install_dotfiles.sh)`
+  - Change `felipecrs` to `<your-username>`
+- `[.chezmoi.toml.tmpl](./.chezmoi.toml.tmpl)`
+  - Change personal and work name and email to yours.
+
+Where `<your-username>` is your GitHub username or organization name.
 
 ## [`scripts/`](scripts/)
 
