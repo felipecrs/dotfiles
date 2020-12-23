@@ -38,7 +38,7 @@ sourceDir = "{{ .chezmoi.sourceDir }}"
   email = "{{ $workEmail }}"
   {{- end }}
 
-  {{- if or (lookPath "code") $isDevcontainer }}
+  {{- if or (lookPath "code") (lookPath "code-insiders") $isDevcontainer }}
   editor = "code --wait"
   {{- else if lookPath "nano" }}
   editor = "nano"
