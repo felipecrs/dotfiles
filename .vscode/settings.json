@@ -19,5 +19,6 @@
   ],
   "shellcheck.customArgs": [
     "-x"
-  ]
+  ],
+  "editor.formatOnSave": true
 }
