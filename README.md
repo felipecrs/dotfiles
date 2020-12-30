@@ -4,7 +4,7 @@
 
 Bootstrap your Ubuntu in a few minutes!
 
-This dotfiles repository is currently aimed for [**Ubuntu for WSL**](https://ubuntu.com/wsl), **Ubuntu Server** and **Ubuntu Desktop**, tested only in **Ubuntu 20.04**. See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10).
+This dotfiles repository is currently aimed for [**Ubuntu on WSL**](https://ubuntu.com/wsl), **Ubuntu Server**, and **Ubuntu Desktop**, tested with **Ubuntu 20.04**. See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10). It's also suitable for use in [**GitHub Codespaces**](https://github.com/features/codespaces) and [**VS Code Remote - Containers**](https://code.visualstudio.com/docs/remote/containers).
 
 This repository is managed with [`chezmoi`](https://chezmoi.io).
 
