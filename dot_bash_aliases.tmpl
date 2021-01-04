@@ -4,13 +4,13 @@
 # in order to keep the same aliases on both shells. So keep in mind that any
 # code here must be compatible with bash and zsh.
 
-function mcd() {
+mcd() {
   mkdir -p "$1"
   cd "$1" || return
 }
 
 {{ if .is_wsl -}}
-function gsudo() {
+gsudo() {
   local command_line
   command_line=("$(sh -c 'ps -p $$ -o ppid=' | xargs -I'{}' readlink -f '/proc/{}/exe')")
   if [ $# -gt 0 ]; then
@@ -21,7 +21,10 @@ function gsudo() {
 {{- end }}
 
 # shellcheck disable=SC2142
-alias refreshenv='exec ${0##*-}'
-alias python=python3
+alias refreshenv='exec ${0#-}'
 # See: https://github.com/twpayne/chezmoi/issues/854#issuecomment-675160348
 alias chezmoi-re-run-scripts='rm -rf $HOME/.config/chezmoi/chezmoistate.boltdb && chezmoi init --apply'
+
+{{ if not .is_devcontainer -}}
+alias python=python3
+{{- end }}
