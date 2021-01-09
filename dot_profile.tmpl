@@ -31,6 +31,13 @@ else
   unset NVM_DIR
 fi
 
+if [ -d "$HOME/.volta" ]; then
+  export VOLTA_HOME="$HOME/.volta"
+  if [ -d "$VOLTA_HOME/bin" ]; then
+    export PATH="$VOLTA_HOME/bin:$PATH"
+  fi
+fi
+
 if [ -d "$HOME/.deno/bin" ]; then
   export DENO_INSTALL="$HOME/.deno"
   export PATH="$DENO_INSTALL/bin:$PATH"
