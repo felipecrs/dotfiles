@@ -32,13 +32,11 @@
   cz = !npx -p commitizen cz
   set-profile = "!f() { if [ \"$1\" = \"personal\" ]; then git config user.name \"{{ .personal_name }}\" && git config user.email \"{{ .personal_email}}\"; elif [ \"$1\" = \"work\" ]; then git config user.name \"{{ .work_name }}\" && git config user.email \"{{ .work_email }}\"; else echo \"Accepted values: personal, work\" && return 1; fi; }; f"
   fully-clean = "!f() { set -v; branch="$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)"; git checkout $branch; git fetch origin $branch; git clean -fd; }; f"
-  rr = "!f() { set -ex; branch="${1:-"$(git branch --show-current | grep .)"}"; git reset --hard "origin/$branch"; }; f"
-  pfor = "!f() { set -ex; branch="${1:-"$(git branch --show-current | grep .)"}"; git push origin "HEAD:refs/for/$branch"; }; f"
+  get-current-branch = "!git branch --show-current | grep ."
+  rr = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; git reset --hard "origin/$branch"; }; f"
+  pfor = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; git push origin "HEAD:refs/for/$branch"; }; f"
   psfor = "!f() { set -ex; git caane; git pfor "$@"; }; f"
+  plr = pull --rebase
   plro = pull --rebase origin
-  plrom = plro master
-  plrod = plro develop
-  prune-tags = !git tag -l | xargs git tag -d && git fetch -t
-  prune-branches = fetch --prune
-  prune = !git prune-branches && git prune-tags
+  prune = fetch --prune --prune-tags
   hist = log --pretty=format:'%C(yellow)%h%Creset %ad | %s%d %Cgreen[%an]%Creset' --graph --date=short
