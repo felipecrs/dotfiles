@@ -24,15 +24,12 @@ antigen use oh-my-zsh
 antigen bundles <<EOBUNDLES
   # Bundles from the default repo (robbyrussell's oh-my-zsh)
   git
-  git-extras
   z
   docker
   docker-compose
   helm
   kubectl
-  heroku
   pip
-  lein
   nvm
   node
   npm
