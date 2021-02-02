@@ -38,5 +38,5 @@
   psfor = "!f() { set -ex; git caane; git pfor "$@"; }; f"
   plr = pull --rebase
   plro = pull --rebase origin
-  prune = fetch --prune --prune-tags
+  prune-refs = fetch --prune --prune-tags
   hist = log --pretty=format:'%C(yellow)%h%Creset %ad | %s%d %Cgreen[%an]%Creset' --graph --date=short
