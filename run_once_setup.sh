@@ -138,6 +138,15 @@ if ! is_devcontainer; then
 
   echo_task "Installing podman"
   sudo apt install -y podman
+  if is_wsl; then
+    echo_sub_task "Setting up podman for WSL2"
+    if [[ ! -f "/etc/containers/containers.conf" ]]; then
+      sudo mkdir -p /etc/containers
+      sudo cp -f /usr/share/containers/containers.conf /etc/containers/containers.conf
+    fi
+    sudo sed -i "s/.*cgroup_manager.*=.*/cgroup_manager = \"cgroupfs\"/g" /etc/containers/containers.conf
+    sudo sed -i "s/.*events_logger.*=.*/events_logger = \"file\"/g" /etc/containers/containers.conf
+  fi
 
   echo_task "Installing buildah"
   sudo apt install -y buildah
