@@ -38,6 +38,7 @@ antigen bundles <<EOBUNDLES
   npm
   command-not-found
   common-aliases
+  dotenv
 
   # Syntax highlighting bundle.
   zsh-users/zsh-syntax-highlighting
