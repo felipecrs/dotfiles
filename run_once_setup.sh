@@ -131,6 +131,17 @@ if ! is_devcontainer; then
   sudo add-apt-repository -y ppa:git-core/ppa
   sudo apt install -y git
 
+  echo_task "Installing skopeo"
+  curl -fsSL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/Release.key" | sudo apt-key add -
+  sudo add-apt-repository -y "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/ /"
+  sudo apt install -y skopeo
+
+  echo_task "Installing podman"
+  sudo apt install -y podman
+
+  echo_task "Installing buildah"
+  sudo apt install -y buildah
+
   echo_task "Installing brew"
   if ! brew --version &>/dev/null; then
     CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
