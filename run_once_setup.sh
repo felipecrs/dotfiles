@@ -157,12 +157,11 @@ if ! is_devcontainer; then
     echo "deno is already installed"
   fi
 
-  echo_task "Installing nvm"
-  PROFILE=/dev/null bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"
+  echo_task "Installing volta"
+  bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
 
   echo_task "Installing node"
-  nvm install 'lts/*' --latest-npm --reinstall-packages-from=current
-  nvm alias default 'lts/*'
+  volta install node
 
   echo_task "Installing sdk"
   if ! sdk version &>/dev/null; then

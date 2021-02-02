@@ -58,46 +58,75 @@ antigen() {
 EOM
 }
 
+yellow() {
+  printf "\e[33;1m$*\e[m\n"
+}
+
+c() {
+  yellow "+ $*"
+  "$@"
+}
+
 if chezmoi --version &>/dev/null; then
   echo_task "Updating dotfiles"
-  chezmoi update --apply=false
-  chezmoi init --apply
+  c chezmoi update --apply=false
+  c chezmoi init --apply
 fi
 
 echo_task "Updating apt packages"
-sudo apt update -y
-sudo apt full-upgrade -y
-sudo apt autoremove -y
+c sudo apt update -y
+c sudo apt full-upgrade -y --autoremove
 
 if snap warnings &>/dev/null; then
   echo_task "Updating snap packages"
-  sudo snap refresh
+  c sudo snap refresh
 fi
 
 echo_task "Updating brew packages"
-brew upgrade
+c brew upgrade
 
 echo_task "Updating antigen"
-curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
+c curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
 
 echo_task "Updating antigen packages"
-antigen update
+c antigen update
 
-echo_task "Updating nvm"
-PROFILE=/dev/null bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"
+if deno --version &>/dev/null; then
+  echo_task "Updating deno"
+  c deno upgrade
+fi
 
-echo_task "Updating node"
-nvm install 'lts/*' --latest-npm --reinstall-packages-from=current
-nvm alias default 'lts/*'
+if volta --version &>/dev/null; then
+  echo_task "Updating volta"
+  yellow '+ bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup'
+  bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
+fi
 
-echo_task "Updating npm packages"
-npm update --global
+if nvm --version &>/dev/null; then
+  echo_task "Updating nvm"
+  yellow '+x PROFILE=/dev/null bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"'
+  PROFILE=/dev/null bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"
+fi
 
-echo_task "Updating sdk"
-sdk selfupdate
+if volta --version &>/dev/null; then
+  echo_task "Updating node with volta"
+  c volta install node
 
-echo_task "Updating sdk packages"
-sdk update
+elif nvm --version &>/dev/null; then
+  echo_task "Updating node with nvm"
+  c nvm install 'lts/*' --reinstall-packages-from=current
+  c nvm alias default 'lts/*'
+fi
 
-echo_task "Updating deno"
-deno upgrade
+if npm --version &>/dev/null; then
+  echo_task "Updating npm packages"
+  c npm update --global
+fi
+
+if sdk version &>/dev/null; then
+  echo_task "Updating sdk"
+  c sdk selfupdate
+
+  echo_task "Updating sdk packages"
+  c sdk update
+fi
