@@ -131,6 +131,31 @@ if ! is_devcontainer; then
   sudo add-apt-repository -y ppa:git-core/ppa
   sudo apt install -y git
 
+  echo_task "Installing skopeo"
+  curl -fsSL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/Release.key" | sudo apt-key add -
+  sudo add-apt-repository -y "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/ /"
+  sudo apt install -y skopeo
+
+  echo_task "Installing podman"
+  sudo apt install -y podman
+
+  echo_task "Installing buildah"
+  sudo apt install -y buildah
+
+  echo_task "Installing Helm"
+  curl -fsSL https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+  sudo add-apt-repository -y "deb https://baltocdn.com/helm/stable/debian/ all main"
+  sudo apt install -y helm
+
+  echo_task "Installing kubectl"
+  curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+  sudo add-apt-repository -y "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+  sudo apt install -y kubectl
+
+  echo_task "Installing yq"
+  sudo add-apt-repository -y ppa:rmescandon/yq
+  sudo apt install -y yq
+
   echo_task "Installing brew"
   if ! brew --version &>/dev/null; then
     CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
