@@ -119,6 +119,9 @@ elif nvm --version &>/dev/null; then
 fi
 
 if npm --version &>/dev/null; then
+  echo_task "Updating npm"
+  npm install -g npm@latest
+
   echo_task "Updating npm packages"
   c npm update --global
 fi
