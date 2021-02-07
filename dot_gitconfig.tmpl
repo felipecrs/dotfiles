@@ -40,3 +40,4 @@
   plro = pull --rebase origin
   prune-refs = fetch --prune --prune-tags
   hist = log --pretty=format:'%C(yellow)%h%Creset %ad | %s%d %Cgreen[%an]%Creset' --graph --date=short
+  apply-gitignore = "!set -ex; git rm -r --cached . >/dev/null; git add ."
