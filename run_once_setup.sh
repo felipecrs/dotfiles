@@ -209,11 +209,14 @@ if ! is_devcontainer; then
     echo "sdk is already installed"
   fi
 
-  echo_task "Installing Java 8"
+  echo_task "Installing Java"
+  yes | sdk install java
+
+  # Install latest Java 8
   # get the identifier for java 8
-  identifier="$(sdk ls java | grep -m 1 -o ' 8.*.hs-adpt ' | awk '{print $NF}')"
-  sdk i java "$identifier"
-  unset identifier
+  # identifier="$(sdk ls java | grep -m 1 -o ' 8.*.hs-adpt ' | awk '{print $NF}')"
+  # sdk i java "$identifier"
+  # unset identifier
 
   if is_wsl; then
     echo_task "Performing WSL specific steps"
