@@ -101,6 +101,8 @@ sdk() {
 EOM
 }
 
+ran_apt_update=false
+
 # See: https://github.com/microsoft/vscode-remote-release/issues/3531#issuecomment-675278804
 if [ -z "${USER+x}" ]; then
   USER="$(id -un)"
@@ -117,6 +119,7 @@ echo "$USER  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$USER"
 echo_task "Installing zsh"
 if ! zsh --version &>/dev/null; then
   sudo apt update
+  ran_apt_update=true
   sudo apt install -y zsh
 else
   echo "zsh already installed"
@@ -137,7 +140,9 @@ echo "Done."
 
 if ! is_devcontainer; then
   echo_task "Installing common packages"
-  sudo apt update
+  if [[ "$ran_apt_update" == false ]]; then
+    sudo apt update
+  fi
   sudo apt install -y software-properties-common build-essential curl wget tree parallel file zip
 
   echo_task "Adding apt repositories"
