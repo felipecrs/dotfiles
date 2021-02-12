@@ -75,6 +75,19 @@ nvm() {
 EOM
 }
 
+volta() {
+  bash <<EOM
+  if [[ -f "$HOME/.volta/bin/volta" ]]; then
+    export VOLTA_HOME="$HOME/.volta"
+    export PATH="$VOLTA_HOME/bin:$PATH"
+  else
+    echo "volta is not installed" >&2
+    exit 127
+  fi
+  volta $@
+EOM
+}
+
 sdk() {
   bash <<EOM
   export SDKMAN_DIR="\$HOME/.sdkman"
@@ -127,29 +140,31 @@ if ! is_devcontainer; then
   sudo apt update
   sudo apt install -y software-properties-common build-essential curl wget tree parallel file zip
 
+  echo_task "Adding apt repositories"
+  sudo add-apt-repository --no-update -y ppa:git-core/ppa
+  curl -fsSL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/Release.key" | sudo apt-key add -
+  sudo add-apt-repository -y "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/ /"
+
   echo_task "Installing git"
-  sudo add-apt-repository -y ppa:git-core/ppa
   sudo apt install -y git
 
   echo_task "Installing skopeo"
-  curl -fsSL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/Release.key" | sudo apt-key add -
-  sudo add-apt-repository -y "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/ /"
   sudo apt install -y skopeo
 
-  echo_task "Installing podman"
-  sudo apt install -y podman
-  if is_wsl; then
-    echo_sub_task "Setting up podman for WSL2"
-    if [[ ! -f "/etc/containers/containers.conf" ]]; then
-      sudo mkdir -p /etc/containers
-      sudo cp -f /usr/share/containers/containers.conf /etc/containers/containers.conf
-    fi
-    sudo sed -i "s/.*cgroup_manager.*=.*/cgroup_manager = \"cgroupfs\"/g" /etc/containers/containers.conf
-    sudo sed -i "s/.*events_logger.*=.*/events_logger = \"file\"/g" /etc/containers/containers.conf
-  fi
+  # echo_task "Installing podman"
+  # sudo apt install -y podman
+  # if is_wsl; then
+  #   echo_sub_task "Setting up podman for WSL2"
+  #   if [[ ! -f "/etc/containers/containers.conf" ]]; then
+  #     sudo mkdir -p /etc/containers
+  #     sudo cp -f /usr/share/containers/containers.conf /etc/containers/containers.conf
+  #   fi
+  #   sudo sed -i "s/.*cgroup_manager.*=.*/cgroup_manager = \"cgroupfs\"/g" /etc/containers/containers.conf
+  #   sudo sed -i "s/.*events_logger.*=.*/events_logger = \"file\"/g" /etc/containers/containers.conf
+  # fi
 
-  echo_task "Installing buildah"
-  sudo apt install -y buildah
+  # echo_task "Installing buildah"
+  # sudo apt install -y buildah
 
   echo_task "Installing brew"
   if ! brew --version &>/dev/null; then
@@ -178,10 +193,14 @@ if ! is_devcontainer; then
   fi
 
   echo_task "Installing volta"
-  bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
+  if ! volta --version &>/dev/null; then
+    bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
+  else
+    echo "volta is already installed"
+  fi
 
-  echo_task "Installing node"
-  volta install node
+  echo_task "Installing node, npm, and yarn"
+  volta install node npm yarn
 
   echo_task "Installing sdk"
   if ! sdk version &>/dev/null; then
@@ -211,6 +230,7 @@ if ! is_devcontainer; then
 
     echo_task "Setting up Git credential helper"
     sudo git config --system credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe"
+
   elif is_gnome; then
     echo_task "Performing GNOME specific steps"
 
