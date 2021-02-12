@@ -210,7 +210,10 @@ if ! is_devcontainer; then
   fi
 
   echo_task "Installing Java"
-  yes | sdk install java
+  (
+    set +o pipefail
+    yes | sdk install java
+  )
 
   # Install latest Java 8
   # get the identifier for java 8
