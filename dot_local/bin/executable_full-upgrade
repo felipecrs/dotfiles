@@ -6,11 +6,20 @@ echo_task() {
   printf "\033[0;34m--> %s\033[0m\n" "$@"
 }
 
+yellow() {
+  printf '\e[33;1m%s\e[m\n' "$*"
+}
+
+c() {
+  yellow "+ $*"
+  "$@"
+}
+
 brew() {
   bash <<EOM
-  if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+  if [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
     eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-  elif [ -f "\$HOME/.linuxbrew/bin/brew" ]; then
+  elif [[ -f "\$HOME/.linuxbrew/bin/brew" ]]; then
     eval "\$("\$HOME/.linuxbrew/bin/brew" shellenv)"
   else
     echo "brew is not installed" >&2
@@ -23,7 +32,7 @@ EOM
 nvm() {
   bash <<EOM
   export NVM_DIR="\$([ -z "\${XDG_CONFIG_HOME-}" ] && printf %s "\${HOME}/.nvm" || printf %s "\${XDG_CONFIG_HOME}/nvm")"
-  if [ -f "\$NVM_DIR/nvm.sh" ]; then
+  if [[ -f "\$NVM_DIR/nvm.sh" ]]; then
     . "\$NVM_DIR/nvm.sh"
   else
     echo "nvm is not installed" >&2
@@ -33,10 +42,23 @@ nvm() {
 EOM
 }
 
+volta() {
+  bash <<EOM
+  export VOLTA_HOME="$HOME/.volta"
+  if [[ -f "$VOLTA_HOME/bin/volta" ]]; then
+    export PATH="$VOLTA_HOME/bin:$PATH"
+  else
+    echo "volta is not installed" >&2
+    exit 127
+  fi
+  volta $@
+EOM
+}
+
 sdk() {
   bash <<EOM
   export SDKMAN_DIR="\$HOME/.sdkman"
-  if [ -f "\$SDKMAN_DIR/bin/sdkman-init.sh" ]; then
+  if [[ -f "\$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
     . "\$SDKMAN_DIR/bin/sdkman-init.sh"
   else
     echo "sdk is not installed" >&2
@@ -48,7 +70,7 @@ EOM
 
 antigen() {
   zsh <<EOM
-  if [ -f "\$HOME/.antigenrc" ]; then
+  if [[ -f "\$HOME/.antigenrc" ]]; then
     source "\$HOME/.antigenrc"
   else
     echo "The .antigenrc was not found." >&2
@@ -56,15 +78,6 @@ antigen() {
   fi
   antigen $@
 EOM
-}
-
-yellow() {
-  printf "\e[33;1m$*\e[m\n"
-}
-
-c() {
-  yellow "+ $*"
-  "$@"
 }
 
 if chezmoi --version &>/dev/null; then

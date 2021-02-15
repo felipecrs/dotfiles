@@ -50,9 +50,9 @@ is_gnome() {
 
 brew() {
   bash <<EOM
-  if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+  if [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
     eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-  elif [ -f "\$HOME/.linuxbrew/bin/brew" ]; then
+  elif [[ -f "\$HOME/.linuxbrew/bin/brew" ]]; then
     eval "\$("\$HOME/.linuxbrew/bin/brew" shellenv)"
   else
     echo "brew is not installed" >&2
@@ -65,7 +65,7 @@ EOM
 nvm() {
   bash <<EOM
   export NVM_DIR="\$([ -z "\${XDG_CONFIG_HOME-}" ] && printf %s "\${HOME}/.nvm" || printf %s "\${XDG_CONFIG_HOME}/nvm")"
-  if [ -f "\$NVM_DIR/nvm.sh" ]; then
+  if [[ -f "\$NVM_DIR/nvm.sh" ]]; then
     . "\$NVM_DIR/nvm.sh"
   else
     echo "nvm is not installed" >&2
@@ -77,8 +77,8 @@ EOM
 
 volta() {
   bash <<EOM
-  if [[ -f "$HOME/.volta/bin/volta" ]]; then
-    export VOLTA_HOME="$HOME/.volta"
+  export VOLTA_HOME="$HOME/.volta"
+  if [[ -f "$VOLTA_HOME/bin/volta" ]]; then
     export PATH="$VOLTA_HOME/bin:$PATH"
   else
     echo "volta is not installed" >&2
@@ -91,7 +91,7 @@ EOM
 sdk() {
   bash <<EOM
   export SDKMAN_DIR="\$HOME/.sdkman"
-  if [ -f "\$SDKMAN_DIR/bin/sdkman-init.sh" ]; then
+  if [[ -f "\$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
     . "\$SDKMAN_DIR/bin/sdkman-init.sh"
   else
     echo "sdk is not installed" >&2
