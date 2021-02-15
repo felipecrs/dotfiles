@@ -77,9 +77,9 @@ EOM
 
 volta() {
   bash <<EOM
-  export VOLTA_HOME="$HOME/.volta"
-  if [[ -f "$VOLTA_HOME/bin/volta" ]]; then
-    export PATH="$VOLTA_HOME/bin:$PATH"
+  export VOLTA_HOME="\$HOME/.volta"
+  if [[ -f "\$VOLTA_HOME/bin/volta" ]]; then
+    export PATH="\$VOLTA_HOME/bin:\$PATH"
   else
     echo "volta is not installed" >&2
     exit 127
