@@ -111,19 +111,21 @@ fi
 
 if volta --version &>/dev/null; then
   echo_task "Updating volta"
+  # shellcheck disable=SC2016
   yellow '+ bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup'
   bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
 fi
 
 if nvm --version &>/dev/null; then
   echo_task "Updating nvm"
-  yellow '+x PROFILE=/dev/null bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"'
+  # shellcheck disable=SC2016
+  yellow '+ PROFILE=/dev/null bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"'
   PROFILE=/dev/null bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"
 fi
 
 if volta --version &>/dev/null; then
-  echo_task "Updating node with volta"
-  c volta install node
+  echo_task "Updating node, npm and yarn with volta"
+  c volta install node npm yarn
 
 elif nvm --version &>/dev/null; then
   echo_task "Updating node with nvm"
@@ -132,8 +134,10 @@ elif nvm --version &>/dev/null; then
 fi
 
 if npm --version &>/dev/null; then
-  echo_task "Updating npm"
-  npm install -g npm@latest
+  if ! volta --version &>/dev/null; then
+    echo_task "Updating npm"
+    npm install -g npm@latest
+  fi
 
   echo_task "Updating npm packages"
   c npm update --global
