@@ -245,6 +245,11 @@ if ! is_devcontainer; then
   elif is_gnome; then
     echo_task "Performing GNOME specific steps"
 
+    echo_task "Installing and setting up Fira Code Nerd Font"
+    curl -fsSL --create-dirs -o "$HOME/.local/share/fonts/Fira Code Regular Nerd Font Complete.ttf" \
+      "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Regular/complete/Fira%20Code%20Regular%20Nerd%20Font%20Complete.ttf"
+    gsettings set org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font 13'
+
     echo_task "Setting up Git credential helper"
     sudo apt install -y libsecret-1-0 libsecret-1-dev
     sudo make --directory /usr/share/doc/git/contrib/credential/libsecret
