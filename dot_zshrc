@@ -12,6 +12,8 @@ if [ -f "$HOME/.profile" ]; then
   source "$HOME/.profile"
 fi
 
+export GPG_TTY=$(tty)
+
 # Load bash aliases
 if [ -f "$HOME/.bash_aliases" ]; then
   source "$HOME/.bash_aliases"
