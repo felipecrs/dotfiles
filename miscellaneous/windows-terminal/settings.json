@@ -27,7 +27,7 @@
     "defaults": {
       // Put settings here that you want to apply to all profiles.
       "colorScheme": "Dracula",
-      "fontFace": "FiraCode NF",
+      "fontFace": "FiraCode Nerd Font",
       "fontSize": 14,
       "backgroundImage": "%USERPROFILE%\\OneDrive\\Imagens\\Wallpapers\\daft-punk-3.jpg",
       "backgroundImageOpacity": 0.1
@@ -38,7 +38,6 @@
         "hidden": false,
         "name": "Ubuntu",
         "source": "Windows.Terminal.Wsl",
-        "icon": "%PROGRAMFILES%\\WindowsApps\\CanonicalGroupLimited.UbuntuonWindows_2004.2020.812.0_x64__79rhkp1fndgsc\\Assets\\Square44x44Logo.altform-unplated_targetsize-48.png",
         "startingDirectory": "//wsl$/Ubuntu/home/felipesantos"
       },
       {
@@ -129,6 +128,15 @@
         "splitMode": "duplicate"
       },
       "keys": "alt+shift+d"
+    },
+
+    // Open Settings UI
+    {
+      "command": {
+        "action": "openSettings",
+        "target": "settingsUI"
+      },
+      "keys": "ctrl+shift+,"
     }
   ]
 }
