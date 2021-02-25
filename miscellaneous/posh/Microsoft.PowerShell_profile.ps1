@@ -6,6 +6,8 @@
 
 Clear-Host
 
+[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+
 Import-WslCommand "apt", "awk", "emacs", "grep", "head", "less", "ls", "rm", "mv", "cp", "man", "sed", "seq", "tail", "vim", "tree"
 
 # Chocolatey profile
