@@ -18,6 +18,10 @@ gsudo() {
   fi
   gsudo.exe wsl -d "$WSL_DISTRO_NAME" -e "${command_line[@]}"
 }
+
+cdw() {
+  cd "${WIN_HOME?}"
+}
 {{- end }}
 
 # shellcheck disable=SC2142
