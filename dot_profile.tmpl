@@ -48,8 +48,8 @@ if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
   . "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
 
-if [ -d "$HOME/development/flutter/bin" ]; then
-  export PATH="$HOME/development/flutter/bin:$PATH"
+if [ -d "$HOME/.local/share/flutter/bin" ]; then
+  export PATH="$HOME/.local/share/flutter/bin:$PATH"
 fi
 
 # set PATH so it includes user's private bin if it exists
