@@ -6,7 +6,7 @@
 {{- $workName := "Felipe de Cássio Rocha Santos" -}}
 {{- $workEmail := "felipesantos@inatel.br" -}}
 
-{{- $isWork := or (contains "work" (lower .chezmoi.fullHostname)) (contains "inatel" (lower .chezmoi.fullHostname)) (contains "iccso" (lower .chezmoi.fullHostname)) (contains "seli" (lower .chezmoi.fullHostname)) (contains "vmx" (lower .chezmoi.fullHostname)) -}}
+{{- $isWork := or (contains "work" (lower .chezmoi.hostname)) (contains "inatel" (lower .chezmoi.hostname)) (contains "iccso" (lower .chezmoi.hostname)) (contains "seli" (lower .chezmoi.hostname)) (contains "vmx" (lower .chezmoi.hostname)) -}}
 {{- $isPersonal := not $isWork -}}
 
 {{- $isWsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
