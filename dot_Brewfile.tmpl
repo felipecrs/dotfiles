@@ -9,7 +9,7 @@ brew "kind"
 {{- if .is_work }}
 brew "jfrog-cli"
 {{- end }}
-{{- if .is_gnome }}
+{{- if and .is_gnome (not .is_wsl) }}
 brew "onedrive"
 {{- end }}
 {{- if not .is_wsl }}
