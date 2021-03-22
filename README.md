@@ -4,6 +4,10 @@
 
 Bootstrap your Ubuntu in a few minutes!
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/29582865/112045407-95518600-8b29-11eb-8218-128fd2e9805a.png" alt="Hello dotfiles!"/>
+</p>
+
 This dotfiles repository is currently aimed for [**Ubuntu on WSL**](https://ubuntu.com/wsl), **Ubuntu Server**, and **Ubuntu Desktop**, tested with **Ubuntu 20.04**. See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10). It's also suitable for use in [**GitHub Codespaces**](https://github.com/features/codespaces) and [**VS Code Remote - Containers**](https://code.visualstudio.com/docs/remote/containers).
 
 This repository is managed with [`chezmoi`](https://chezmoi.io).
@@ -11,10 +15,11 @@ This repository is managed with [`chezmoi`](https://chezmoi.io).
 ## Summary <!-- omit in toc -->
 
 - [Get started](#get-started)
-  - [Using the convenience script](#using-the-convenience-script)
+  - [Setup the font](#setup-the-font)
+  - [Install](#install)
     - [Usage](#usage)
     - [Examples](#examples)
-  - [Manually](#manually)
+  - [Install manually](#install-manually)
 - [Forking guide](#forking-guide)
 - [`scripts/`](#scripts)
   - [`create_alternative_chrome_shortcut.sh`](#create_alternative_chrome_shortcutsh)
@@ -24,17 +29,45 @@ This repository is managed with [`chezmoi`](https://chezmoi.io).
 
 ## Get started
 
-The current state of this dotfiles uses the zsh theme [Powerlevel10k](https://github.com/romkatv/powerlevel10k), so it requires you to install a font on your host machine with support for [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts). Currently I use `FiraCode NF`, and you can install it on Windows with [Chocolatey](https://chocolatey.org/install):
+The current state of this dotfiles uses the zsh theme [Powerlevel10k](https://github.com/romkatv/powerlevel10k), so it requires you to install a font on your host machine with support for [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts). Currently I use `FiraCode Nerd Font`. You have to:
 
-```powershell
-choco install firacodenf
-```
+1. [Setup the font](#set-up-the-font)
+2. [Install the dotfiles](#installing)
+
+### Setup the font
+
+In Ubuntu Desktop, the dotfiles installation will take care of installing the font and set it up in GNOME Terminal. On Windows, you can install it with the following steps:
+
+1. [Download it by clicking here](https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Regular/complete/Fira%20Code%20Regular%20Nerd%20Font%20Complete.ttf).
+2. Open it and click in _Install_.
+
+Once you have it installed, you have to configure your terminal applications to use it. **To configure VS Code**:
+
+1. On VS Code, press `Ctrl`+`,` to open the settings.
+2. Search by "Terminal Font Family" and write `FiraCode Nerd Font` under _Terminal › Integrated: Font Family_.
+
+**To configure Windows Terminal**:
+
+1. On Windows Terminal, press `Ctrl`+`,` to open the settings. It will open a `json` file in your text editor.
+2. Insert a new `fontFace` key under `profiles.defaults` with the value `FiraCode Nerd Font`, something like:
+
+   ```json
+   {
+     "profiles": {
+       "defaults": {
+         "fontFace": "FiraCode Nerd Font"
+       }
+     }
+   }
+   ```
+
+Note that both applications needs to be restarted after installing the font before using it.
 
 Now you will learn how to bootstrap this repository on your machine.
 
-### Using the convenience script
+### Install
 
-You can use the [convenience script](./clone_and_install.sh) with, it will install Git in case you don't have it already:
+You can use the [convenience script](./clone_and_install.sh) to get started pretty quick, it will install Git in case you don't have it already:
 
 ```bash
 sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
@@ -48,7 +81,7 @@ sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
 
 #### Usage
 
-The convenience script supports two environment variables:
+The convenience script supports some environment variables:
 
 - `DOTFILES_REPO_HOST`: Default to `https://github.com`.
 - `DOTFILES_USER`: Default to `felipecrs`.
@@ -62,9 +95,9 @@ The convenience script supports two environment variables:
   DOTFILES_BRANCH=beta sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
   ```
 
-### Manually
+### Install manually
 
-You can also do it manually, it's simple after all.
+You can also do it manually, without the convenience script, it's simple after all.
 
 ```bash
 git clone https://github.com/felipecrs/dotfiles "$HOME/.dotfiles"
