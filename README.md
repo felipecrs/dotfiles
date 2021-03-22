@@ -50,7 +50,8 @@ sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
 
 The convenience script supports two environment variables:
 
-- `DOTFILES_REPO`: Default to `felipecrs`.
+- `DOTFILES_REPO_HOST`: Default to `https://github.com`.
+- `DOTFILES_USER`: Default to `felipecrs`.
 - `DOTFILES_BRANCH`: Default to `master`.
 
 #### Examples
