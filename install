@@ -13,19 +13,37 @@ error() {
 # -u: exit on unset variables
 set -eu
 
+if [ "$(command -v curl)" ]; then
+  download_cmd="curl -fsSL"
+elif [ "$(command -v wget)" ]; then
+  download_cmd="wget -qO-"
+fi
+
 if [ ! "$(command -v chezmoi)" ]; then
   bin_dir="$HOME/.local/bin"
   chezmoi="$bin_dir/chezmoi"
   echo_task "Installing chezmoi to $chezmoi"
-  if [ "$(command -v curl)" ]; then
-    sh -c "$(curl -fsSL https://git.io/chezmoi)" -- -b "$bin_dir"
-  elif [ "$(command -v wget)" ]; then
-    sh -c "$(wget -qO- https://git.io/chezmoi)" -- -b "$bin_dir"
+  if [ -n "${download_cmd:-}" ]; then
+    sh -c "$($download_cmd https://git.io/chezmoi)" -- -b "$bin_dir"
   else
     error "To install chezmoi, you must have curl or wget."
   fi
 else
-  chezmoi=chezmoi
+  chezmoi="chezmoi"
+fi
+
+if [ ! "$(command -v op)" ]; then
+  if [ -n "${download_cmd:-}" ]; then
+    op_url="$($download_cmd https://app-updates.agilebits.com/product_history/CLI \
+      | grep -Eo "https://.*/op_linux_amd64_.*\.zip" | head -1)"
+    $download_cmd "$op_url" > /tmp/op.zip
+    unzip -q -j /tmp/op.zip op -d "$HOME/.local/bin"
+    op="$HOME/.local/bin/op"
+  else
+    error "To install op, you must have curl or wget."
+  fi
+else
+  op="op"
 fi
 
 # POSIX way to get script's dir: https://stackoverflow.com/a/29834779/12156188
