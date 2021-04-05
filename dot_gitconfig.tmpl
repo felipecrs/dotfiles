@@ -30,6 +30,7 @@
   co = checkout
   cob = checkout -b
   cz = !npx -p commitizen cz
+  cp = cherry-pick
   set-profile = "!f() { if [ \"$1\" = \"personal\" ]; then git config user.name \"{{ .personal_name }}\" && git config user.email \"{{ .personal_email}}\"; elif [ \"$1\" = \"work\" ]; then git config user.name \"{{ .work_name }}\" && git config user.email \"{{ .work_email }}\"; else echo \"Accepted values: personal, work\" && return 1; fi; }; f"
   fully-clean = "!f() { set -v; branch="$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)"; git checkout $branch; git fetch origin $branch; git clean -fd; }; f"
   get-current-branch = "!git branch --show-current | grep ."
