@@ -11,8 +11,11 @@ refreshenv() {
 }
 
 mcd() {
-  mkdir -p "$1" &&
-    cd "$1"
+  mkdir -p "$1" && cd "$1"
+}
+
+cdr() {
+  cd "$REPOS_HOME"
 }
 
 # See: https://github.com/twpayne/chezmoi/issues/854#issuecomment-675160348
