@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 read -r -d '' _HELP <<EOM
 This script creates a new shortcut for Google Chrome which opens using a

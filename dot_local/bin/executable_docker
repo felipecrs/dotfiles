@@ -1,15 +1,4 @@
-#!/usr/bin/env bash
-
-get_in_path_except_current() {
-  which -a "$1" | grep -A1 "$0" | grep -v "$0"
-}
-
-is_docker_from_desktop() {
-  if [ "$1" != "/mnt/c/Program Files/Docker/Docker/resources/bin/docker" ] &&
-    [ "$1" != "/mnt/c/ProgramData/DockerDesktop/version-bin/docker" ]; then
-    return 1
-  fi
-}
+#!/bin/bash
 
 echo_blue() {
   printf "\033[0;34m%s\033[0m" "$*" >&2
@@ -23,32 +12,52 @@ echo_red_nl() {
   printf "\033[0;31m%s\033[0m\n" "$*" >&2
 }
 
-docker="$(get_in_path_except_current docker)"
+get_in_path_except() {
+  local -r command="$1"
+  local -r except="$2"
 
-if is_docker_from_desktop "$docker"; then
-  echo_blue "Starting Docker Desktop..."
+  which -a "$command" | grep -A1 "$except" | grep -v "$except" | grep .
+}
 
-  # Using `powershell.exe` because of https://github.com/microsoft/WSL/issues/3769
-  powershell.exe 'Start "C:\Program Files\Docker\Docker\Docker Desktop.exe"'
+set -euo pipefail
 
-  seconds=30
-  for ((i = 0; i < seconds; i++)); do
-    sleep 1
+if ! docker="$(get_in_path_except docker "$0")"; then
+  readonly docker_desktop_win_path="C:\Program Files\Docker\Docker\Docker Desktop.exe"
+  readonly docker_desktop_wsl_path="/mnt/c/Program Files/Docker/Docker/Docker Desktop.exe"
 
-    docker="$(get_in_path_except_current docker)"
-    "$docker" info &>/dev/null
+  if [[ -f "$docker_desktop_wsl_path" ]]; then
+    echo_blue "Starting Docker Desktop..."
 
-    exit_code=$?
-    if [ $exit_code -eq 0 ]; then
-      break
+    # Using `powershell.exe` because of https://github.com/microsoft/WSL/issues/3769
+    PowerShell.exe -Command "Start '$docker_desktop_win_path'"
+
+    readonly seconds=45
+    for ((i = 0; i < seconds; i++)); do
+      sleep 1
+
+      if docker="$(get_in_path_except docker "$0")"; then
+        if "$docker" info &>/dev/null; then
+          exit_code=0
+          break
+        else
+          exit_code=$?
+        fi
+      else
+        # command not found
+        exit_code=127
+      fi
+    done
+
+    if [[ $exit_code -eq 0 ]]; then
+      echo_green_nl " started successfully."
+    else
+      echo_red_nl " not able to start in $seconds seconds."
+      exit $exit_code
     fi
-  done
-
-  if [ $exit_code -eq 0 ]; then
-    echo_green_nl " started successfully."
   else
-    echo_red_nl " not able to start in $seconds seconds."
-    exit $exit_code
+    echo_red_nl "Docker Desktop is not installed (the file '$docker_desktop_wsl_path' was not found)."
+    # command not found
+    exit 127
   fi
 fi
 

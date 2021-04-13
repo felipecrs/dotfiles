@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 read -r -d '' _HELP <<EOM
 This script enables Google Chrome's dark mode on Ubuntu by copying the shortcut
