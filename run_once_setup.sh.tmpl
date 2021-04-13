@@ -31,11 +31,14 @@ is_devcontainer() {
 is_ubuntu() {
   local version=${1-'20.04'}
 
-  if [[ "$(cat /etc/os-release)" = *VERSION_ID=\"$version\"* ]]; then
-    return 0
-  else
-    return 1
-  fi
+  (
+    . /etc/os-release
+    if [[ "$VERSION_ID" == "$version" ]]; then
+      return 0
+    else
+      return 1
+    fi
+  )
 }
 
 is_gnome() {
@@ -179,7 +182,26 @@ if ! is_devcontainer; then
   fi
 
   echo_task "Installing brew packages"
-  brew bundle install --global
+  readarray -t brew_packages <<'EOM'
+chezmoi
+gh
+jq
+yq
+kubectl
+helm
+kind
+asciinema
+{{ if .is_work -}}
+jfrog-cli
+{{ end -}}
+{{ if and .is_gnome (not .is_wsl) -}}
+onedrive
+{{ end -}}
+{{ if not .is_wsl -}}
+docker-compose
+{{ end -}}
+EOM
+  brew install "${brew_packages[@]}"
 
   # Uninstalling previously installed chezmoi because it was already installed
   # by Homebrew.
