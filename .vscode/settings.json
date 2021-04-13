@@ -29,5 +29,32 @@
   "shellcheck.customArgs": [
     "-x"
   ],
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "shellcheck.ignorePatterns": {
+    "**/*.zsh": true,
+    "**/*.zshrc": true,
+    "**/zshrc": true,
+    "**/*.zprofile": true,
+    "**/zprofile": true,
+    "**/*.zlogin": true,
+    "**/zlogin": true,
+    "**/*.zlogout": true,
+    "**/zlogout": true,
+    "**/*.zshenv": true,
+    "**/zshenv": true,
+    "**/*.zsh-theme": true,
+    // custom
+    "**/*_zshrc": true,
+    "**/*_antigenrc": true,
+  },
+  "files.associations": {
+    "install": "shellscript",
+    "*.sh.tmpl": "shellscript",
+    "*_zshrc": "shellscript",
+    "*_antigenrc": "shellscript",
+    "*_profile.tmpl": "shellscript",
+    "*_bashrc": "shellscript",
+    "*_bash_aliases.tmpl": "shellscript",
+    "**/dot_local/bin/*": "shellscript"
+  }
 }

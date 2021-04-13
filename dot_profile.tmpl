@@ -24,9 +24,11 @@ elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
   eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
 fi
 
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 if [ -f "$NVM_DIR/nvm.sh" ]; then
+  # shellcheck disable=SC1090
   . "$NVM_DIR/nvm.sh"
+  export NVM_DIR
 else
   unset NVM_DIR
 fi
@@ -45,6 +47,7 @@ fi
 
 if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
   export SDKMAN_DIR="$HOME/.sdkman"
+  # shellcheck disable=SC1090
   . "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
 
@@ -64,7 +67,10 @@ fi
 
 if [ -n "$WSL_DISTRO_NAME" ] || [ -n "$IS_WSL" ]; then
   export BROWSER="wslview"
-  export WIN_HOME="$(wslpath "$(wslvar USERPROFILE)")"
+  if [ "$(command -v wslpath)" ] && [ "$(command -v wslvar)" ]; then
+    WIN_HOME="$(wslpath "$(wslvar USERPROFILE)")"
+    export WIN_HOME
+  fi
 fi
 
 export VISUAL="{{ .editor }}"

@@ -1,54 +1,32 @@
 #!/bin/bash
 
-set -euo pipefail
-
 echo_task() {
-  printf "\033[0;34m--> %s\033[0m\n" "$@"
+  printf "\033[0;34m--> %s\033[0m\n" "$*"
 }
 
 echo_sub_task() {
-  printf "\033[0;34m----> %s\033[0m\n" "$@"
+  printf "\033[0;34m----> %s\033[0m\n" "$*"
 }
 
 is_wsl() {
-  if [ -n "${WSL_DISTRO_NAME+x}" ] || [ -n "${IS_WSL+x}" ]; then
-    return 0
-  else
-    return 1
-  fi
+  # shellcheck disable=SC2050
+  [[ "{{ .is_wsl }}" == true ]]
 }
 
 is_devcontainer() {
-  # VSCODE_REMOTE_CONTAINERS_SESSION:
-  # https://github.com/microsoft/vscode-remote-release/issues/3517#issuecomment-698617749
-  if [ -n "${REMOTE_CONTAINERS+x}" ] || [ -n "${CODESPACES+x}" ] || [ -n "${VSCODE_REMOTE_CONTAINERS_SESSION+x}" ]; then
-    return 0
-  else
-    return 1
-  fi
+  # shellcheck disable=SC2050
+  [[ "{{ .is_devcontainer }}" == true ]]
 }
 
 is_ubuntu() {
   local version=${1-'20.04'}
 
-  (
-    . /etc/os-release
-    if [[ "$VERSION_ID" == "$version" ]]; then
-      return 0
-    else
-      return 1
-    fi
-  )
+  [[ "{{ .chezmoi.osRelease.versionID }}" == "${version}" ]]
 }
 
 is_gnome() {
-  # This is not the best way of doing it, but at least it works inside the
-  # Visual Studio Code integrated terminal, which is enough for me now.
-  if [ "$(command -v gnome-shell)" ]; then
-    return 0
-  else
-    return 1
-  fi
+  # shellcheck disable=SC2050
+  [[ "{{ .is_gnome }}" == true ]]
 }
 
 brew() {
@@ -104,10 +82,12 @@ sdk() {
 EOM
 }
 
+set -euo pipefail
+
 ran_apt_update=false
 
 # See: https://github.com/microsoft/vscode-remote-release/issues/3531#issuecomment-675278804
-if [ -z "${USER+x}" ]; then
+if [[ -z "${USER+x}" ]]; then
   USER="$(id -un)"
 fi
 
@@ -206,7 +186,7 @@ EOM
   # Uninstalling previously installed chezmoi because it was already installed
   # by Homebrew.
   local_bin_chezmoi="$HOME/.local/bin/chezmoi"
-  if [ -f "$local_bin_chezmoi" ]; then
+  if [[ -f "$local_bin_chezmoi" ]]; then
     echo_task "Uninstalling chezmoi at $local_bin_chezmoi"
     rm -f "$local_bin_chezmoi"
   fi
@@ -253,7 +233,7 @@ EOM
 
     echo_task "Syncing .ssh folder from Windows to WSL"
     USERPROFILE="$(wslpath "$(wslvar USERPROFILE)")"
-    if [ -f "$USERPROFILE/.ssh/id_rsa" ]; then
+    if [[ -f "$USERPROFILE/.ssh/id_rsa" ]]; then
       cp -rf "$USERPROFILE/.ssh/." "$HOME/.ssh"
       chmod 600 "$HOME/.ssh/id_rsa"
     else

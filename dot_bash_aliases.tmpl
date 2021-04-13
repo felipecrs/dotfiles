@@ -11,10 +11,12 @@ refreshenv() {
 }
 
 mcd() {
+  # shellcheck disable=SC2164
   mkdir -p "$1" && cd "$1"
 }
 
 cdr() {
+  # shellcheck disable=SC2164
   cd "$REPOS_HOME"
 }
 
@@ -24,7 +26,7 @@ chezmoi-re-run-scripts() {
     chezmoi init --apply
 }
 
-{{ if .is_wsl -}}
+# {{ if .is_wsl }}
 gsudo() {
   local -r shell=$(ps -p $$ -ocomm=)
 
@@ -32,6 +34,7 @@ gsudo() {
 }
 
 cdw() {
+  # shellcheck disable=SC2164
   cd "${WIN_HOME?}"
 }
-{{- end }}
+# {{ end }}
