@@ -48,8 +48,9 @@ Once you have it installed, you have to configure your terminal applications to 
 
 **To configure Windows Terminal**:
 
-1. On Windows Terminal, press `Ctrl`+`,` to open the settings. It will open a `json` file in your text editor.
-2. Insert a new `fontFace` key under `profiles.defaults` with the value `FiraCode Nerd Font`, something like:
+1. On Windows Terminal, press `Ctrl`+`,` to open the settings.
+2. Click in _Open JSON file_ in the bottom left side. It will open the `settings.json` file in your text editor.
+3. Insert a new `fontFace` key under `profiles.defaults` with the value `FiraCode Nerd Font`, something like:
 
    ```json
    {
