@@ -67,7 +67,7 @@ Once you have it installed, you have to configure your terminal applications to 
 
 ### 2. Install the dotfiles
 
-You can use the [convenience script](./clone_and_install.sh) to install the dotfiles pretty quickly, and it will install Git in case you don't have it already:
+You can use the [convenience script](./clone_and_install.sh) to install the dotfiles pretty quickly, and it will install Git in case you don't have it already. Simply run the following command in your terminal:
 
 ```bash
 sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
