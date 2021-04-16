@@ -130,14 +130,9 @@ if ! is_devcontainer; then
 
   echo_task "Adding apt repositories"
   sudo add-apt-repository --no-update -y ppa:git-core/ppa
-  curl -fsSL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/Release.key" | sudo apt-key add -
-  sudo add-apt-repository -y "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/ /"
 
   echo_task "Installing git"
   sudo apt install -y git
-
-  echo_task "Installing skopeo"
-  sudo apt install -y skopeo
 
   # echo_task "Installing podman"
   # sudo apt install -y podman
@@ -170,6 +165,7 @@ yq
 kubectl
 helm
 kind
+skopeo
 asciinema
 {{ if .is_work -}}
 jfrog-cli
