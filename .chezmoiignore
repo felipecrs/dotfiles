@@ -9,8 +9,8 @@ miscellaneous/
 .vscode/
 .devcontainer/
 {{ if not .is_wsl -}}
-dot_local/bin/executable_docker
+.local/bin/docker
 {{- end}}
 {{ if .is_devcontainer -}}
-dot_local/bin/executable_code
+.local/bin/code
 {{- end}}
