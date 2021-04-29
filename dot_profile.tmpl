@@ -1,15 +1,5 @@
 #!/bin/sh
 
-# ~/.profile: executed by the command interpreter for login shells.
-# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
-# exists.
-# see /usr/share/doc/bash/examples/startup-files for examples.
-# the files are located in the bash-doc package.
-
-# the default umask is set in /etc/profile; for setting the umask
-# for ssh logins, install and configure the libpam-umask package.
-#umask 022
-
 # if not coming from .bashrc and running in bash and .bashrc exists
 if [ -z "$COMING_FROM_BASHRC" ] && [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then
   export COMING_FROM_PROFILE="true"
@@ -18,26 +8,25 @@ if [ -z "$COMING_FROM_BASHRC" ] && [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc
   unset COMING_FROM_PROFILE
 fi
 
-if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-elif [ -f "$HOME/.linuxbrew/bin/brew" ]; then
+elif [ -x "$HOME/.linuxbrew/bin/brew" ]; then
   eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
 fi
 
-NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+# shellcheck disable=SC2031
+NVM_DIR="$([ -n "$XDG_CONFIG_HOME" ] && echo "$XDG_CONFIG_HOME/nvm" || echo "$HOME/.nvm")"
 if [ -f "$NVM_DIR/nvm.sh" ]; then
-  # shellcheck disable=SC1090
+  # shellcheck disable=SC1091
   . "$NVM_DIR/nvm.sh"
   export NVM_DIR
 else
   unset NVM_DIR
 fi
 
-if [ -d "$HOME/.volta" ]; then
+if [ -d "$HOME/.volta/bin" ]; then
   export VOLTA_HOME="$HOME/.volta"
-  if [ -d "$VOLTA_HOME/bin" ]; then
-    export PATH="$VOLTA_HOME/bin:$PATH"
-  fi
+  export PATH="$VOLTA_HOME/bin:$PATH"
 fi
 
 if [ -d "$HOME/.deno/bin" ]; then
@@ -47,7 +36,7 @@ fi
 
 if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
   export SDKMAN_DIR="$HOME/.sdkman"
-  # shellcheck disable=SC1090
+  # shellcheck disable=SC1091
   . "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
 
@@ -55,20 +44,20 @@ if [ -d "$HOME/.local/share/flutter/bin" ]; then
   export PATH="$HOME/.local/share/flutter/bin:$PATH"
 fi
 
-# set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ]; then
   export PATH="$HOME/bin:$PATH"
 fi
 
-# set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.local/bin" ]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
 if [ -n "$WSL_DISTRO_NAME" ] || [ -n "$IS_WSL" ]; then
-  export BROWSER="wslview"
+  if [ "$(command -v wslview)" ]; then
+    export BROWSER="wslview"
+  fi
   if [ "$(command -v wslpath)" ] && [ "$(command -v wslvar)" ]; then
-    WIN_HOME="$(wslpath "$(wslvar USERPROFILE)")"
+    WIN_HOME=$(wslpath "$(wslvar USERPROFILE)")
     export WIN_HOME
   fi
 fi
