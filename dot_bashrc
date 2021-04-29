@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This file is based on Ubuntu's default .bashrc, with some customizations
+
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -134,16 +136,21 @@ fi
 if type brew &>/dev/null; then
   HOMEBREW_PREFIX="$(brew --prefix)"
   if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
-    # shellcheck disable=SC1090
-    source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+    # shellcheck disable=SC1091
+    . "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
   else
     for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
-      # shellcheck disable=SC1090
-      [[ -r "$COMPLETION" ]] && source "$COMPLETION"
+      if [[ -r "$COMPLETION" ]]; then
+        # shellcheck disable=SC1090
+        . "$COMPLETION"
+      fi
     done
   fi
+  unset HOMEBREW_PREFIX
 fi
 
 # Enable bash completions for nvm
-# shellcheck disable=SC1090
-[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+if [ -s "$NVM_DIR/bash_completion" ]; then
+  # shellcheck disable=SC1091
+  . "$NVM_DIR/bash_completion"
+fi
