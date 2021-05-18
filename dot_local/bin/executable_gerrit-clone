@@ -1,0 +1,91 @@
+#!/bin/bash
+
+red() {
+  printf '\e[31;1m%s\e[m\n' "$*"
+}
+
+green() {
+  printf '\e[32;1m%s\e[m\n' "$*"
+}
+
+yellow() {
+  printf '\e[33;1m%s\e[m\n' "$*"
+}
+
+c() {
+  yellow "➡ $*"
+  "$@"
+}
+
+set -euo pipefail
+
+command_name=$(basename "$0")
+readonly command_name
+
+help_text=$(
+  cat <<'EOM'
+This script is a wrapper on top of `git clone`, so it not only clones, but also
+sets up the Gerrit commit-msg hook for the repository without any hassle.
+EOM
+)
+
+readonly help_text
+
+usage=$(
+  cat <<EOM
+Usage:
+
+  $command_name [--help] <repository> [<directory>] [<additional-git-clone-args>]
+
+Example:
+
+  $command_name https://felipecrs@review.gerrithub.io/a/felipecrs/dotfiles
+  $command_name https://felipecrs@review.gerrithub.io/a/felipecrs/dotfiles ~/.dotfiles
+  $command_name https://felipecrs@review.gerrithub.io/a/felipecrs/dotfiles --depth=1
+  $command_name https://felipecrs@review.gerrithub.io/a/felipecrs/dotfiles ~/.dotfiles --depth=1
+EOM
+)
+
+readonly usage
+
+if [[ -z "${1:-}" || "$1" == "--help" ]]; then
+  echo "$help_text"
+  echo
+  echo "$usage"
+  exit 0
+fi
+
+readonly regex='^(https?)://([-A-Za-z0-9\+&#%?=~_|!:,.;]*@)?([-A-Za-z0-9\+&#%?=~_|!:,.;]*)/[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
+
+if [[ "$1" =~ $regex ]]; then
+  readonly git_repository="${BASH_REMATCH[0]}"
+  readonly protocol="${BASH_REMATCH[1]}"
+  readonly hostname="${BASH_REMATCH[3]}"
+
+  # check if it's not an option
+  if [[ -n "${2:-}" && "${2#-}" == "$2" ]]; then
+    directoy="$2"
+  else
+    directoy="$(basename "$git_repository")"
+  fi
+  readonly directoy
+
+  c git clone "$@"
+
+  git_dir="$directoy/$(git -C "$directoy" rev-parse --git-dir)"
+  readonly git_dir
+
+  hook="$git_dir/hooks/commit-msg"
+  readonly hook
+
+  c curl -fL --create-dirs "$protocol://$hostname/tools/hooks/commit-msg" -o "$hook"
+
+  c chmod +x "$hook"
+
+  green "✔ Done!"
+else
+  red "Error: the repository does not seem to be a valid http or https url." >&2
+  echo
+  echo "$usage"
+  exit 2
+fi
