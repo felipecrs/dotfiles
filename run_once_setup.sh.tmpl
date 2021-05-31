@@ -30,56 +30,64 @@ is_gnome() {
 }
 
 brew() {
-  bash <<EOM
-  if [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
-    eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-  elif [[ -f "\$HOME/.linuxbrew/bin/brew" ]]; then
-    eval "\$("\$HOME/.linuxbrew/bin/brew" shellenv)"
-  else
-    echo "brew is not installed" >&2
-    exit 127
-  fi
-  brew $@
+  bash <(
+    cat <<'EOM'
+if [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [[ -f "$HOME/.linuxbrew/bin/brew" ]]; then
+  eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
+else
+  echo "brew is not installed" >&2
+  exit 127
+fi
+brew "$@"
 EOM
+  ) "$@"
 }
 
 nvm() {
-  bash <<EOM
-  export NVM_DIR="\$([ -z "\${XDG_CONFIG_HOME-}" ] && printf %s "\${HOME}/.nvm" || printf %s "\${XDG_CONFIG_HOME}/nvm")"
-  if [[ -f "\$NVM_DIR/nvm.sh" ]]; then
-    . "\$NVM_DIR/nvm.sh"
-  else
-    echo "nvm is not installed" >&2
-    exit 127
-  fi
-  nvm $@
+  bash <(
+    cat <<'EOM'
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+if [[ -f "$NVM_DIR/nvm.sh" ]]; then
+  . "$NVM_DIR/nvm.sh"
+else
+  echo "nvm is not installed" >&2
+  exit 127
+fi
+nvm "$@"
 EOM
+  ) "$@"
 }
 
 volta() {
-  bash <<EOM
-  export VOLTA_HOME="\$HOME/.volta"
-  if [[ -f "\$VOLTA_HOME/bin/volta" ]]; then
-    export PATH="\$VOLTA_HOME/bin:\$PATH"
-  else
-    echo "volta is not installed" >&2
-    exit 127
-  fi
-  volta $@
+  bash <(
+    cat <<'EOM'
+export VOLTA_HOME="$HOME/.volta"
+if [[ -f "$VOLTA_HOME/bin/volta" ]]; then
+  export PATH="$VOLTA_HOME/bin:$PATH"
+else
+  echo "volta is not installed" >&2
+  exit 127
+fi
+volta "$@"
 EOM
+  ) "$@"
 }
 
 sdk() {
-  bash <<EOM
-  export SDKMAN_DIR="\$HOME/.sdkman"
-  if [[ -f "\$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
-    . "\$SDKMAN_DIR/bin/sdkman-init.sh"
-  else
-    echo "sdk is not installed" >&2
-    exit 127
-  fi
-  sdk $@
+  bash <(
+    cat <<'EOM'
+export SDKMAN_DIR="$HOME/.sdkman"
+if [[ -f "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
+  . "$SDKMAN_DIR/bin/sdkman-init.sh"
+else
+  echo "sdk is not installed" >&2
+  exit 127
+fi
+sdk "$@"
 EOM
+  ) "$@"
 }
 
 set -euo pipefail
@@ -162,26 +170,25 @@ if ! is_devcontainer; then
   fi
 
   echo_task "Installing brew packages"
-  readarray -t brew_packages <<'EOM'
-chezmoi
-gh
-jq
-yq
-kubectl
-helm
-kind
-asciinema
+
+  brew bundle --no-lock --file=/dev/stdin <<'EOF'
+brew "chezmoi"
+brew "jq"
+brew "yq"
+brew "kubectl"
+brew "helm"
+brew "kind"
+brew "asciinema"
 {{ if .is_work -}}
-jfrog-cli
+brew "jfrog-cli"
 {{ end -}}
 {{ if and .is_gnome (not .is_wsl) -}}
-onedrive
+brew "onedrive"
 {{ end -}}
 {{ if not .is_wsl -}}
-docker-compose
+brew "docker-compose"
 {{ end -}}
-EOM
-  brew install "${brew_packages[@]}"
+EOF
 
   # Uninstalling previously installed chezmoi because it was already installed
   # by Homebrew.
