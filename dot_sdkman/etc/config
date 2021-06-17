@@ -1,0 +1,8 @@
+# make sdkman non-interactive, preferred for CI environments
+sdkman_auto_answer=true
+
+# perform automatic selfupdates
+sdkman_auto_selfupdate=false
+
+# enable bash or zsh auto-completion
+sdkman_auto_complete=true
