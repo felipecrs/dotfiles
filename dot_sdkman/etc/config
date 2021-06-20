@@ -4,5 +4,8 @@ sdkman_auto_answer=true
 # perform automatic selfupdates
 sdkman_auto_selfupdate=false
 
+# subscribe to the beta channel
+sdkman_beta_channel=false
+
 # enable bash or zsh auto-completion
 sdkman_auto_complete=true
