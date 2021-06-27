@@ -26,10 +26,19 @@
     "wslpath",
     "wslvar"
   ],
-  "shellcheck.customArgs": [
-    "-x"
-  ],
-  "editor.formatOnSave": true,
+  "shellcheck.customArgs": ["-x"],
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[shellscript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
   "shellcheck.ignorePatterns": {
     "**/*.zsh": true,
     "**/*.zshrc": true,
@@ -45,7 +54,7 @@
     "**/*.zsh-theme": true,
     // custom
     "**/*_zshrc": true,
-    "**/*_antigenrc": true,
+    "**/*_antigenrc": true
   },
   "files.associations": {
     "install": "shellscript",
