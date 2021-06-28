@@ -19,6 +19,8 @@
   // If enabled, formatted data is also copied to your clipboard
   "copyFormatting": false,
 
+  "launchMode": "maximized",
+
   // A profile specifies a command to execute paired with information about how it should look and feel.
   // Each one of them will appear in the 'New Tab' dropdown,
   //   and can be invoked from the commandline with `wt.exe -p xxx`
