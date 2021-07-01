@@ -88,7 +88,7 @@ fi
 
 echo_task "Updating apt packages"
 c sudo apt update -y
-c sudo apt full-upgrade -y --autoremove
+c sudo apt full-upgrade -y
 
 if snap warnings &>/dev/null; then
   echo_task "Updating snap packages"
