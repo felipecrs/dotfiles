@@ -218,16 +218,26 @@ EOF
 
   echo_task "Installing sdk"
   if ! sdk version &>/dev/null; then
-    bash -c "$(curl -fsSL "https://get.sdkman.io/?rcupdate=false")"
+    # sdkman installation fails because chezmoi already placed in the etc/config file
+    # so we install to a temporary directory
+    target_sdkman_dir="$HOME/.sdkman"
+    temp_sdkman_dir="$(mktemp --directory --dry-run --suffix=.sdkman)"
+    echo "Installing sdkman to temp directory..."
+    SDKMAN_DIR="$temp_sdkman_dir" bash -c "$(curl -fsSL "https://get.sdkman.io/?rcupdate=false")"
+    
+    echo "Now moving back sdkman to the target directory..."
+    # then we replace the config file
+    mv -f "$target_sdkman_dir/etc/config" "$temp_sdkman_dir/etc/config"
+    # delete the target sdkman installation folder
+    rm -rf "$target_sdkman_dir"
+    # and move the temp install dir to the target one
+    mv -f "$temp_sdkman_dir" "$target_sdkman_dir"
   else
     echo "sdk is already installed"
   fi
 
   echo_task "Installing Java"
-  (
-    set +o pipefail
-    yes | sdk install java
-  )
+  sdk install java
 
   # Install latest Java 8
   # get the identifier for java 8
