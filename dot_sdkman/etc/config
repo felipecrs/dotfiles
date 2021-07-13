@@ -2,10 +2,19 @@
 sdkman_auto_answer=true
 
 # perform automatic selfupdates
-sdkman_auto_selfupdate=false
+sdkman_selfupdate_enable=false
 
 # subscribe to the beta channel
 sdkman_beta_channel=false
 
 # enable bash or zsh auto-completion
 sdkman_auto_complete=true
+
+# other default settings
+sdkman_insecure_ssl=false
+sdkman_curl_connect_timeout=7
+sdkman_curl_max_time=10
+sdkman_debug_mode=false
+sdkman_colour_enable=true
+sdkman_auto_env=false
+sdkman_rosetta2_compatible=true
