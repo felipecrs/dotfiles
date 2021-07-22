@@ -181,6 +181,8 @@ brew "kind"
 brew "asciinema"
 {{ if .is_work -}}
 brew "jfrog-cli"
+{{ else -}}
+brew "gh"
 {{ end -}}
 {{ if and .is_gnome (not .is_wsl) -}}
 brew "onedrive"
