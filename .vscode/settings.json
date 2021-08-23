@@ -1,4 +1,7 @@
 {
+  "editor.codeActionsOnSave": {
+    "source.fixAll.shellcheck": true,
+  },
   "cSpell.words": [
     "C",
     "CODESPACES",
