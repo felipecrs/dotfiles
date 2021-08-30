@@ -226,7 +226,7 @@ EOF
     temp_sdkman_dir="$(mktemp --directory --dry-run --suffix=.sdkman)"
     echo "Installing sdkman to temp directory..."
     SDKMAN_DIR="$temp_sdkman_dir" bash -c "$(curl -fsSL "https://get.sdkman.io/?rcupdate=false")"
-    
+
     echo "Now moving back sdkman to the target directory..."
     # then we replace the config file
     mv -f "$target_sdkman_dir/etc/config" "$temp_sdkman_dir/etc/config"
@@ -261,7 +261,7 @@ EOF
     unset USERPROFILE
 
     echo_task "Setting up Git credential helper"
-    sudo git config --system credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe"
+    sudo git config --system --replace-all credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager-core.exe"
 
   elif is_gnome; then
     echo_task "Performing GNOME specific steps"
@@ -272,9 +272,15 @@ EOF
     gsettings set org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font 13'
 
     echo_task "Setting up Git credential helper"
-    sudo apt install -y libsecret-1-0 libsecret-1-dev
-    sudo make --directory /usr/share/doc/git/contrib/credential/libsecret
-    sudo git config --system credential.helper /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
+    if ! git-credential-manager-core --version; then
+      echo_sub_task "Installing Git Credential Manager Core"
+      # Using this method while https://github.com/microsoft/Git-Credential-Manager-Core/issues/422 does not get solved
+      curl -fsSL 'https://glare.now.sh/microsoft/Git-Credential-Manager-Core/^.*.deb$' --output /tmp/gcmcore.deb
+      sudo apt install -y /tmp/gcmcore.deb
+      rm -f /tmp/gcmcore.deb
+    fi
+    sudo git config --system --replace-all credential.helper /usr/bin/git-credential-manager-core
+    sudo git config --system --replace-all credential.credentialStore secretservice
 
     echo_task "Adding 'Open Code here' in Nautilus context menu"
     bash -c "$(wget -qO- https://raw.githubusercontent.com/harry-cpp/code-nautilus/master/install.sh)"
