@@ -37,6 +37,8 @@
   rr = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; git reset --hard "origin/$branch"; }; f"
   pfor = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; git push origin "HEAD:refs/for/$branch"; }; f"
   psfor = "!f() { set -ex; git caane; git pfor "$@"; }; f"
+  pdraft = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; git push origin "HEAD:refs/draft/$branch"; }; f"
+  psdraft = "!f() { set -ex; git caane; git pdraft "$@"; }; f"
   plr = pull --rebase
   plro = pull --rebase origin
   prune-refs = fetch --prune --prune-tags
