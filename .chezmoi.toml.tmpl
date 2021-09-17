@@ -1,12 +1,22 @@
-# The following variables are only available within this file
+{{- /* The following variables are only available within this file */ -}}
 
-{{ $personalName := "Felipe Santos" -}}
+{{- $personalName := "Felipe Santos" -}}
 {{- $personalEmail := "felipecassiors@gmail.com" -}}
 
 {{- $workName := "Felipe de Cássio Rocha Santos" -}}
 {{- $workEmail := "felipesantos@inatel.br" -}}
 
-{{- $isWork := or (contains "work" (lower .chezmoi.hostname)) (contains "inatel" (lower .chezmoi.hostname)) (contains "iccso" (lower .chezmoi.hostname)) (contains "seli" (lower .chezmoi.hostname)) (contains "vmx" (lower .chezmoi.hostname)) -}}
+{{- $isWork := .is_work -}}
+{{- if kindIs "invalid" $isWork -}}
+{{-   if stdinIsATTY -}}
+{{-     $isWork = promptBool "Is this a work environment" -}}
+{{-     writeToStdout "\n💡 Tip: you can make chezmoi ask this again with `chezmoi init --data=false`.\n" -}}
+{{-   else -}}
+{{- /*  You can set this environment variable to "true" in your work account for Codespaces or Gitpod */ -}}
+{{-     $isWork = eq (env "DOTFILES_IS_WORK") "true" -}}
+{{-   end -}}
+{{- end -}}
+
 {{- $isPersonal := not $isWork -}}
 
 {{- $isWsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
