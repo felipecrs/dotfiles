@@ -82,8 +82,9 @@ EOM
 
 if chezmoi --version &>/dev/null; then
   echo_task "Updating dotfiles"
-  c chezmoi update --apply=false
-  c chezmoi init --apply --force
+  c chezmoi upgrade --verbose
+  c chezmoi update --verbose --apply=false
+  c chezmoi init --verbose --apply --force
 fi
 
 echo_task "Updating apt packages"

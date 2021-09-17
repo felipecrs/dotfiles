@@ -1,0 +1,10 @@
+{{- if not .is_devcontainer | and .is_gnome -}}
+# Downloads all the variants of Fira Code Nerd Font
+{{-   range $_, $face := list "Regular" "Light" "Medium" "Bold" "Retina" "SemiBold" -}}
+{{-     range $_, $variant := list "" " Mono" }}
+".local/share/fonts/Fira Code {{ $face }} Nerd Font Complete{{ $variant }}.ttf":
+  type: file
+  url: https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/{{ $face }}/complete/Fira%20Code%20{{ $face }}%20Nerd%20Font%20Complete{{ $variant | replace " " "%20" }}.ttf
+{{      end -}}
+{{-   end -}}
+{{- end -}}

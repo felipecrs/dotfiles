@@ -172,7 +172,6 @@ if ! is_devcontainer; then
   echo_task "Installing brew packages"
 
   brew bundle --no-lock --file=/dev/stdin <<'EOF'
-brew "chezmoi"
 brew "jq"
 brew "yq"
 brew "kubectl"
@@ -191,15 +190,6 @@ brew "onedrive"
 brew "docker-compose"
 {{ end -}}
 EOF
-
-  # Uninstalling previously installed chezmoi because it was already installed
-  # by Homebrew.
-  local_bin_chezmoi="$HOME/.local/bin/chezmoi"
-  if [[ -f "$local_bin_chezmoi" ]]; then
-    echo_task "Uninstalling chezmoi at $local_bin_chezmoi"
-    rm -f "$local_bin_chezmoi"
-  fi
-  unset local_bin_chezmoi
 
   echo_task "Installing deno"
   if ! deno --version &>/dev/null; then
@@ -266,9 +256,7 @@ EOF
   elif is_gnome; then
     echo_task "Performing GNOME specific steps"
 
-    echo_task "Installing and setting up Fira Code Nerd Font"
-    curl -fsSL --create-dirs -o "$HOME/.local/share/fonts/Fira Code Regular Nerd Font Complete.ttf" \
-      "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Regular/complete/Fira%20Code%20Regular%20Nerd%20Font%20Complete.ttf"
+    echo_task "Setting up Fira Code Nerd Font as default monospaced font"
     gsettings set org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font 13'
 
     echo_task "Setting up Git credential helper"

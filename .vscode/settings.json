@@ -1,6 +1,6 @@
 {
   "editor.codeActionsOnSave": {
-    "source.fixAll.shellcheck": true,
+    "source.fixAll.shellcheck": true
   },
   "cSpell.words": [
     "C",
@@ -67,6 +67,7 @@
     "*_profile.tmpl": "shellscript",
     "*_bashrc": "shellscript",
     "*_bash_aliases.tmpl": "shellscript",
-    "**/dot_local/bin/*": "shellscript"
+    "**/dot_local/bin/*": "shellscript",
+    ".chezmoi*.yaml": "helm"
   }
 }
