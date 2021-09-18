@@ -85,14 +85,11 @@ c brew upgrade
 
 if chezmoi --version &>/dev/null; then
   echo_task "Updating dotfiles"
-  # We don't let update to apply, as we want the init to run before
+  # Pull latest changes from dotfiles repo
   c chezmoi update --verbose --apply=false
-  # We call init in case a change in the configuration was made
+  # Apply changes to chezmoi config
   c chezmoi init --verbose
-  # We first remove targets, as we may actually remove the
-  # previously created chezmoi.toml
-  c chezmoi apply --verbose --include remove --force
-  # And reapply, because this time chezmoi will pick up the correct config
+  # Apply the rest
   c chezmoi apply --verbose --force --refresh-externals
 fi
 
