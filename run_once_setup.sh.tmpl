@@ -172,6 +172,7 @@ if ! is_devcontainer; then
   echo_task "Installing brew packages"
 
   brew bundle --no-lock --file=/dev/stdin <<'EOF'
+brew "chezmoi"
 brew "jq"
 brew "yq"
 brew "kubectl"
@@ -190,6 +191,15 @@ brew "onedrive"
 brew "docker-compose"
 {{ end -}}
 EOF
+
+  # Uninstalling previously installed chezmoi because it was already installed
+  # by Homebrew.
+  local_bin_chezmoi="$HOME/.local/bin/chezmoi"
+  if [[ -f "$local_bin_chezmoi" ]]; then
+    echo_task "Uninstalling chezmoi at $local_bin_chezmoi"
+    rm -f "$local_bin_chezmoi"
+  fi
+  unset local_bin_chezmoi
 
   echo_task "Installing deno"
   if ! deno --version &>/dev/null; then

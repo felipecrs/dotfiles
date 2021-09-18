@@ -80,9 +80,11 @@ antigen() {
 EOM
 }
 
+echo_task "Updating brew packages"
+c brew upgrade
+
 if chezmoi --version &>/dev/null; then
   echo_task "Updating dotfiles"
-  c chezmoi upgrade --verbose
   c chezmoi update --verbose --apply=false
   c chezmoi init --verbose --apply --force
 fi
@@ -95,9 +97,6 @@ if snap warnings &>/dev/null; then
   echo_task "Updating snap packages"
   c sudo snap refresh
 fi
-
-echo_task "Updating brew packages"
-c brew upgrade
 
 echo_task "Updating antigen"
 c curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
