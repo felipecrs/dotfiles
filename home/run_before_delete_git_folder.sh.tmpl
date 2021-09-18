@@ -5,6 +5,5 @@
 readonly chezmoi_source_path="{{ .chezmoi.sourceDir }}"
 
 if [[ "$chezmoi_source_path" == */home && -d "$chezmoi_source_path/.git" ]]; then
-  echo "removing"
   rm -rf "$chezmoi_source_path/.git"
 fi
