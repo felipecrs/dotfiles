@@ -68,6 +68,7 @@
     "*_bashrc": "shellscript",
     "*_bash_aliases.tmpl": "shellscript",
     "**/dot_local/bin/*": "shellscript",
-    ".chezmoi*.yaml": "helm"
+    ".chezmoi*.yaml": "helm",
+    ".chezmoi.yaml.tmpl": "helm"
   }
 }

@@ -23,37 +23,37 @@
 {{- $isDevcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") | not | not -}}
 {{- $isGnome := lookPath "gnome-shell" | not | not -}}
 
-sourceDir = "{{ .chezmoi.sourceDir }}"
+{{- /* This retains the value passed with --source on chezmoi init, which is used in the ./install script */ -}}
+sourceDir: "{{ .chezmoi.sourceDir }}"
 
-[data]
-  # Here we "export" the variables, so we can access them outside this file
+# Here we "export" the variables, so we can access them outside this file
+data:
+  is_personal: {{ $isPersonal }}
+  is_work: {{ $isWork }}
+  is_wsl: {{ $isWsl }}
+  is_devcontainer: {{ $isDevcontainer }}
+  is_gnome: {{ $isGnome }}
 
-  personal_name = "{{ $personalName }}"
-  personal_email = "{{ $personalEmail }}"
+  personal_name: "{{ $personalName }}"
+  personal_email: "{{ $personalEmail }}"
 
-  work_name = "{{ $workName }}"
-  work_email = "{{ $workEmail }}"
+  work_name: "{{ $workName }}"
+  work_email: "{{ $workEmail }}"
 
-  is_personal = {{ $isPersonal }}
-  is_work = {{ $isWork }}
-  is_wsl = {{ $isWsl }}
-  is_devcontainer = {{ $isDevcontainer }}
-  is_gnome = {{ $isGnome }}
+{{- if $isPersonal }}
+  name: "{{ $personalName }}"
+  email: "{{ $personalEmail }}"
+{{- else }}
+  name: "{{ $workName }}"
+  email: "{{ $workEmail }}"
+{{- end }}
 
-  {{- if $isPersonal }}
-  name = "{{ $personalName }}"
-  email = "{{ $personalEmail }}"
-  {{- else }}
-  name = "{{ $workName }}"
-  email = "{{ $workEmail }}"
-  {{- end }}
-
-  {{- if or (lookPath "code") (lookPath "code-insiders") $isDevcontainer }}
-  editor = "code --wait"
-  {{- else if lookPath "nano" }}
-  editor = "nano"
-  {{- else if lookPath "vim" }}
-  editor = "vim"
-  {{- else }}
-  editor = "vi"
-  {{- end }}
+{{- if or (lookPath "code") (lookPath "code-insiders") $isDevcontainer }}
+  editor: "code --wait"
+{{- else if lookPath "nano" }}
+  editor: "nano"
+{{- else if lookPath "vim" }}
+  editor: "vim"
+{{- else }}
+  editor: "vi"
+{{- end }}
