@@ -1,0 +1,11 @@
+{{ if stat (joinPath .chezmoi.homeDir ".config/chezmoi/chezmoi.yaml") -}}
+.config/chezmoi/chezmoi.toml
+{{ end -}}
+
+*.deb
+*.rpm
+*.tar
+*.tar.gz
+*.tar.xz
+*.tgz
+*.zip
