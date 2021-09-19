@@ -80,8 +80,10 @@ antigen() {
 EOM
 }
 
-echo_task "Updating brew packages"
-c brew upgrade
+if brew --version &>/dev/null; then
+  echo_task "Updating brew packages"
+  c brew upgrade
+fi
 
 if chezmoi --version &>/dev/null; then
   echo_task "Updating dotfiles"
@@ -93,11 +95,13 @@ if chezmoi --version &>/dev/null; then
   c chezmoi apply --verbose --force --refresh-externals
 fi
 
-echo_task "Updating apt packages"
-c sudo apt update -y
-c sudo apt upgrade -y
+if apt --version &>/dev/null; then
+  echo_task "Updating apt packages"
+  c sudo apt update -y
+  c sudo apt full-upgrade -y
+fi
 
-if snap warnings &>/dev/null; then
+if timeout 2 snap warnings &>/dev/null; then
   echo_task "Updating snap packages"
   c sudo snap refresh
 fi
