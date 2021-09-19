@@ -266,9 +266,6 @@ EOF
   elif is_gnome; then
     echo_task "Performing GNOME specific steps"
 
-    echo_task "Setting up Fira Code Nerd Font as default monospaced font"
-    gsettings set org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font 13'
-
     echo_task "Setting up Git credential helper"
     if ! git-credential-manager-core --version; then
       echo_sub_task "Installing Git Credential Manager Core"
@@ -280,15 +277,6 @@ EOF
     sudo git config --system --replace-all credential.helper /usr/bin/git-credential-manager-core
     sudo git config --system --replace-all credential.credentialStore secretservice
 
-    echo_task "Adding 'Open Code here' in Nautilus context menu"
-    bash -c "$(wget -qO- https://raw.githubusercontent.com/harry-cpp/code-nautilus/master/install.sh)"
-
-    if is_ubuntu 20.04; then
-      echo_task "Setting up dark theme"
-      sudo apt install -y gnome-shell-extensions
-      gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
-      gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
-      gsettings set org.gnome.shell.extensions.user-theme name "Yaru-dark"
-    fi
   fi
+
 fi

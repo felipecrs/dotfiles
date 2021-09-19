@@ -108,6 +108,11 @@ c curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh
 echo_task "Updating antigen packages"
 c antigen update
 
+if [[ "$(command -v gnome-shell-extension-installer)" ]]; then
+  echo_task "Updating gnome extensions"
+  c gnome-shell-extension-installer --update --yes
+fi
+
 if deno --version &>/dev/null; then
   echo_task "Updating deno"
   c deno upgrade

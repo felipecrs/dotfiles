@@ -1,0 +1,6 @@
+{{- if not .is_devcontainer | and .is_gnome -}}
+".local/bin/gnome-shell-extension-installer":
+  type: file
+  url: https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/master/gnome-shell-extension-installer
+  executable: true
+{{ end -}}
