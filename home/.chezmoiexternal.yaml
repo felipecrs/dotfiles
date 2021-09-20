@@ -1,4 +1,8 @@
 {{- if not .is_devcontainer | and .is_gnome -}}
+".local/bin/gnome-shell-extension-installer":
+  type: file
+  url: https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/master/gnome-shell-extension-installer
+  executable: true
 # Downloads all the variants of Fira Code Nerd Font
 {{-   range $_, $face := list "Regular" "Light" "Medium" "Bold" "Retina" "SemiBold" -}}
 {{-     range $_, $variant := list "" " Mono" }}
