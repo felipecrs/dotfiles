@@ -10,14 +10,6 @@ set -euo pipefail
 echo_task "Setting up terminal font"
 gsettings set org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font 13'
 
-echo_task "Installing gnome tweaks"
-sudo apt update
-# Gnome Tweaks is useful in WSL so we can tweak the theme of the applications
-sudo apt install -y gnome-tweaks
-
-echo_task "Adding 'Open Code here' in Nautilus context menu"
-curl -fsSL https://raw.githubusercontent.com/harry-cpp/code-nautilus/master/install.sh | bash -
-
 {{ if not .is_wsl -}}
 echo_task "Installing gnome extensions"
 # User Themes
@@ -31,11 +23,17 @@ gnome-shell-extension-installer --update --yes 779
 gnome-extensions enable clipboard-indicator@tudmotu.com
 {{ end -}}
 
-{{ if eq .chezmoi.osRelease.versionID "20.04" -}}
-echo_task "Setting up dark theme"
+{{ if lookPath "nautilus" -}}
+echo_task "Adding 'Open Code here' in Nautilus context menu"
+curl -fsSL https://raw.githubusercontent.com/harry-cpp/code-nautilus/master/install.sh | bash -
+{{ end -}}
+
+echo_task "Setting up theme"
 gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
+gsettings set org.gnome.desktop.interface icon-theme "Yaru"
+gsettings set org.gnome.desktop.interface cursor-theme "Yaru"
+gsettings set org.gnome.desktop.sound theme-name "Yaru"
 {{ if not .is_wsl -}}
 gsettings set org.gnome.shell.extensions.user-theme name "Yaru-dark"
-{{ end -}}
 {{ end -}}
 {{- end -}}

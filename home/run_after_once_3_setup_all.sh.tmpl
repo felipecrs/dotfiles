@@ -92,8 +92,6 @@ EOM
 
 set -euo pipefail
 
-ran_apt_update=false
-
 # See: https://github.com/microsoft/vscode-remote-release/issues/3531#issuecomment-675278804
 if [[ -z "${USER+x}" ]]; then
   USER="$(id -un)"
@@ -106,15 +104,6 @@ fi
 
 echo_task "Adding user to sudoers"
 echo "$USER  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$USER"
-
-echo_task "Installing zsh"
-if ! zsh --version &>/dev/null; then
-  sudo apt update
-  ran_apt_update=true
-  sudo apt install -y zsh
-else
-  echo "zsh already installed"
-fi
 
 echo_task "Making zsh the default shell"
 sudo chsh -s "$(which zsh)" "$USER"
@@ -130,38 +119,6 @@ echo_task "Initializing zsh"
 echo "Done."
 
 if ! is_devcontainer; then
-  echo_task "Installing common packages"
-  if [[ "$ran_apt_update" == false ]]; then
-    sudo apt update
-  fi
-  sudo apt install -y software-properties-common build-essential curl wget tree parallel file zip
-
-  echo_task "Adding apt repositories"
-  sudo add-apt-repository --no-update -y ppa:git-core/ppa
-  curl -fsSL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/Release.key" | sudo apt-key add -
-  sudo add-apt-repository -y "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_$(lsb_release -sr)/ /"
-
-  echo_task "Installing git"
-  sudo apt install -y git
-
-  echo_task "Installing skopeo"
-  sudo apt install -y skopeo
-
-  # echo_task "Installing podman"
-  # sudo apt install -y podman
-  # if is_wsl; then
-  #   echo_sub_task "Setting up podman for WSL2"
-  #   if [[ ! -f "/etc/containers/containers.conf" ]]; then
-  #     sudo mkdir -p /etc/containers
-  #     sudo cp -f /usr/share/containers/containers.conf /etc/containers/containers.conf
-  #   fi
-  #   sudo sed -i "s/.*cgroup_manager.*=.*/cgroup_manager = \"cgroupfs\"/g" /etc/containers/containers.conf
-  #   sudo sed -i "s/.*events_logger.*=.*/events_logger = \"file\"/g" /etc/containers/containers.conf
-  # fi
-
-  # echo_task "Installing buildah"
-  # sudo apt install -y buildah
-
   echo_task "Installing brew"
   if ! brew --version &>/dev/null; then
     CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
@@ -266,17 +223,8 @@ EOF
   elif is_gnome; then
     echo_task "Performing GNOME specific steps"
 
-    echo_task "Setting up Git credential helper"
-    if ! git-credential-manager-core --version; then
-      echo_sub_task "Installing Git Credential Manager Core"
-      # Using this method while https://github.com/microsoft/Git-Credential-Manager-Core/issues/422 does not get solved
-      curl -fsSL 'https://glare.now.sh/microsoft/Git-Credential-Manager-Core/^.*.deb$' --output /tmp/gcmcore.deb
-      sudo apt install -y /tmp/gcmcore.deb
-      rm -f /tmp/gcmcore.deb
-    fi
     sudo git config --system --replace-all credential.helper /usr/bin/git-credential-manager-core
     sudo git config --system --replace-all credential.credentialStore secretservice
-
   fi
 
 fi
