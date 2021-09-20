@@ -106,9 +106,6 @@ if timeout 2 snap warnings &>/dev/null; then
   c sudo snap refresh
 fi
 
-echo_task "Updating antigen"
-c curl -fsSL https://git.io/antigen --create-dirs -o "$HOME/.antigen/antigen.zsh"
-
 echo_task "Updating antigen packages"
 c antigen update
 
