@@ -29,52 +29,6 @@ is_gnome() {
   [[ "{{ .is_gnome }}" == true ]]
 }
 
-brew() {
-  bash <(
-    cat <<'EOM'
-if [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-elif [[ -f "$HOME/.linuxbrew/bin/brew" ]]; then
-  eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
-else
-  echo "brew is not installed" >&2
-  exit 127
-fi
-brew "$@"
-EOM
-  ) "$@"
-}
-
-nvm() {
-  bash <(
-    cat <<'EOM'
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-if [[ -f "$NVM_DIR/nvm.sh" ]]; then
-  . "$NVM_DIR/nvm.sh"
-else
-  echo "nvm is not installed" >&2
-  exit 127
-fi
-nvm "$@"
-EOM
-  ) "$@"
-}
-
-volta() {
-  bash <(
-    cat <<'EOM'
-export VOLTA_HOME="$HOME/.volta"
-if [[ -f "$VOLTA_HOME/bin/volta" ]]; then
-  export PATH="$VOLTA_HOME/bin:$PATH"
-else
-  echo "volta is not installed" >&2
-  exit 127
-fi
-volta "$@"
-EOM
-  ) "$@"
-}
-
 sdk() {
   bash <(
     cat <<'EOM'
@@ -120,6 +74,11 @@ echo "Done."
 
 if ! is_devcontainer; then
   echo_task "Installing brew"
+
+  if [[ ":$PATH:" != *":/home/linuxbrew/.linuxbrew/bin:"* ]]; then
+    export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+  fi
+
   if ! brew --version &>/dev/null; then
     CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   else
@@ -130,13 +89,13 @@ if ! is_devcontainer; then
 
   brew bundle --no-lock --file=/dev/stdin <<'EOF'
 brew "chezmoi"
-brew "jq"
 brew "yq"
 brew "volta"
 brew "kubectl"
 brew "helm"
 brew "kind"
 brew "asciinema"
+brew "dive"
 {{ if .is_work -}}
 brew "jfrog-cli"
 {{ else -}}
@@ -144,9 +103,6 @@ brew "gh"
 {{ end -}}
 {{ if and .is_gnome (not .is_wsl) -}}
 brew "onedrive"
-{{ end -}}
-{{ if not .is_wsl -}}
-brew "docker-compose"
 {{ end -}}
 EOF
 

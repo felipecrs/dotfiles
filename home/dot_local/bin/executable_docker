@@ -19,30 +19,23 @@ get_in_path_except() {
   which -a "$command" | grep -A1 "$except" | grep -v "$except" | grep .
 }
 
-is_docker_from_desktop() {
-  local -r path="$1"
-
-  [[ "$path" == "/mnt/c/Program Files/Docker/Docker/resources/bin/docker" ]]
-}
-
 set -euo pipefail
 
-readonly current_bin="$0"
-docker="$(get_in_path_except docker "$current_bin")"
+docker="$(get_in_path_except docker "$0")"
 
-if is_docker_from_desktop "$docker"; then
-  echo_blue "Starting Docker Desktop..."
+# Unfortunately we cannot rely on status code 3, because if the service
+# is stopped, its status become 1.
+# We also do not want to try to start docker daemon if the service is
+# not configured.
+if ! service_stdout=$(service docker status 2>&1) && [[ "$service_stdout" == *"is not running"* ]]; then
+  echo_blue "Starting Docker Daemon..."
+  sudo service docker start >/dev/null
 
-  # Using `PowerShell.exe` because of https://github.com/microsoft/WSL/issues/3769
-  PowerShell.exe -Command 'Start "C:\Program Files\Docker\Docker\Docker Desktop.exe"'
-
-  readonly seconds=45
+  readonly seconds=30
   for ((i = 0; i < seconds; i++)); do
     sleep 1
 
-    docker="$(get_in_path_except docker "$current_bin")"
-
-    if "$docker" version &>/dev/null; then
+    if service docker status &>/dev/null; then
       exit_code=0
       break
     else

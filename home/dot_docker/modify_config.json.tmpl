@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -euo pipefail
+
+json=$(cat /dev/stdin)
+
+if [ -z "${json}" ]; then
+  json='{}'
+fi
+
+json=$(jq '.aliases.builder = "buildx"' <<<"$json")
+
+{{ if .is_wsl -}}
+json=$(jq '.credsStore = "wincred.exe"' <<<"$json")
+{{- end }}
+
+echo "$json"

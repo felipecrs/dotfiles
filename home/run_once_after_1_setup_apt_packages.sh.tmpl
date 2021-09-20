@@ -12,6 +12,8 @@ sudo apt install -y software-properties-common
 {{ end -}}
 echo "Setting up repositories"
 sudo add-apt-repository --no-update -y ppa:git-core/ppa
+echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ .chezmoi.osRelease.ubuntuCodename }} stable" | sudo tee /etc/apt/sources.list.d/docker.list
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ .chezmoi.osRelease.versionID }}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
 curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ .chezmoi.osRelease.versionID }}/Release.key | sudo apt-key add -
 {{ if eq .chezmoi.osRelease.versionID "18.04" -}}
@@ -22,6 +24,10 @@ sudo add-apt-repository --no-update -y ppa:communitheme/ppa
 readarray -t apt_packages <<'EOF'
 zsh
 {{ if not .is_devcontainer -}}
+apt-transport-https
+ca-certificates
+gnupg
+lsb-release
 build-essential
 curl
 wget
@@ -30,6 +36,10 @@ parallel
 file
 zip
 git
+jq
+docker-ce
+docker-ce-cli
+containerd.io
 skopeo
 {{ if .is_gnome -}}
 yaru-theme-gtk
@@ -50,9 +60,15 @@ sudo apt update
 
 sudo apt install -y "${apt_packages[@]}"
 
+echo "Configuring Docker"
+sudo usermod -aG docker "{{ .chezmoi.username }}"
+if [[ ! -f /etc/docker/daemon.json ]]; then
+  echo '{}' | sudo tee /etc/docker/daemon.json
+fi
+jq '.features.buildkit = true' /etc/docker/daemon.json | tee /tmp/daemon.json && sudo mv -f /tmp/daemon.json /etc/docker/daemon.json
+
 {{ if not .is_wsl | and .is_gnome | and (not (lookPath "git-credential-manager-core")) -}}
 echo "Installing Git Credential Manager Core"
-echo_sub_task "Installing Git Credential Manager Core"
 # Using this method while https://github.com/microsoft/Git-Credential-Manager-Core/issues/422 does not get solved
 curl -fsSL 'https://glare.now.sh/microsoft/Git-Credential-Manager-Core/^.*.deb$' --output /tmp/gcmcore.deb
 sudo apt install -y /tmp/gcmcore.deb

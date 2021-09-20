@@ -1,11 +1,28 @@
 ".antigen/antigen.zsh":
   type: file
   url: https://raw.githubusercontent.com/zsh-users/antigen/HEAD/bin/antigen.zsh
+
 {{  if not .is_devcontainer | and .is_gnome -}}
 ".local/bin/gnome-shell-extension-installer":
   type: file
   url: https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/HEAD/gnome-shell-extension-installer
   executable: true
+
+{{ $dockerBuildxVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/buildx/releases/latest)\"" | trim -}}
+".docker/cli-plugins/docker-buildx":
+  type: file
+  url: "https://github.com/docker/buildx/releases/download/{{ $dockerBuildxVersion }}/buildx-{{ $dockerBuildxVersion }}.linux-amd64"
+  executable: true
+
+{{ $dockerCredsVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/docker-credential-helpers/releases/latest)\"" | trim -}}
+".local/bin/docker-credential-wincred.exe":
+  type: file
+  url: "https://github.com/docker/docker-credential-helpers/releases/download/{{ $dockerCredsVersion }}/docker-credential-wincred-{{ $dockerCredsVersion }}-amd64.zip"
+  filter:
+    command: "busybox"
+    args: ["unzip", "-p", "docker-credential-wincred.exe"]
+  executable: true
+
 # Downloads all the variants of Fira Code Nerd Font
 {{-   range $_, $face := list "Regular" "Light" "Medium" "Bold" "Retina" "SemiBold" -}}
 {{-     range $_, $variant := list "" " Mono" }}
