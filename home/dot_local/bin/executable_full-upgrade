@@ -119,13 +119,6 @@ if deno --version &>/dev/null; then
   c deno upgrade
 fi
 
-if volta --version &>/dev/null; then
-  echo_task "Updating volta"
-  # shellcheck disable=SC2016
-  yellow '+ bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup'
-  bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
-fi
-
 if nvm --version &>/dev/null; then
   echo_task "Updating nvm"
   # shellcheck disable=SC2016

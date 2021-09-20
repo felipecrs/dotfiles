@@ -132,6 +132,7 @@ if ! is_devcontainer; then
 brew "chezmoi"
 brew "jq"
 brew "yq"
+brew "volta"
 brew "kubectl"
 brew "helm"
 brew "kind"
@@ -163,13 +164,6 @@ EOF
     sh -c "$(curl -fsSL https://deno.land/x/install/install.sh)"
   else
     echo "deno is already installed"
-  fi
-
-  echo_task "Installing volta"
-  if ! volta --version &>/dev/null; then
-    bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
-  else
-    echo "volta is already installed"
   fi
 
   echo_task "Installing node, npm, and yarn"
