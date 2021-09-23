@@ -21,3 +21,6 @@
 .volta/bin/volta
 
 {{- end }}
+
+.antigen/
+.antigenrc

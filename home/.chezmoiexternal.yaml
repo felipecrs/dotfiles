@@ -1,7 +1,37 @@
-{{ $antigenRevision := output "git" "ls-remote" "https://github.com/zsh-users/antigen.git" "HEAD" | trimSuffix "HEAD\n" | trim }}
-".antigen/antigen.zsh":
-  type: file
-  url: "https://raw.githubusercontent.com/zsh-users/antigen/{{ $antigenRevision }}/bin/antigen.zsh"
+{{ $ohMyZshRevision := output "bash" "-c" "git ls-remote https://github.com/ohmyzsh/ohmyzsh.git HEAD | awk '{ print $1}'" | trim }}
+".oh-my-zsh":
+  type: archive
+  url: "https://github.com/ohmyzsh/ohmyzsh/archive/{{ $ohMyZshRevision }}.tar.gz"
+  exact: true
+  stripComponents: 1
+
+{{ $powerlevel10kRevision := output "bash" "-c" "git ls-remote https://github.com/romkatv/powerlevel10k.git HEAD | awk '{ print $1}'" | trim }}
+".oh-my-zsh/custom/themes/powerlevel10k":
+  type: archive
+  url: "https://github.com/romkatv/powerlevel10k/archive/{{ $powerlevel10kRevision }}.tar.gz"
+  exact: true
+  stripComponents: 1
+
+{{ $zshSyntaxHighlightingRevision := output "bash" "-c" "git ls-remote https://github.com/zsh-users/zsh-syntax-highlighting.git HEAD | awk '{ print $1}'" | trim }}
+".oh-my-zsh/custom/plugins/zsh-syntax-highlighting":
+  type: archive
+  url: "https://github.com/zsh-users/zsh-syntax-highlighting/archive/{{ $zshSyntaxHighlightingRevision }}.tar.gz"
+  exact: true
+  stripComponents: 1
+
+{{ $zshAutoSuggestionsRevision := output "bash" "-c" "git ls-remote https://github.com/zsh-users/zsh-autosuggestions.git HEAD | awk '{ print $1}'" | trim }}
+".oh-my-zsh/custom/plugins/zsh-autosuggestions":
+  type: archive
+  url: "https://github.com/zsh-users/zsh-autosuggestions/archive/{{ $zshAutoSuggestionsRevision }}.tar.gz"
+  exact: true
+  stripComponents: 1
+
+{{ $zshCompletionsRevision := output "bash" "-c" "git ls-remote https://github.com/zsh-users/zsh-completions.git HEAD | awk '{ print $1}'" | trim }}
+".oh-my-zsh/custom/plugins/zsh-completions":
+  type: archive
+  url: "https://github.com/zsh-users/zsh-completions/archive/{{ $zshCompletionsRevision }}.tar.gz"
+  exact: true
+  stripComponents: 1
 
 {{ if not .is_devcontainer -}}
 {{   if .is_gnome | and (not .is_wsl) -}}
