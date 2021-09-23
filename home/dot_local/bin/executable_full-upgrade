@@ -68,18 +68,6 @@ sdk() {
 EOM
 }
 
-antigen() {
-  zsh <<EOM
-  if [[ -f "\$HOME/.antigenrc" ]]; then
-    source "\$HOME/.antigenrc"
-  else
-    echo "The .antigenrc was not found." >&2
-    exit 1
-  fi
-  antigen $@
-EOM
-}
-
 if brew --version &>/dev/null; then
   echo_task "Updating brew"
   c brew update
