@@ -65,9 +65,10 @@ sudo apt install -y "${apt_packages[@]}"
 echo "Configuring Docker"
 sudo usermod -aG docker "{{ .chezmoi.username }}"
 if [[ ! -f /etc/docker/daemon.json ]]; then
-  echo '{}' | sudo tee /etc/docker/daemon.json
+  mkdir -p /etc/docker
+  echo '{}' | sudo tee /etc/docker/daemon.json >/dev/null
 fi
-jq --raw-output '.features.buildkit = true' /etc/docker/daemon.json | tee /tmp/daemon.json && sudo mv -f /tmp/daemon.json /etc/docker/daemon.json
+jq --raw-output '.features.buildkit = true' /etc/docker/daemon.json | tee /tmp/daemon.json >/dev/null && sudo mv -f /tmp/daemon.json /etc/docker/daemon.json
 
 {{ if .is_wsl -}}
 sudo crudini --set /etc/wsl.conf boot command '"service docker start"'
