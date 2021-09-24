@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# This script is a workaround for https://github.com/twpayne/chezmoi/issues/891#issuecomment-922379179
-
-readonly chezmoi_source_path="{{ .chezmoi.sourceDir }}"
-
-if [[ "$chezmoi_source_path" == */home && -d "$chezmoi_source_path/.git" ]]; then
-  rm -rf "$chezmoi_source_path/.git"
-fi
