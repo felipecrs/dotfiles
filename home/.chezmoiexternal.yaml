@@ -1,11 +1,58 @@
 ".antigen/antigen.zsh":
   type: file
   url: https://raw.githubusercontent.com/zsh-users/antigen/HEAD/bin/antigen.zsh
-{{  if not .is_devcontainer | and .is_gnome -}}
+
+{{ if not .is_devcontainer -}}
+{{   if .is_gnome | and (not .is_wsl) -}}
 ".local/bin/gnome-shell-extension-installer":
   type: file
   url: https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/HEAD/gnome-shell-extension-installer
   executable: true
+{{-  end }}
+
+{{ $dockerComposeVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/compose/releases/latest)\"" | trim -}}
+{{ if semverCompare "1.x" $dockerComposeVersion -}}
+".local/bin/docker-compose":
+  type: file
+  url: "https://github.com/docker/compose/releases/download/{{ $dockerComposeVersion }}/docker-compose-Linux-x86_64"
+  executable: true
+# Install docker compose v2 while still in rc
+".docker/cli-plugins/docker-compose":
+  type: file
+  url: "https://github.com/docker/compose/releases/download/v2.0.0-rc.3/docker-compose-linux-amd64"
+  executable: true
+{{ else -}}
+".docker/cli-plugins/docker-compose":
+  type: file
+  url: "https://github.com/docker/compose/releases/download/{{ $dockerComposeVersion }}/docker-compose-linux-amd64"
+  executable: true
+{{- end }}
+
+{{ $dockerBuildxVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/buildx/releases/latest)\"" | trim -}}
+".docker/cli-plugins/docker-buildx":
+  type: file
+  url: "https://github.com/docker/buildx/releases/download/{{ $dockerBuildxVersion }}/buildx-{{ $dockerBuildxVersion }}.linux-amd64"
+  executable: true
+
+{{ if .is_wsl -}}
+{{   $dockerCredsVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/docker-credential-helpers/releases/latest)\"" | trim -}}
+".local/bin/docker-credential-wincred.exe":
+  type: file
+  url: "https://github.com/docker/docker-credential-helpers/releases/download/{{ $dockerCredsVersion }}/docker-credential-wincred-{{ $dockerCredsVersion }}-amd64.zip"
+  filter:
+    command: zcat
+  executable: true
+{{ else if .is_gnome -}}
+{{   $dockerCredsVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/docker-credential-helpers/releases/latest)\"" | trim -}}
+".local/bin/docker-credential-secretservice":
+  type: file
+  url: "https://github.com/docker/docker-credential-helpers/releases/download/{{ $dockerCredsVersion }}/docker-credential-secretservice-{{ $dockerCredsVersion }}-amd64.tar.gz"
+  filter:
+    command: tar
+    args: ["-xzf", "-", "-O"]
+  executable: true
+{{- end }}
+
 # Downloads all the variants of Fira Code Nerd Font
 {{-   range $_, $face := list "Regular" "Light" "Medium" "Bold" "Retina" "SemiBold" -}}
 {{-     range $_, $variant := list "" " Mono" }}
@@ -14,4 +61,5 @@
   url: https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/FiraCode/{{ $face }}/complete/Fira%20Code%20{{ $face }}%20Nerd%20Font%20Complete{{ $variant | replace " " "%20" }}.ttf
 {{      end -}}
 {{-   end -}}
+
 {{- end -}}

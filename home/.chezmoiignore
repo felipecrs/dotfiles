@@ -1,6 +1,3 @@
-{{ if not .is_wsl -}}
-.local/bin/docker
-{{- end}}
 {{ if .is_devcontainer -}}
 .local/bin/code
 {{- end}}
