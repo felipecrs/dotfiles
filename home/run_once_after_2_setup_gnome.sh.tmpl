@@ -7,6 +7,10 @@ echo_task() {
 
 set -euo pipefail
 
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+  export PATH="$HOME/.local/bin:$PATH"
+fi
+
 echo_task "Setting up terminal font"
 gsettings set org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font 13'
 

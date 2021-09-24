@@ -75,8 +75,13 @@ echo "Done."
 if ! is_devcontainer; then
   echo_task "Installing brew"
 
+  # Fix PATH
   if [[ ":$PATH:" != *":/home/linuxbrew/.linuxbrew/bin:"* ]]; then
     export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+  fi
+
+  if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    export PATH="$HOME/.local/bin:$PATH"
   fi
 
   if ! brew --version &>/dev/null; then

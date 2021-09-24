@@ -7,3 +7,7 @@
 *.zip
 
 .local/bin/docker
+
+{{ if not .is_devcontainer -}}
+.local/bin/localpath
+{{- end }}
