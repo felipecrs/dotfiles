@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+jq="jq --raw-output --tab"
 json=$(cat /dev/stdin)
 
 if [ -z "${json}" ]; then
@@ -10,8 +11,12 @@ fi
 
 json=$(jq '.aliases.builder = "buildx"' <<<"$json")
 
-{{ if .is_wsl -}}
-json=$(jq '.credsStore = "wincred.exe"' <<<"$json")
-{{- end }}
+json=$($jq '.aliases.builder = "buildx"' <<<"${json-"{}"}")
 
-echo "$json"
+# {{ if .is_wsl }}
+json=$($jq '.credsStore = "wincred.exe"' <<<"$json")
+# {{ else if .is_gnome }}
+json=$($jq '.credsStore = "secretservice"' <<<"$json")
+# {{ end }}
+
+echo -n "$json"

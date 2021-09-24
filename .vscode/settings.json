@@ -60,14 +60,15 @@
     "**/*_antigenrc": true
   },
   "files.associations": {
-    "install": "shellscript",
-    "*.sh.tmpl": "shellscript",
+    "**/home/install": "shellscript",
     "*_zshrc": "shellscript",
     "*_antigenrc": "shellscript",
     "*_profile.tmpl": "shellscript",
     "*_bashrc": "shellscript",
     "*_bash_aliases.tmpl": "shellscript",
-    "**/dot_local/bin/*": "shellscript",
+    "**/home/**/run_*": "shellscript",
+    "**/home/**/executable_*": "shellscript",
+    "**/home/**/modify_*": "shellscript",
     ".chezmoi*.yaml": "helm",
     ".chezmoi.yaml.tmpl": "helm"
   }
