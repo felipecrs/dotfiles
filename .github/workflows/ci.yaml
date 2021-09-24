@@ -8,7 +8,12 @@ on:
 
 jobs:
   test:
+    strategy:
+      matrix:
+        variant: [devcontainer, wsl, gnome]
+        os: [ubuntu-18.04, ubuntu-20.04]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: scripts/test.sh
+      - run: |
+          scripts/test.sh --variant "${{ matrix.variant }}" --os "${{ matrix.os }}"
