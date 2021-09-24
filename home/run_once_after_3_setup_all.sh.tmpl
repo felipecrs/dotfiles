@@ -144,14 +144,11 @@ EOF
     echo "sdk is already installed"
   fi
 
-  echo_task "Installing Java"
-  sdk install java
-
-  # Install latest Java 8
-  # get the identifier for java 8
-  # identifier="$(sdk ls java | grep -m 1 -o ' 8.*.hs-adpt ' | awk '{print $NF}')"
-  # sdk i java "$identifier"
-  # unset identifier
+  echo_task "Installing Java 11"
+  identifier="$(sdk list java | grep --only-matching --max-count 1 ' 11.*.hs-adpt ' | awk '{print $NF}')"
+  sdk install java "$identifier"
+  sdk default java "$identifier"
+  unset identifier
 
   if is_wsl; then
     echo_task "Performing WSL specific steps"
