@@ -61,6 +61,7 @@ sudo apt update
 
 sudo apt install -y "${apt_packages[@]}"
 
+{{ if not .is_devcontainer -}}
 echo "Configuring Docker"
 sudo usermod -aG docker "{{ .chezmoi.username }}"
 if [[ ! -f /etc/docker/daemon.json ]]; then
@@ -92,4 +93,6 @@ echo "Installing VS Code"
 curl -fsSL 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' --output /tmp/code.deb
 sudo apt install -y /tmp/code.deb
 rm -f /tmp/code.deb
+{{ end -}}
+
 {{ end -}}
