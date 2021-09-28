@@ -73,19 +73,19 @@ fi
 jq --raw-output '.features.buildkit = true' /etc/docker/daemon.json | tee /tmp/daemon.json >/dev/null && sudo mv -f /tmp/daemon.json /etc/docker/daemon.json
 
 echo "Installing compose-switch (docker-compose v1 compatibility)"
-{{   $composeSwitchVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/compose-switch/releases/latest)\"" | trim -}}
+{{   $composeSwitchVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/docker/compose-switch/releases/latest" | trim | base -}}
 sudo curl -fsSL "https://github.com/docker/compose-switch/releases/download/{{ $composeSwitchVersion }}/docker-compose-linux-amd64" --output /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
 {{ if .is_wsl -}}
 echo "Setting up docker service in WSL initalization"
 sudo crudini --set /etc/wsl.conf boot command '"service docker start"'
-{{   $dockerCredsVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/docker-credential-helpers/releases/latest)\"" | trim -}}
+{{   $dockerCredsVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/docker/docker-credential-helpers/releases/latest" | trim | base -}}
 echo "Installing docker credential helper for WSL"
 curl -fsSL "https://github.com/docker/docker-credential-helpers/releases/download/{{ $dockerCredsVersion }}/docker-credential-wincred-{{ $dockerCredsVersion }}-amd64.zip" | zcat | sudo tee /usr/bin/docker-credential-wincred.exe >/dev/null
 sudo chmod +x /usr/bin/docker-credential-wincred.exe
 {{ else if .is_gnome -}}
-{{   $dockerCredsVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/docker-credential-helpers/releases/latest)\"" | trim -}}
+{{   $dockerCredsVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/docker/docker-credential-helpers/releases/latest" | trim | base -}}
 echo "Installing docker credential helper for GNOME"
 curl -fsSL "https://github.com/docker/docker-credential-helpers/releases/download/{{ $dockerCredsVersion }}/docker-credential-secretservice-{{ $dockerCredsVersion }}-amd64.tar.gz" | tar -xzf - -O | sudo tee /usr/bin/docker-credential-secretservice >/dev/null
 sudo chmod +x /usr/bin/docker-credential-secretservice
