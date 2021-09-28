@@ -140,6 +140,8 @@ for variant in "${variants[@]}"; do
     elif [[ "$variant" == "wsl" ]]; then
       run_test "$os" "$(
         cat <<'EOF'
+export IS_WSL=true
+
 cat <<'EOM' | sudo tee /usr/local/bin/wslpath
 #!/bin/bash
 
