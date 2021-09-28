@@ -16,7 +16,7 @@
   url: "https://github.com/docker/compose/releases/download/{{ $dockerComposeVersion }}/docker-compose-linux-amd64"
   executable: true
 
-{{ $dockerBuildxVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/docker/buildx/releases/latest)" | trim | base -}}
+{{ $dockerBuildxVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/docker/buildx/releases/latest" | trim | base -}}
 ".docker/cli-plugins/docker-buildx":
   type: file
   url: "https://github.com/docker/buildx/releases/download/{{ $dockerBuildxVersion }}/buildx-{{ $dockerBuildxVersion }}.linux-amd64"
