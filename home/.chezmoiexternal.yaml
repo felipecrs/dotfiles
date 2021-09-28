@@ -11,22 +11,10 @@
 {{-  end }}
 
 {{ $dockerComposeVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/compose/releases/latest)\"" | trim -}}
-{{ if semverCompare "1.x" $dockerComposeVersion -}}
-".local/bin/docker-compose":
-  type: file
-  url: "https://github.com/docker/compose/releases/download/{{ $dockerComposeVersion }}/docker-compose-Linux-x86_64"
-  executable: true
-# Install docker compose v2 while still in rc
-".docker/cli-plugins/docker-compose":
-  type: file
-  url: "https://github.com/docker/compose/releases/download/v2.0.0-rc.3/docker-compose-linux-amd64"
-  executable: true
-{{ else -}}
 ".docker/cli-plugins/docker-compose":
   type: file
   url: "https://github.com/docker/compose/releases/download/{{ $dockerComposeVersion }}/docker-compose-linux-amd64"
   executable: true
-{{- end }}
 
 {{ $dockerBuildxVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/buildx/releases/latest)\"" | trim -}}
 ".docker/cli-plugins/docker-buildx":
