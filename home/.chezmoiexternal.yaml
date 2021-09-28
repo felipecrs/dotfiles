@@ -22,25 +22,6 @@
   url: "https://github.com/docker/buildx/releases/download/{{ $dockerBuildxVersion }}/buildx-{{ $dockerBuildxVersion }}.linux-amd64"
   executable: true
 
-{{ if .is_wsl -}}
-{{   $dockerCredsVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/docker-credential-helpers/releases/latest)\"" | trim -}}
-".local/bin/docker-credential-wincred.exe":
-  type: file
-  url: "https://github.com/docker/docker-credential-helpers/releases/download/{{ $dockerCredsVersion }}/docker-credential-wincred-{{ $dockerCredsVersion }}-amd64.zip"
-  filter:
-    command: zcat
-  executable: true
-{{ else if .is_gnome -}}
-{{   $dockerCredsVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/docker-credential-helpers/releases/latest)\"" | trim -}}
-".local/bin/docker-credential-secretservice":
-  type: file
-  url: "https://github.com/docker/docker-credential-helpers/releases/download/{{ $dockerCredsVersion }}/docker-credential-secretservice-{{ $dockerCredsVersion }}-amd64.tar.gz"
-  filter:
-    command: tar
-    args: ["-xzf", "-", "-O"]
-  executable: true
-{{- end }}
-
 # Downloads all the variants of Fira Code Nerd Font
 {{-   range $_, $face := list "Regular" "Light" "Medium" "Bold" "Retina" "SemiBold" -}}
 {{-     range $_, $variant := list "" " Mono" }}

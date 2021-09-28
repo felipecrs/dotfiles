@@ -76,12 +76,19 @@ echo "Creating docker-compose shim"
 cat <<'EOF' | sudo tee /usr/local/bin/docker-compose >/dev/null
 #!/bin/bash
 
-exec -- docker compose "$@"
+exec -- docker compose --compatibility "$@"
 EOF
 sudo chmod +x /usr/local/bin/docker-compose
 
 {{ if .is_wsl -}}
 sudo crudini --set /etc/wsl.conf boot command '"service docker start"'
+{{   $dockerCredsVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/docker-credential-helpers/releases/latest)\"" | trim -}}
+curl -fsSL "https://github.com/docker/docker-credential-helpers/releases/download/{{ $dockerCredsVersion }}/docker-credential-wincred-{{ $dockerCredsVersion }}-amd64.zip" | zcat | sudo tee /usr/bin/docker-credential-wincred.exe >/dev/null
+sudo chmod +x /usr/bin/docker-credential-wincred.exe
+{{ else if .is_gnome -}}
+{{   $dockerCredsVersion := output "bash" "-c" "basename \"$(curl -fsSL -o /dev/null -w \"%{url_effective}\" https://github.com/docker/docker-credential-helpers/releases/latest)\"" | trim -}}
+curl -fsSL "https://github.com/docker/docker-credential-helpers/releases/download/{{ $dockerCredsVersion }}/docker-credential-secretservice-{{ $dockerCredsVersion }}-amd64.tar.gz" | tar -xzf - -O | sudo tee /usr/bin/docker-credential-secretservice >/dev/null
+sudo chmod +x /usr/bin/docker-credential-secretservice
 {{- end }}
 
 {{ if not .is_wsl | and .is_gnome | and (not (lookPath "git-credential-manager-core")) -}}

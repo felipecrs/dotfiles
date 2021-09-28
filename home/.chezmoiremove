@@ -6,9 +6,13 @@
 *.tgz
 *.zip
 
-.local/bin/docker
-.local/bin/docker-compose
-
 {{ if not .is_devcontainer -}}
 .local/bin/localpath
 {{- end }}
+
+.local/bin/docker
+
+# These files are now installed to system-wide
+.local/bin/docker-compose
+.local/bin/docker-credential-wincred.exe
+.local/bin/docker-credential-secretservice
