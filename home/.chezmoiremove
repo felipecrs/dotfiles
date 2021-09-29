@@ -16,3 +16,6 @@
 .local/bin/docker-compose
 .local/bin/docker-credential-wincred.exe
 .local/bin/docker-credential-secretservice
+
+# Volta is now installed by Homebrew
+.volta/bin/volta
