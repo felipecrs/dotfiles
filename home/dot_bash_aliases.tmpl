@@ -17,20 +17,19 @@ mcd() {
 
 cdr() {
   # shellcheck disable=SC2164
-  cd "$REPOS_HOME"
+  cd "${REPOS_HOME?}"
 }
 
 # See: https://github.com/twpayne/chezmoi/issues/854#issuecomment-675160348
 chezmoi-re-run-scripts() {
-  rm -rf "$HOME/.config/chezmoi/chezmoistate.boltdb" &&
+  rm -f "$HOME/.config/chezmoi/chezmoistate.boltdb" &&
     chezmoi init --apply
 }
 
 # {{ if .is_wsl }}
 gsudo() {
-  local -r shell=$(ps -p $$ -ocomm=)
-
-  gsudo.exe wsl -d "$WSL_DISTRO_NAME" -e "$shell" "-c" "$*"
+  local shell && shell=$(ps -p $$ -ocomm=) &&
+    gsudo.exe wsl -d "${WSL_DISTRO_NAME?}" -e "$shell" "-c" "$*"
 }
 
 cdw() {
