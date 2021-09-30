@@ -6,11 +6,11 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-# if not coming from .profile and .profile exists
-if [ -z "$COMING_FROM_PROFILE" ] && [ -f "$HOME/.profile" ]; then
+# if not coming from .bash_profile and .bash_profile exists
+if [ -z "$COMING_FROM_BASH_PROFILE" ] && [ -f "$HOME/.bash_profile" ]; then
   export COMING_FROM_BASHRC=true
   # shellcheck source=./dot_profile.tmpl
-  source "$HOME/.profile"
+  source "$HOME/.bash_profile"
   unset COMING_FROM_BASHRC
 fi
 

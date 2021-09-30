@@ -1,13 +1,5 @@
 #!/bin/sh
 
-# if not coming from .bashrc and running in bash and .bashrc exists
-if [ -z "$COMING_FROM_BASHRC" ] && [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then
-  export COMING_FROM_PROFILE="true"
-  # shellcheck source=./dot_bashrc
-  . "$HOME/.bashrc"
-  unset COMING_FROM_PROFILE
-fi
-
 if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 elif [ -x "$HOME/.linuxbrew/bin/brew" ]; then
