@@ -76,6 +76,10 @@ if ! is_devcontainer; then
   echo_task "Installing brew"
 
   # Fix PATH
+  if [[ ":$PATH:" != *":$HOME/.linuxbrew/bin:"* ]]; then
+    export PATH="$HOME/.linuxbrew/bin:$PATH"
+  fi
+
   if [[ ":$PATH:" != *":/home/linuxbrew/.linuxbrew/bin:"* ]]; then
     export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
   fi
@@ -85,7 +89,18 @@ if ! is_devcontainer; then
   fi
 
   if ! brew --version &>/dev/null; then
-    CI=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    if sudo test -w /home/linuxbrew; then
+      CI=true bash <(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)
+    else
+      echo "Installing to ~/.linuxbrew due to lack of permissions"
+      homebrew_prefix="${HOME}/.linuxbrew"
+      git clone https://github.com/Homebrew/brew "${homebrew_prefix}/Homebrew"
+      mkdir -p "${homebrew_prefix}/bin"
+      ln -sfn "../Homebrew/bin/brew" "${homebrew_prefix}/bin"
+      brew update --force --quiet
+      chmod -R go-w "${homebrew_prefix}/share/zsh"
+      unset homebrew_prefix
+    fi
   else
     echo "brew is already installed"
   fi
@@ -121,7 +136,7 @@ EOF
 
   echo_task "Installing deno"
   if ! deno --version &>/dev/null; then
-    sh -c "$(curl -fsSL https://deno.land/x/install/install.sh)"
+    sh <(curl -fsSL https://deno.land/x/install/install.sh)
   else
     echo "deno is already installed"
   fi
@@ -136,7 +151,7 @@ EOF
     target_sdkman_dir="$HOME/.sdkman"
     temp_sdkman_dir="$(mktemp --directory --dry-run --suffix=.sdkman)"
     echo "Installing sdkman to temp directory..."
-    SDKMAN_DIR="$temp_sdkman_dir" bash -c "$(curl -fsSL "https://get.sdkman.io/?rcupdate=false")"
+    SDKMAN_DIR="$temp_sdkman_dir" bash <(curl -fsSL "https://get.sdkman.io/?rcupdate=false")
 
     echo "Now moving back sdkman to the target directory..."
     # then we replace the config file
