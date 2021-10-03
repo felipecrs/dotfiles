@@ -120,9 +120,6 @@ brew "jfrog-cli"
 {{ else -}}
 brew "gh"
 {{ end -}}
-{{ if and .is_gnome (not .is_wsl) -}}
-brew "onedrive"
-{{ end -}}
 EOF
 
   # Uninstalling previously installed chezmoi because it was already installed
