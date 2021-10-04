@@ -51,4 +51,7 @@ gsettings set org.gnome.desktop.sound theme-name "Yaru"
 {{ if not .is_wsl -}}
 gsettings --schemadir "$HOME/.local/share/gnome-shell/extensions/user-theme@gnome-shell-extensions.gcampax.github.com/schemas" set org.gnome.shell.extensions.user-theme name "Yaru-dark"
 {{ end -}}
+
+echo_task "Additional tweaks"
+gsettings set org.gtk.Settings.FileChooser show-hidden true
 {{- end -}}
