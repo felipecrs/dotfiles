@@ -35,7 +35,20 @@ extensions+=('dash-to-panel@jderose9.github.com')
 gnome-shell-extension-installer --update --yes 779
 extensions+=('clipboard-indicator@tudmotu.com')
 
-gsettings set org.gnome.shell enabled-extensions "[$(printf "'%s', " "${extensions[@]}" | sed 's/, $//')]"
+function enable_extension() {
+  for extension in "${@}"; do
+    local output
+    if output="$(gnome-shell-extension-tool --enable-extension "$extension" 2>&1)" ||
+      [[ "$output" == "is already enabled" ]]; then
+      echo "$output"
+    else
+      echo "$output"
+      return 1
+    fi
+  done
+}
+
+enable_extension "${extensions[@]}"
 {{ end -}}
 
 {{ if lookPath "nautilus" -}}
