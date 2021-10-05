@@ -6,14 +6,16 @@ echo "Installing apt packages"
 
 {{ if not .is_devcontainer -}}
 {{ if lookPath "add-apt-repository" | not -}}
-echo "Installing add-apt-repository"
+echo "Installing pre-requisites"
 sudo apt update
-sudo apt install -y software-properties-common
-{{ end -}}
+sudo apt install -y software-properties-common apt-transport-https ca-certificates curl gnupg lsb-release
 echo "Setting up repositories"
+# Latest git
 sudo add-apt-repository --no-update -y ppa:git-core/ppa
-echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ .chezmoi.osRelease.ubuntuCodename }} stable" | sudo tee /etc/apt/sources.list.d/docker.list
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+# Docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor --output /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu {{ .chezmoi.osRelease.ubuntuCodename }} stable" | sudo tee /etc/apt/sources.list.d/docker.list
+# Kubic (skopeo, podman, buildah)
 echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ .chezmoi.osRelease.versionID }}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
 curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ .chezmoi.osRelease.versionID }}/Release.key | sudo apt-key add -
 {{ if eq .chezmoi.osRelease.versionID "18.04" -}}
@@ -24,10 +26,6 @@ sudo add-apt-repository --no-update -y ppa:communitheme/ppa
 readarray -t apt_packages <<'EOF'
 zsh
 {{ if not .is_devcontainer -}}
-apt-transport-https
-ca-certificates
-gnupg
-lsb-release
 build-essential
 curl
 wget
@@ -36,6 +34,7 @@ parallel
 file
 procps
 zip
+unzip
 git
 jq
 crudini
