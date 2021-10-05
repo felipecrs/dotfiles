@@ -39,7 +39,7 @@ function enable_extension() {
   for extension in "${@}"; do
     local output
     if output="$(gnome-shell-extension-tool --enable-extension "$extension" 2>&1)" ||
-      [[ "$output" == "is already enabled" ]]; then
+      [[ "$output" == *"is already enabled"* ]]; then
       echo "$output"
     else
       echo "$output"
