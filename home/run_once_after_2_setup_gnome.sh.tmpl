@@ -43,6 +43,9 @@ echo_task "Adding 'Open Code here' in Nautilus context menu"
 bash <(curl -fsSL https://raw.githubusercontent.com/harry-cpp/code-nautilus/master/install.sh)
 {{ end -}}
 
+echo_task "Setup VS Code as default text editor on gnome"
+xdg-mime default code.desktop text/plain
+
 echo_task "Setting up theme"
 gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
 gsettings set org.gnome.desktop.interface icon-theme "Yaru"
