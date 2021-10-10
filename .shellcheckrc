@@ -1,12 +1,9 @@
-# Available in ShellCheck v0.7.2
 enable=add-default-case
 enable=avoid-nullary-conditions
+enable=check-extra-masked-returns
+enable=check-set-e-suppressed
 enable=check-unassigned-uppercase
 enable=deprecate-which
 enable=quote-safe-variables
-enable=require-variable-braces
-
-# Not available in ShellCheck v0.7.2
-enable=check-extra-masked-returns
-enable=check-set-e-suppressed
 enable=require-double-brackets
+enable=require-variable-braces

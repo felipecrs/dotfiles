@@ -1,0 +1,10 @@
+{{- $repo := index . 0 -}}
+{{- $cache := index . 1 -}}
+{{- $revisions := get $cache "revisions" -}}
+{{- if hasKey $revisions $repo -}}
+{{-   get $revisions $repo -}}
+{{- else -}}
+{{-   $result := output "git" "ls-remote" (printf "https://github.com/%s.git" $repo) "HEAD" | trimSuffix "HEAD\n" | trim -}}
+{{-   $_ := set $revisions $repo $result -}}
+{{-   $result -}}
+{{- end -}}

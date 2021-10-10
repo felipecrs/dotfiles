@@ -1,0 +1,10 @@
+{{- if not (eq .chezmoi.osRelease.versionCodename "bionic") -}}
+etc/apt/sources.list.d/communitheme-ppa.list
+usr/share/keyrings/communitheme-ppa-archive-keyring.gpg
+{{- end }}
+
+{{ if .is_wsl -}}
+usr/bin/docker-credential-secretservice
+{{- else -}}
+usr/bin/docker-credential-wincred.exe
+{{- end }}

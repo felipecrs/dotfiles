@@ -1,5 +1,6 @@
 {{ if .is_devcontainer -}}
 .local/bin/code
+9_apply_root.sh
 {{- end}}
 
 # waiting for chezmoi to leverage .gitignore from archives:
