@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "Applying chezmoi to root..."
+
+executable='{{ joinPath .chezmoi.homeDir ".local/bin/rootmoi" }}'
+args=({{ range (rest .chezmoi.args) }} {{ . | quote }}{{ end }})
+
+echo "Executing: ${executable} ${args[@]}"
+exec "${executable}" "${args[@]}"

@@ -1,0 +1,23 @@
+{{- /* Reads the revisions and versions from a cache file, and use them if they are newer than 10 minutes */ -}}
+{{- $cache := . -}}
+{{- $cacheFile := joinPath .chezmoi.cacheDir "external/versions_and_revisions.yaml"  -}}
+{{- $currentTime := now | unixEpoch -}}
+{{- $saveCache := true -}}
+{{- $revisions := dict -}}
+{{- $versions := dict -}}
+{{- if stat $cacheFile -}}
+{{-   $fileCache := include $cacheFile | fromYaml -}}
+{{-   $fileCacheTime := get $fileCache "time" -}}
+{{-   $timeDiff := sub $currentTime $fileCacheTime -}}
+{{-   $refreshExternals := or (has "--refresh-externals" .chezmoi.args) (has "--refresh-externals=true" .chezmoi.args) (has "-R" .chezmoi.args) -}}
+{{-   if or $refreshExternals (lt $timeDiff 600) -}}
+{{-     $revisions = get $fileCache "revisions" -}}
+{{-     $versions = get $fileCache "versions" -}}
+{{-     $saveCache = false -}}
+{{-   end -}}
+{{- end -}}
+{{- $_ := set $cache "save" $saveCache -}}
+{{- $_ := set $cache "file" $cacheFile -}}
+{{- $_ := set $cache "time" $currentTime -}}
+{{- $_ := set $cache "revisions" $revisions -}}
+{{- $_ := set $cache "versions" $versions -}}

@@ -4,31 +4,6 @@ set -euo pipefail
 
 echo "Installing apt packages"
 
-{{ if not .is_devcontainer -}}
-echo "Installing pre-requisites"
-if ! sudo apt update; then
-  echo "Ignoring failure because it may be due to ca-certificates"
-fi
-sudo apt install -y software-properties-common ca-certificates curl gnupg
-echo "Setting up repositories"
-sudo add-apt-repository --no-update -y ppa:git-core/ppa
-docker_apt_repo="deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ .chezmoi.osRelease.ubuntuCodename }} stable"
-# This ensures that the docker repo is not inside /etc/apt/sources.list
-sudo add-apt-repository --no-update -y --remove "$docker_apt_repo"
-echo "$docker_apt_repo" | sudo tee /etc/apt/sources.list.d/docker.list
-unset docker_apt_repo
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-kubic_apt_repo="deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ .chezmoi.osRelease.versionID }}/ /"
-# This ensures that the kubic repo is not inside /etc/apt/sources.list
-sudo add-apt-repository --no-update -y --remove "$kubic_apt_repo"
-echo "$kubic_apt_repo" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-unset kubic_apt_repo
-curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ .chezmoi.osRelease.versionID }}/Release.key | sudo apt-key add -
-{{ if eq .chezmoi.osRelease.versionID "18.04" -}}
-sudo add-apt-repository --no-update -y ppa:communitheme/ppa
-{{ end -}}
-{{ end -}}
-
 readarray -t apt_packages <<'EOF'
 zsh
 direnv
@@ -83,29 +58,10 @@ sudo apt install -y "${apt_packages[@]}"
 {{ if not .is_devcontainer -}}
 echo "Configuring Docker"
 sudo usermod -aG docker "{{ .chezmoi.username }}"
-if [[ ! -f /etc/docker/daemon.json ]]; then
-  sudo mkdir -p /etc/docker
-  echo '{}' | sudo tee /etc/docker/daemon.json >/dev/null
-fi
-jq --raw-output '.features.buildkit = true' /etc/docker/daemon.json | tee /tmp/daemon.json >/dev/null && sudo mv -f /tmp/daemon.json /etc/docker/daemon.json
-
-echo "Installing compose-switch (docker-compose v1 compatibility)"
-{{   $composeSwitchVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/docker/compose-switch/releases/latest" | trim | base -}}
-sudo curl -fsSL "https://github.com/docker/compose-switch/releases/download/{{ $composeSwitchVersion }}/docker-compose-linux-amd64" --output /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
 
 {{ if .is_wsl -}}
 echo "Setting up docker service in WSL initalization"
 sudo crudini --set /etc/wsl.conf boot command '"service docker start"'
-{{   $dockerCredsVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/docker/docker-credential-helpers/releases/latest" | trim | base -}}
-echo "Installing docker credential helper for WSL"
-curl -fsSL "https://github.com/docker/docker-credential-helpers/releases/download/{{ $dockerCredsVersion }}/docker-credential-wincred-{{ $dockerCredsVersion }}-amd64.zip" | zcat | sudo tee /usr/bin/docker-credential-wincred.exe >/dev/null
-sudo chmod +x /usr/bin/docker-credential-wincred.exe
-{{ else if .is_gnome -}}
-{{   $dockerCredsVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/docker/docker-credential-helpers/releases/latest" | trim | base -}}
-echo "Installing docker credential helper for GNOME"
-curl -fsSL "https://github.com/docker/docker-credential-helpers/releases/download/{{ $dockerCredsVersion }}/docker-credential-secretservice-{{ $dockerCredsVersion }}-amd64.tar.gz" | tar -xzf - -O | sudo tee /usr/bin/docker-credential-secretservice >/dev/null
-sudo chmod +x /usr/bin/docker-credential-secretservice
 {{- end }}
 
 {{ if not .is_wsl | and .is_gnome | and (not (lookPath "git-credential-manager-core")) -}}
