@@ -49,6 +49,14 @@ else
   git clone -b "${DOTFILES_BRANCH}" "${DOTFILES_REPO}" "${DOTFILES_DIR}"
 fi
 
-INSTALL_BIN="${DOTFILES_DIR}/install"
-echo_task "Running ${INSTALL_BIN}"
-exec "${INSTALL_BIN}"
+if [ -f "${DOTFILES_DIR}/install.sh" ]; then
+  INSTALL_SCRIPT="${DOTFILES_DIR}/install.sh"
+elif [ -f "${DOTFILES_DIR}/install" ]; then
+  INSTALL_SCRIPT="${DOTFILES_DIR}/install"
+else
+  echo "No install script found." >&2
+  exit 1
+fi
+
+echo_task "Running ${INSTALL_SCRIPT}"
+exec "${INSTALL_SCRIPT}"
