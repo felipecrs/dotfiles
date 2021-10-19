@@ -92,7 +92,7 @@ if chezmoi --version &>/dev/null; then
   # Apply changes to chezmoi config
   c chezmoi init --verbose
   # Apply the rest
-  c chezmoi apply --verbose --force --refresh-externals
+  c chezmoi apply --verbose --force
 fi
 
 if apt --version &>/dev/null; then
@@ -109,7 +109,7 @@ fi
 echo_task "Updating antigen packages"
 c antigen update
 
-if [[ "$(command -v gnome-shell-extension-installer)" ]]; then
+if command -v gnome-shell-extension-installer &>/dev/null; then
   echo_task "Updating gnome extensions"
   c gnome-shell-extension-installer --update --yes
 fi

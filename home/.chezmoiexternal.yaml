@@ -1,12 +1,14 @@
+{{ $antigenRevision := output "git" "ls-remote" "https://github.com/zsh-users/antigen.git" "HEAD" | trimSuffix "HEAD\n" | trim }}
 ".antigen/antigen.zsh":
   type: file
-  url: https://raw.githubusercontent.com/zsh-users/antigen/HEAD/bin/antigen.zsh
+  url: "https://raw.githubusercontent.com/zsh-users/antigen/{{ $antigenRevision }}/bin/antigen.zsh"
 
 {{ if not .is_devcontainer -}}
 {{   if .is_gnome | and (not .is_wsl) -}}
+{{ $extensionInstallerRevision := output "git" "ls-remote" "https://github.com/brunelli/gnome-shell-extension-installer.git" "HEAD" | trimSuffix "HEAD\n" | trim }}
 ".local/bin/gnome-shell-extension-installer":
   type: file
-  url: https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/HEAD/gnome-shell-extension-installer
+  url: "https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/{{ $extensionInstallerRevision }}/gnome-shell-extension-installer"
   executable: true
 {{-  end }}
 
@@ -23,11 +25,12 @@
   executable: true
 
 # Downloads all the variants of Fira Code Nerd Font
+{{ $nerdFontRevision := output "git" "ls-remote" "https://github.com/ryanoasis/nerd-fonts.git" "HEAD" | trimSuffix "HEAD\n" | trim }}
 {{-   range $_, $face := list "Regular" "Light" "Medium" "Bold" "Retina" "SemiBold" -}}
 {{-     range $_, $variant := list "" " Mono" }}
 ".local/share/fonts/Fira Code {{ $face }} Nerd Font Complete{{ $variant }}.ttf":
   type: file
-  url: https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/FiraCode/{{ $face }}/complete/Fira%20Code%20{{ $face }}%20Nerd%20Font%20Complete{{ $variant | replace " " "%20" }}.ttf
+  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/{{ $nerdFontRevision }}/patched-fonts/FiraCode/{{ $face }}/complete/Fira%20Code%20{{ $face }}%20Nerd%20Font%20Complete{{ $variant | replace " " "%20" }}.ttf"
 {{      end -}}
 {{-   end -}}
 
