@@ -30,7 +30,7 @@ die() {
 begins_with_short_option() {
   local first_option all_short_options='fh'
   first_option="${1:0:1}"
-  test "$all_short_options" = "${all_short_options/$first_option/}" && return 1 || return 0
+  test "${all_short_options}" = "${all_short_options/${first_option}/}" && return 1 || return 0
 }
 
 # THE DEFAULTS INITIALIZATION - OPTIONALS
@@ -40,14 +40,14 @@ print_help() {
   printf 'Usage: %s [-f|--(no-)force] [-h|--help]\n' "$0"
   printf '\t%s\n' "-f, --force, --no-force: Do not ask for confirmation (off by default)"
   printf '\t%s\n' "-h, --help: Prints help"
-  printf '\n%s\n' "$_HELP
+  printf '\n%s\n' "${_HELP}
 "
 }
 
 parse_commandline() {
   while test $# -gt 0; do
     _key="$1"
-    case "$_key" in
+    case "${_key}" in
     -f | --no-force | --force)
       _arg_force="on"
       test "${1:0:5}" = "--no-" && _arg_force="off"
@@ -55,8 +55,8 @@ parse_commandline() {
     -f*)
       _arg_force="on"
       _next="${_key##-f}"
-      if test -n "$_next" -a "$_next" != "$_key"; then
-        { begins_with_short_option "$_next" && shift && set -- "-f" "-${_next}" "$@"; } || die "The short option '$_key' can't be decomposed to ${_key:0:2} and -${_key:2}, because ${_key:0:2} doesn't accept value and '-${_key:2:1}' doesn't correspond to a short option."
+      if test -n "${_next}" -a "${_next}" != "${_key}"; then
+        { begins_with_short_option "${_next}" && shift && set -- "-f" "-${_next}" "$@"; } || die "The short option '${_key}' can't be decomposed to ${_key:0:2} and -${_key:2}, because ${_key:0:2} doesn't accept value and '-${_key:2:1}' doesn't correspond to a short option."
       fi
       ;;
     -h | --help)
@@ -84,39 +84,39 @@ parse_commandline "$@"
 
 set -euo pipefail
 
-force=$_arg_force
+force=${_arg_force}
 
 original_shortcut=/usr/share/applications/google-chrome.desktop
-if [ ! -f "$original_shortcut" ]; then
-  echo "Could not find the file $original_shortcut. Are you sure that Google Chrome is installed?"
+if [[ ! -f "${original_shortcut}" ]]; then
+  echo "Could not find the file ${original_shortcut}. Are you sure that Google Chrome is installed?"
   exit 1
 fi
 
-new_shortcut="$HOME/.local/share/applications/$(basename "$original_shortcut")"
+new_shortcut="${HOME}/.local/share/applications/$(basename "${original_shortcut}")"
 
 echo
 echo "We will:"
-echo "  - Create the file '$new_shortcut'"
+echo "  - Create the file '${new_shortcut}'"
 echo
-if [ "$force" = off ]; then
+if [[ "${force}" = off ]]; then
   read -p "Do you confirm? (Yy)" -n 1 -r
   echo
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+  if [[ ! ${REPLY} =~ ^[Yy]$ ]]; then
     exit 1
   fi
 fi
 
 ## Create the shortcut
-cp -f $original_shortcut "$new_shortcut"
+cp -f "${original_shortcut}" "${new_shortcut}"
 line_match="Exec=/usr/bin/google-chrome-stable"
-sed -i "s:$line_match:$line_match --enable-features=WebUIDarkMode --force-dark-mode:g" "$new_shortcut" # The //\//\\/ is used to escape forward slashes
+sed -i "s:${line_match}:${line_match} --enable-features=WebUIDarkMode --force-dark-mode:g" "${new_shortcut}" # The //\//\\/ is used to escape forward slashes
 
 echo
 echo "All done."
 echo "Please make sure you fully close Google Chrome before opening a new instance."
 echo
 echo "To uninstall, run:"
-echo "  $ rm -f $new_shortcut"
+echo "  $ rm -f ${new_shortcut}"
 echo
 
 # ] <-- needed because of Argbash

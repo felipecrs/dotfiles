@@ -21,7 +21,7 @@ die() {
 begins_with_short_option() {
   local first_option all_short_options='voh'
   first_option="${1:0:1}"
-  test "$all_short_options" = "${all_short_options/$first_option/}" && return 1 || return 0
+  test "${all_short_options}" = "${all_short_options/${first_option}/}" && return 1 || return 0
 }
 
 # THE DEFAULTS INITIALIZATION - OPTIONALS
@@ -44,9 +44,9 @@ print_help() {
 parse_commandline() {
   while test $# -gt 0; do
     _key="$1"
-    case "$_key" in
+    case "${_key}" in
     -v | --variant)
-      test $# -lt 2 && die "Missing value for the optional argument '$_key'." 1
+      test $# -lt 2 && die "Missing value for the optional argument '${_key}'." 1
       _arg_variant+=("$2")
       shift
       ;;
@@ -57,7 +57,7 @@ parse_commandline() {
       _arg_variant+=("${_key##-v}")
       ;;
     -o | --os)
-      test $# -lt 2 && die "Missing value for the optional argument '$_key'." 1
+      test $# -lt 2 && die "Missing value for the optional argument '${_key}'." 1
       _arg_os+=("$2")
       shift
       ;;
@@ -68,7 +68,7 @@ parse_commandline() {
       _arg_os+=("${_key##-o}")
       ;;
     --pre-script)
-      test $# -lt 2 && die "Missing value for the optional argument '$_key'." 1
+      test $# -lt 2 && die "Missing value for the optional argument '${_key}'." 1
       _arg_pre_script="$2"
       shift
       ;;
@@ -108,14 +108,14 @@ run_test() {
   local -r setup_script="$2"
 
   cmd time docker run --rm --init --user vscode \
-    --volume "$dotfiles_root:/home/vscode/.dotfiles:ro" \
-    "mcr.microsoft.com/vscode/devcontainers/base:$os" \
-    bash -xeuc "$(
-      cat <<EOF
+    --volume "${dotfiles_root}:/home/vscode/.dotfiles:ro" \
+    "mcr.microsoft.com/vscode/devcontainers/base:${os}" \
+    bash <<EOF
+set -euxo pipefail
 
 ${_arg_pre_script}
 
-$setup_script
+${setup_script}
 
 ~/.dotfiles/install
 
@@ -125,13 +125,12 @@ set -xeu
 
 chezmoi data
 EOF
-    )"
 }
 
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-dotfiles_root="$(realpath "$script_dir/..")"
+dotfiles_root="$(realpath "${script_dir}/..")"
 
 variants=("${_arg_variant[@]}")
 if ((${#variants[@]} == 0)); then
@@ -145,14 +144,14 @@ fi
 
 for variant in "${variants[@]}"; do
   for os in "${oses[@]}"; do
-    echo "Testing variant '$variant' with OS '$os'"
+    echo "Testing variant '${variant}' with OS '${os}'"
 
-    if [[ "$variant" == "devcontainer" ]]; then
-      run_test "$os" "export REMOTE_CONTAINERS=true"
+    if [[ "${variant}" == "devcontainer" ]]; then
+      run_test "${os}" "export REMOTE_CONTAINERS=true"
 
-    elif [[ "$variant" == "wsl" ]]; then
-      run_test "$os" "$(
-        cat <<'EOF'
+    elif [[ "${variant}" == "wsl" ]]; then
+      run_test "${os}" "$(
+        cat <<'EOF' || true
 export IS_WSL=true
 
 cat <<'EOM' | sudo tee /usr/local/bin/wslpath
@@ -174,9 +173,9 @@ sudo chmod +x /usr/local/bin/wslvar
 EOF
       )"
 
-    elif [[ "$variant" == "gnome" ]]; then
-      run_test "$os" "$(
-        cat <<'EOF'
+    elif [[ "${variant}" == "gnome" ]]; then
+      run_test "${os}" "$(
+        cat <<'EOF' || true
 sudo apt update
 sudo apt install -y --no-install-recommends gnome-shell
 EOF
