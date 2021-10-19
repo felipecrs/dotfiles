@@ -31,7 +31,7 @@ DOTFILES_REPO="${DOTFILES_REPO_HOST}/${DOTFILES_USER}/dotfiles"
 DOTFILES_BRANCH=${DOTFILES_BRANCH:-"master"}
 DOTFILES_DIR="${HOME}/.dotfiles"
 
-if [ -z "$(command -v git || true)" ]; then
+if command -v git >/dev/null 2>&1; then
   echo "Git does not seems to be installed"
   if ! sudo -n true 2>/dev/null; then
     echo_task "Prompting for sudo password to install Git"

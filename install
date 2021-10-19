@@ -13,14 +13,13 @@ error() {
 # -u: exit on unset variables
 set -eu
 
-chezmoi="$(command -v chezmoi)"
-if [ -z "${chezmoi}" ]; then
+if chezmoi="$(command -v chezmoi)" 2>/dev/null; then
   bin_dir="${HOME}/.local/bin"
   chezmoi="${bin_dir}/chezmoi"
   echo_task "Installing chezmoi to ${chezmoi}"
-  if [ -n "$(command -v curl || true)" ]; then
+  if command -v curl >/dev/null 2>&1; then
     chezmoi_install_script="$(curl -fsSL https://git.io/chezmoi)"
-  elif [ -n "$(command -v wget || true)" ]; then
+  elif command -v wget >/dev/null 2>&1; then
     chezmoi_install_script="$(wget -qO- https://git.io/chezmoi)"
   else
     error "To install chezmoi, you must have curl or wget."
@@ -30,7 +29,8 @@ if [ -z "${chezmoi}" ]; then
 fi
 
 # POSIX way to get script's dir: https://stackoverflow.com/a/29834779/12156188
-script_dir="$(cd -P -- "$(dirname -- "$(command -v -- "$0" || true)")" && pwd -P)"
+# shellcheck disable=SC2312
+script_dir="$(cd -P -- "$(dirname -- "$(command -v -- "$0")")" && pwd -P)"
 
 if [ -n "${DOTFILES_ONE_SHOT-}" ]; then
   chezmoi_extra_arg="--one-shot"
