@@ -81,6 +81,9 @@ EOM
 }
 
 if brew --version &>/dev/null; then
+  echo_task "Updating brew"
+  c brew update
+
   echo_task "Updating brew packages"
   c brew upgrade
 fi
