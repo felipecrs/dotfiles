@@ -59,6 +59,7 @@
     "**/*_zshrc": true,
     "**/*_antigenrc": true
   },
+
   "files.associations": {
     "**/home/install": "shellscript",
     "*_zshrc": "shellscript",
@@ -69,7 +70,9 @@
     "**/home/**/run_*": "shellscript",
     "**/home/**/executable_*": "shellscript",
     "**/home/**/modify_*": "shellscript",
-    ".chezmoi*.yaml": "helm",
-    ".chezmoi.yaml.tmpl": "helm"
+    "*.yaml.tmpl": "helm",
+    ".chezmoiignore": "helm",
+    ".chezmoiremove": "helm",
+    "**/.chezmoitemplates/*": "helm"
   }
 }
