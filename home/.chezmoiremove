@@ -10,7 +10,6 @@
 
 .local/bin/localpath
 
-.local/bin/code
 .local/bin/docker
 
 # These files are now installed to system-wide

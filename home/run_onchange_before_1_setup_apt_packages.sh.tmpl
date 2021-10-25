@@ -107,7 +107,8 @@ sudo apt install -y /tmp/google-chrome.deb
 rm -f /tmp/google-chrome.deb
 {{ end -}}
 
-{{ if not .is_wsl | and .is_gnome | and (not (lookPath "code")) -}}
+{{/* checks if code shim is not the only vscode installed, or if it is running in a remote session */}}
+{{ if not .is_wsl | and .is_gnome | and (not (output "bash" "-c" "which -a code | grep -v ~/.local/bin/code | grep -v ~/.vscode-server/ || true")) -}}
 echo "Installing VS Code"
 curl -fsSL 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' --output /tmp/code.deb
 sudo apt install -y /tmp/code.deb
