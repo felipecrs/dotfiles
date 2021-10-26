@@ -13,13 +13,13 @@ error() {
 # -u: exit on unset variables
 set -eu
 
-if chezmoi="$(command -v chezmoi)" 2>/dev/null; then
+if ! chezmoi="$(command -v chezmoi)"; then
   bin_dir="${HOME}/.local/bin"
   chezmoi="${bin_dir}/chezmoi"
   echo_task "Installing chezmoi to ${chezmoi}"
-  if command -v curl >/dev/null 2>&1; then
+  if command -v curl >/dev/null; then
     chezmoi_install_script="$(curl -fsSL https://git.io/chezmoi)"
-  elif command -v wget >/dev/null 2>&1; then
+  elif command -v wget >/dev/null; then
     chezmoi_install_script="$(wget -qO- https://git.io/chezmoi)"
   else
     error "To install chezmoi, you must have curl or wget."
