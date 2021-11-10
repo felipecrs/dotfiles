@@ -1,0 +1,108 @@
+#!/bin/sh
+
+set -exu
+
+get_in_path_except_current() {
+  entries=$(which -a "$1") &&
+    echo "${entries}" | grep -A1 "$0" | grep -v "$0" | grep .
+}
+
+is_path_from_windows() {
+  echo "${1}" | grep -q '^/mnt/.*$'
+}
+
+get_in_path_from_windows() {
+  entries=$(which -a "$1") &&
+    echo "${entries}" | grep -v -A99 "$0" | grep -v "$0" | grep -m1 '^/mnt/.*$' | grep .
+}
+
+is_first_arg_a_folder() {
+  for arg; do
+    shift
+    # Skip options like --wait
+    if [ "${arg#-}" = "${arg}" ]; then
+      if [ -d "${arg}" ]; then
+        return 0
+      else
+        return 1
+      fi
+    fi
+  done
+  return 1
+}
+
+# shellcheck disable=SC2310
+if code="$(get_in_path_except_current code)"; then
+  # shellcheck disable=SC2310,SC2050
+  if [ "{{ .is_wsl }}" = true ] && ! is_path_from_windows "${code}"; then
+    if get_in_path_from_windows code >/dev/null && [ -z "${USE_CODE_FROM_LINUX:-}" ]; then
+      echo "using code from Windows (set USE_CODE_FROM_LINUX=1 to use code from Linux)" >&2
+      code="$(get_in_path_from_windows code)"
+    else
+      echo "using code from Linux (unset USE_CODE_FROM_LINUX to use code from Windows)" >&2
+      export DONT_PROMPT_WSL_INSTALL=1
+    fi
+  fi
+
+  # Used to work around https://github.com/twpayne/chezmoi/issues/1068
+  # code duplication here is required because there is no way to set
+  # script level args inside of functions in POSIX (on Bash we can use arrays)
+  if is_first_arg_a_folder "$@"; then
+    # Removes -w and --wait flags
+    for arg; do
+      shift
+      if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+        continue
+      fi
+      set -- "$@" "${arg}"
+    done
+  fi
+
+  exec "${code}" "$@"
+else
+  printf "code is not available, " >&2
+  if command -v code-insiders >/dev/null 2>&1; then
+    echo "using code-insiders instead" >&2
+
+    # Used to work around https://github.com/twpayne/chezmoi/issues/1068
+    # code duplication here is required because there is no way to set
+    # script level args inside of functions in POSIX (on Bash we can use arrays)
+    if is_first_arg_a_folder "$@"; then
+      # Removes -w and --wait flags
+      for arg; do
+        shift
+        if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+          continue
+        fi
+        set -- "$@" "${arg}"
+      done
+    fi
+
+    exec code-insiders "$@"
+  else
+    # Removes -w and --wait flags
+    # code duplication here is required because there is no way to set
+    # script level args inside of functions in POSIX (on Bash we can use arrays)
+    for arg; do
+      shift
+      if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+        continue
+      fi
+      set -- "$@" "${arg}"
+    done
+
+    if command -v nano >/dev/null 2>&1; then
+      echo "using nano instead" >&2
+      exec nano "$@"
+    elif command -v vim >/dev/null 2>&1; then
+      echo "using vim instead" >&2
+      exec vim "$@"
+    elif command -v vi >/dev/null 2>&1; then
+      echo "using vi instead" >&2
+      exec vi "$@"
+    else
+      echo "and neither code-insiders, nano, vim or vi." >&2
+      exit 127
+    fi
+  fi
+fi

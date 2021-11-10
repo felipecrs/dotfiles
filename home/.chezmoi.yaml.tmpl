@@ -48,12 +48,4 @@ data:
   email: "{{ $workEmail }}"
 {{- end }}
 
-{{- if or (lookPath "code") (lookPath "code-insiders") $isDevcontainer }}
   editor: "code --wait"
-{{- else if lookPath "nano" }}
-  editor: "nano"
-{{- else if lookPath "vim" }}
-  editor: "vim"
-{{- else }}
-  editor: "vi"
-{{- end }}
