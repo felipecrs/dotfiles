@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -euo pipefail
+
+readonly formula="$1"
+readonly version="$2"
+
+readonly homebrew_core_dir="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core"
+readonly revision=$(git -C "${homebrew_core_dir}" log --grep "${version}" -1 --pretty=format:"%H" -- "Formula/${formula}.rb")
+
+git -C "${homebrew_core_dir}" reset --hard "${revision}"
+
+export HOMEBREW_NO_AUTO_UPDATE=1
+exec brew install "${formula}"
