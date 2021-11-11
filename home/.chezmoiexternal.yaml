@@ -2,36 +2,37 @@
 ".oh-my-zsh":
   type: archive
   url: "https://github.com/ohmyzsh/ohmyzsh/archive/{{ $ohMyZshRevision }}.tar.gz"
-  exact: true
   stripComponents: 1
+  # waiting for https://github.com/twpayne/chezmoi/issues/1614#issuecomment-966524408
+  # exact: true
 
 {{ $powerlevel10kRevision := output "bash" "-c" "git ls-remote https://github.com/romkatv/powerlevel10k.git HEAD | awk '{ print $1}'" | trim }}
 ".oh-my-zsh/custom/themes/powerlevel10k":
   type: archive
   url: "https://github.com/romkatv/powerlevel10k/archive/{{ $powerlevel10kRevision }}.tar.gz"
-  exact: true
   stripComponents: 1
+  exact: true
 
 {{ $zshSyntaxHighlightingRevision := output "bash" "-c" "git ls-remote https://github.com/zsh-users/zsh-syntax-highlighting.git HEAD | awk '{ print $1}'" | trim }}
 ".oh-my-zsh/custom/plugins/zsh-syntax-highlighting":
   type: archive
   url: "https://github.com/zsh-users/zsh-syntax-highlighting/archive/{{ $zshSyntaxHighlightingRevision }}.tar.gz"
-  exact: true
   stripComponents: 1
+  exact: true
 
 {{ $zshAutoSuggestionsRevision := output "bash" "-c" "git ls-remote https://github.com/zsh-users/zsh-autosuggestions.git HEAD | awk '{ print $1}'" | trim }}
 ".oh-my-zsh/custom/plugins/zsh-autosuggestions":
   type: archive
   url: "https://github.com/zsh-users/zsh-autosuggestions/archive/{{ $zshAutoSuggestionsRevision }}.tar.gz"
-  exact: true
   stripComponents: 1
+  exact: true
 
 {{ $zshCompletionsRevision := output "bash" "-c" "git ls-remote https://github.com/zsh-users/zsh-completions.git HEAD | awk '{ print $1}'" | trim }}
 ".oh-my-zsh/custom/plugins/zsh-completions":
   type: archive
   url: "https://github.com/zsh-users/zsh-completions/archive/{{ $zshCompletionsRevision }}.tar.gz"
-  exact: true
   stripComponents: 1
+  exact: true
 
 {{ if not .is_devcontainer -}}
 {{   if .is_gnome | and (not .is_wsl) -}}
