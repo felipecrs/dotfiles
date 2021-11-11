@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -exu
+set -eu
 
 get_in_path_except_current() {
   entries=$(which -a "$1") &&
