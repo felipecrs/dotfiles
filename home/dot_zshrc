@@ -104,10 +104,10 @@ plugins=(
   common-aliases
   sudo
   dotenv
-  zsh_reload
   zsh-syntax-highlighting
   zsh-autosuggestions
   zsh-completions
+  my-completions
   )
 
 source "$ZSH/oh-my-zsh.sh"
