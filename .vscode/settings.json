@@ -71,6 +71,7 @@
     "**/home/**/executable_*": "shellscript",
     "**/home/**/modify_*": "shellscript",
     "*.yaml.tmpl": "helm",
+    ".chezmoi*.yaml": "helm",
     ".chezmoiignore": "helm",
     ".chezmoiremove": "helm",
     "**/.chezmoitemplates/*": "helm"
