@@ -43,6 +43,14 @@
   executable: true
 {{-  end }}
 
+{{ $denoVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/denoland/deno/releases/latest" | trim | base -}}
+".deno/bin/deno":
+  type: file
+  url: "https://github.com/denoland/deno/releases/download/{{ $denoVersion }}/deno-x86_64-unknown-linux-gnu.zip"
+  executable: true
+  filter:
+    command: zcat
+
 {{ $dockerComposeVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/docker/compose/releases/latest" | trim | base -}}
 ".docker/cli-plugins/docker-compose":
   type: file
