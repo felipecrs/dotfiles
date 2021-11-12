@@ -51,6 +51,11 @@
   filter:
     command: zcat
 
+{{ $voltaVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/volta-cli/volta/releases/latest" | trim | base -}}
+".volta/bin":
+  type: archive
+  url: "https://github.com/volta-cli/volta/releases/download/{{ $voltaVersion }}/volta-{{ trimPrefix "v" $voltaVersion }}-linux-openssl-1.1.tar.gz"
+
 {{ $dockerComposeVersion := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" "https://github.com/docker/compose/releases/latest" | trim | base -}}
 ".docker/cli-plugins/docker-compose":
   type: file

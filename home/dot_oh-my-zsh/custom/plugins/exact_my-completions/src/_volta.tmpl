@@ -1,0 +1,4 @@
+{{- $volta := lookPath (joinPath .chezmoi.homeDir ".volta/bin/volta") | or (lookPath "volta") -}}
+{{- if $volta -}}
+{{- output $volta "completions" "zsh" -}}
+{{- end -}}
