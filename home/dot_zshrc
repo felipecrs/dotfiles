@@ -106,14 +106,13 @@ plugins=(
   dotenv
   zsh-syntax-highlighting
   zsh-autosuggestions
-  zsh-completions
   my-completions
   )
 
-source "$ZSH/oh-my-zsh.sh"
+# https://github.com/zsh-users/zsh-completions/issues/603
+fpath+="${ZSH_CUSTOM:-"$ZSH/custom"}/plugins/zsh-completions/src"
 
-# https://github.com/ohmyzsh/ohmyzsh/issues/10412
-autoload -U compinit && compinit
+source "$ZSH/oh-my-zsh.sh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
