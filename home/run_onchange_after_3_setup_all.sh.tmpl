@@ -131,13 +131,6 @@ EOF
   fi
   unset local_bin_chezmoi
 
-  echo_task "Installing deno"
-  if ! deno --version &>/dev/null; then
-    sh <(curl -fsSL https://deno.land/x/install/install.sh)
-  else
-    echo "deno is already installed"
-  fi
-
   echo_task "Installing node, npm, and yarn"
   volta install node npm yarn
 
