@@ -112,5 +112,8 @@ plugins=(
 
 source "$ZSH/oh-my-zsh.sh"
 
+# https://github.com/ohmyzsh/ohmyzsh/issues/10412
+autoload -U compinit && compinit
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
