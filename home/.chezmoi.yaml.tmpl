@@ -6,11 +6,13 @@
 {{- $workName := "Felipe de Cássio Rocha Santos" -}}
 {{- $workEmail := "felipesantos@inatel.br" -}}
 
+{{- $chezmoiForce := or (has "--force" .chezmoi.args) (has "--force=true" .chezmoi.args) -}}
+
 {{- $isWork := false -}}
-{{- if (hasKey . "is_work") -}}
+{{- if hasKey . "is_work" -}}
 {{-   $isWork = .is_work -}}
 {{- end -}}
-{{- if (and stdinIsATTY (not (has "--force" .chezmoi.args))) -}}
+{{- if and stdinIsATTY (not $chezmoiForce) -}}
 {{-   $isWork = promptBool "Is this a work environment" $isWork -}}
 {{-   writeToStdout "\n💡 Tip: you can always make chezmoi ask this again by running `chezmoi init` without `--force`.\n" -}}
 {{- end -}}
