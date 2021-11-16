@@ -6,15 +6,13 @@
 {{- $workName := "Felipe de Cássio Rocha Santos" -}}
 {{- $workEmail := "felipesantos@inatel.br" -}}
 
-{{- $isWork := .is_work -}}
-{{- if kindIs "invalid" $isWork -}}
-{{-   if stdinIsATTY -}}
-{{-     $isWork = promptBool "Is this a work environment" -}}
-{{-     writeToStdout "\n💡 Tip: you can make chezmoi ask this again with `chezmoi init --data=false`.\n" -}}
-{{-   else -}}
-{{- /*  You can set this environment variable to "true" in your work account for Codespaces or Gitpod */ -}}
-{{-     $isWork = eq (env "DOTFILES_IS_WORK") "true" -}}
-{{-   end -}}
+{{- $isWork := false -}}
+{{- if (hasKey . "is_work") -}}
+{{-   $isWork = .is_work -}}
+{{- end -}}
+{{- if (and stdinIsATTY (not (has "--force" .chezmoi.args))) -}}
+{{-   $isWork = promptBool "Is this a work environment" $isWork -}}
+{{-   writeToStdout "\n💡 Tip: you can always make chezmoi ask this again by running `chezmoi init` without `--force`.\n" -}}
 {{- end -}}
 
 {{- $isPersonal := not $isWork -}}
