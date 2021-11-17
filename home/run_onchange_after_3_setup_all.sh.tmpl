@@ -89,7 +89,7 @@ if ! is_devcontainer; then
   fi
 
   if ! brew --version &>/dev/null; then
-    if sudo test -w /home/linuxbrew; then
+    if sudo test -w /home; then
       CI=true bash <(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)
     else
       echo "Installing to ~/.linuxbrew due to lack of permissions"
