@@ -133,6 +133,9 @@ EOF
   echo_task "Installing node, npm, and yarn"
   volta install node npm yarn
 
+  echo_task "Installing devcontainer CLI"
+  volta install @vscode/dev-container-cli
+
   echo_task "Installing sdk"
   if ! sdk version &>/dev/null; then
     # sdkman installation fails because chezmoi already placed in the etc/config file
