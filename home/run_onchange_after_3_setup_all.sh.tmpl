@@ -57,35 +57,42 @@ if ! sudo -n true 2>/dev/null; then
 fi
 
 echo_task "Adding user to sudoers"
-echo "$USER  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$USER"
+echo "${USER}  ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/${USER}"
 
 echo_task "Making zsh the default shell"
-sudo chsh -s "$(which zsh)" "$USER"
+sudo chsh -s "$(which zsh)" "${USER}"
 
 echo_task "Initializing zsh"
 (
   # We need to be in a git repository, so gitstatusd initiliazes
   script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-  cd "$script_dir"
+  cd "${script_dir}"
   # We also need to emulate a TTY
   script -qec "zsh -is </dev/null" /dev/null
 )
 echo "Done."
 
 if ! is_devcontainer; then
+  if [[ ! -x "${HOME}/.local/bin/chezmoi" ]]; then
+    echo_task "Installing chezmoi"
+    chezmoi_install_script="$(curl -fsSL https://git.io/chezmoi)"
+    sh -c "${chezmoi_install_script}" -- -b "${HOME}/.local/bin"
+    unset chezmoi_install_script
+  fi
+
   echo_task "Installing brew"
 
   # Fix PATH
-  if [[ ":$PATH:" != *":$HOME/.linuxbrew/bin:"* ]]; then
-    export PATH="$HOME/.linuxbrew/bin:$PATH"
+  if [[ ":${PATH}:" != *":${HOME}/.linuxbrew/bin:"* ]]; then
+    export PATH="${HOME}/.linuxbrew/bin:${PATH}"
   fi
 
-  if [[ ":$PATH:" != *":/home/linuxbrew/.linuxbrew/bin:"* ]]; then
-    export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+  if [[ ":${PATH}:" != *":/home/linuxbrew/.linuxbrew/bin:"* ]]; then
+    export PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
   fi
 
-  if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-    export PATH="$HOME/.local/bin:$PATH"
+  if [[ ":${PATH}:" != *":${HOME}/.local/bin:"* ]]; then
+    export PATH="${HOME}/.local/bin:${PATH}"
   fi
 
   if ! brew --version &>/dev/null; then
@@ -106,9 +113,7 @@ if ! is_devcontainer; then
   fi
 
   echo_task "Installing brew packages"
-
   brew bundle --no-lock --file=/dev/stdin <<'EOF'
-brew "chezmoi"
 brew "yq"
 brew "kubectl"
 brew "helm"
@@ -121,14 +126,10 @@ brew "gh"
 {{ end -}}
 EOF
 
-  # Uninstalling previously installed chezmoi because it was already installed
-  # by Homebrew.
-  local_bin_chezmoi="$HOME/.local/bin/chezmoi"
-  if [[ -f "$local_bin_chezmoi" ]]; then
-    echo_task "Uninstalling chezmoi at $local_bin_chezmoi"
-    rm -f "$local_bin_chezmoi"
+  if brew list chezmoi &>/dev/null; then
+    echo_task "Removing chezmoi installed by brew"
+    brew uninstall chezmoi
   fi
-  unset local_bin_chezmoi
 
   echo_task "Installing node, npm, and yarn"
   volta install node npm yarn
@@ -140,26 +141,26 @@ EOF
   if ! sdk version &>/dev/null; then
     # sdkman installation fails because chezmoi already placed in the etc/config file
     # so we install to a temporary directory
-    target_sdkman_dir="$HOME/.sdkman"
+    target_sdkman_dir="${HOME}/.sdkman"
     temp_sdkman_dir="$(mktemp --directory --dry-run --suffix=.sdkman)"
     echo "Installing sdkman to temp directory..."
-    SDKMAN_DIR="$temp_sdkman_dir" bash <(curl -fsSL "https://get.sdkman.io/?rcupdate=false")
+    SDKMAN_DIR="${temp_sdkman_dir}" bash <(curl -fsSL "https://get.sdkman.io/?rcupdate=false")
 
     echo "Now moving back sdkman to the target directory..."
     # then we replace the config file
-    mv -f "$target_sdkman_dir/etc/config" "$temp_sdkman_dir/etc/config"
+    mv -f "${target_sdkman_dir}/etc/config" "${temp_sdkman_dir}/etc/config"
     # delete the target sdkman installation folder
-    rm -rf "$target_sdkman_dir"
+    rm -rf "${target_sdkman_dir}"
     # and move the temp install dir to the target one
-    mv -f "$temp_sdkman_dir" "$target_sdkman_dir"
+    mv -f "${temp_sdkman_dir}" "${target_sdkman_dir}"
   else
     echo "sdk is already installed"
   fi
 
   echo_task "Installing Java 11"
   identifier="$(sdk list java | grep --only-matching --max-count 1 ' 11.*.hs-adpt ' | awk '{print $NF}')"
-  sdk install java "$identifier"
-  sdk default java "$identifier"
+  sdk install java "${identifier}"
+  sdk default java "${identifier}"
   unset identifier
 
   if is_wsl; then
@@ -167,9 +168,9 @@ EOF
 
     echo_task "Syncing .ssh folder from Windows to WSL"
     USERPROFILE="$(wslpath "$(wslvar USERPROFILE)")"
-    if [[ -f "$USERPROFILE/.ssh/id_rsa" ]]; then
-      cp -rf "$USERPROFILE/.ssh/." "$HOME/.ssh"
-      chmod 600 "$HOME/.ssh/id_rsa"
+    if [[ -f "${USERPROFILE}/.ssh/id_rsa" ]]; then
+      cp -rf "${USERPROFILE}/.ssh/." "${HOME}/.ssh"
+      chmod 600 "${HOME}/.ssh/id_rsa"
     else
       echo "No keys to sync"
     fi
