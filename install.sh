@@ -40,4 +40,4 @@ fi
 
 echo_task "Running chezmoi init"
 # replace current process with chezmoi init
-exec "${chezmoi}" init --source "${script_dir}/home" "${chezmoi_extra_arg}"
+exec "${chezmoi}" init --source "${script_dir}" "${chezmoi_extra_arg}"
