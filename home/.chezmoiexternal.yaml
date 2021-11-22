@@ -1,58 +1,58 @@
-{{- define "gitHubHEAD" }}
-{{- $dict := (index . 0) }}
-{{- $key := (index . 1) }}
-{{-   if hasKey $dict $key }}
-{{-     get $dict $key -}}
-{{-   else }}
-{{-     $value := output "bash" "-c" (printf "git ls-remote https://github.com/%s.git HEAD | awk '{print $1}'" $key) | trim }}
-{{-     $_ := set $dict $key $value }}
-{{-     $value }}
-{{-   end }}
+{{- define "getGithubHeadRevision" -}}
+{{-   $repo := get . "repo" -}}
+{{-   $cache := get . "cache" -}}
+{{-   if hasKey $cache $repo -}}
+{{-     get $cache $repo -}}
+{{-   else -}}
+{{-     $result := output "git" "ls-remote" (printf "https://github.com/%s.git" $repo) "HEAD" | trimSuffix "HEAD\n" | trim -}}
+{{-     $_ := set $cache $repo $result -}}
+{{-     $result -}}
+{{-   end -}}
 {{- end -}}
 
-{{- define "gitHubLatest" }}
-{{- $dict := (index . 0) }}
-{{- $key := (index . 1) }}
-{{-   if hasKey $dict $key }}
-{{-     get $dict $key -}}
-{{-   else }}
-{{-     $value := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" (printf "https://github.com/%s/releases/latest" $key) | trim | base | trimPrefix "v" }}
-{{-     $_ := set $dict $key $value }}
-{{-     $value }}
-{{-   end }}
+{{- define "getGithubLatestVersion" -}}
+{{-   $repo := get . "repo" -}}
+{{-   $cache := get . "cache" -}}
+{{-   if hasKey $cache $repo -}}
+{{-     get $cache $repo -}}
+{{-   else -}}
+{{-     $result := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" (printf "https://github.com/%s/releases/latest" $repo) | trim | base | trimPrefix "v" -}}
+{{-     $_ := set $cache $repo $result -}}
+{{-     $result -}}
+{{-   end -}}
 {{- end -}}
 
-{{- $HEADs := dict -}}
-{{- $latests := dict -}}
+{{- $githubHeadRevisions := dict -}}
+{{- $githubLatestVersions := dict -}}
 
 ".oh-my-zsh":
   type: archive
-  url: "https://github.com/ohmyzsh/ohmyzsh/archive/{{ template "gitHubHEAD" list $HEADs "ohmyzsh/ohmyzsh" }}.tar.gz"
+  url: "https://github.com/ohmyzsh/ohmyzsh/archive/{{ template "getGithubHeadRevision" dict "repo" "ohmyzsh/ohmyzsh" "cache" $githubHeadRevisions }}.tar.gz"
   stripComponents: 1
   # waiting for https://github.com/twpayne/chezmoi/issues/1614#issuecomment-966524408
   # exact: true
 
 ".oh-my-zsh/custom/themes/powerlevel10k":
   type: archive
-  url: "https://github.com/romkatv/powerlevel10k/archive/{{ template "gitHubHEAD" list $HEADs "romkatv/powerlevel10k" }}.tar.gz"
+  url: "https://github.com/romkatv/powerlevel10k/archive/{{ template "getGithubHeadRevision" dict "repo" "romkatv/powerlevel10k" "cache" $githubHeadRevisions }}.tar.gz"
   stripComponents: 1
   exact: true
 
 ".oh-my-zsh/custom/plugins/zsh-syntax-highlighting":
   type: archive
-  url: "https://github.com/zsh-users/zsh-syntax-highlighting/archive/{{ template "gitHubHEAD" list $HEADs "zsh-users/zsh-syntax-highlighting" }}.tar.gz"
+  url: "https://github.com/zsh-users/zsh-syntax-highlighting/archive/{{ template "getGithubHeadRevision" dict "repo" "zsh-users/zsh-syntax-highlighting" "cache" $githubHeadRevisions }}.tar.gz"
   stripComponents: 1
   exact: true
 
 ".oh-my-zsh/custom/plugins/zsh-autosuggestions":
   type: archive
-  url: "https://github.com/zsh-users/zsh-autosuggestions/archive/{{ template "gitHubHEAD" list $HEADs "zsh-users/zsh-autosuggestions" }}.tar.gz"
+  url: "https://github.com/zsh-users/zsh-autosuggestions/archive/{{ template "getGithubHeadRevision" dict "repo" "zsh-users/zsh-autosuggestions" "cache" $githubHeadRevisions }}.tar.gz"
   stripComponents: 1
   exact: true
 
 ".oh-my-zsh/custom/plugins/zsh-completions":
   type: archive
-  url: "https://github.com/zsh-users/zsh-completions/archive/{{ template "gitHubHEAD" list $HEADs "zsh-users/zsh-completions" }}.tar.gz"
+  url: "https://github.com/zsh-users/zsh-completions/archive/{{ template "getGithubHeadRevision" dict "repo" "zsh-users/zsh-completions" "cache" $githubHeadRevisions }}.tar.gz"
   stripComponents: 1
   exact: true
 
@@ -60,29 +60,29 @@
 {{   if .is_gnome | and (not .is_wsl) -}}
 ".local/bin/gnome-shell-extension-installer":
   type: file
-  url: "https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/{{ template "gitHubHEAD" list $HEADs "brunelli/gnome-shell-extension-installer" }}/gnome-shell-extension-installer"
+  url: "https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/{{ template "getGithubHeadRevision" dict "repo" "brunelli/gnome-shell-extension-installer" "cache" $githubHeadRevisions }}/gnome-shell-extension-installer"
   executable: true
 {{-  end }}
 
 ".deno/bin/deno":
   type: file
-  url: "https://github.com/denoland/deno/releases/download/v{{ template "gitHubLatest" list $latests "denoland/deno" }}/deno-x86_64-unknown-linux-gnu.zip"
+  url: "https://github.com/denoland/deno/releases/download/v{{ template "getGithubLatestVersion" dict "repo" "denoland/deno" "cache" $githubLatestVersions }}/deno-x86_64-unknown-linux-gnu.zip"
   executable: true
   filter:
     command: zcat
 
 ".volta/bin":
   type: archive
-  url: "https://github.com/volta-cli/volta/releases/download/v{{ template "gitHubLatest" list $latests "volta-cli/volta" }}/volta-{{ template "gitHubLatest" list $latests "volta-cli/volta" }}-linux-openssl-1.1.tar.gz"
+  url: "https://github.com/volta-cli/volta/releases/download/v{{ template "getGithubLatestVersion" dict "repo" "volta-cli/volta" "cache" $githubLatestVersions }}/volta-{{ template "getGithubLatestVersion" dict "repo" "volta-cli/volta" "cache" $githubLatestVersions }}-linux-openssl-1.1.tar.gz"
 
 ".docker/cli-plugins/docker-compose":
   type: file
-  url: "https://github.com/docker/compose/releases/download/v{{ template "gitHubLatest" list $latests "docker/compose" }}/docker-compose-linux-x86_64"
+  url: "https://github.com/docker/compose/releases/download/v{{ template "getGithubLatestVersion" dict "repo" "docker/compose" "cache" $githubLatestVersions }}/docker-compose-linux-x86_64"
   executable: true
 
 ".docker/cli-plugins/docker-buildx":
   type: file
-  url: "https://github.com/docker/buildx/releases/download/v{{ template "gitHubLatest" list $latests "docker/buildx" }}/buildx-v{{ template "gitHubLatest" list $latests "docker/buildx" }}.linux-amd64"
+  url: "https://github.com/docker/buildx/releases/download/v{{ template "getGithubLatestVersion" dict "repo" "docker/buildx" "cache" $githubLatestVersions }}/buildx-v{{ template "getGithubLatestVersion" dict "repo" "docker/buildx" "cache" $githubLatestVersions }}.linux-amd64"
   executable: true
 
 # Downloads all the variants of Fira Code Nerd Font
@@ -90,7 +90,7 @@
 {{-     range $_, $variant := list "" " Mono" }}
 ".local/share/fonts/Fira Code {{ $face }} Nerd Font Complete{{ $variant }}.ttf":
   type: file
-  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/{{ template "gitHubHEAD" list $HEADs "ryanoasis/nerd-fonts" }}/patched-fonts/FiraCode/{{ $face }}/complete/Fira%20Code%20{{ $face }}%20Nerd%20Font%20Complete{{ $variant | replace " " "%20" }}.ttf"
+  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/{{ template "getGithubHeadRevision" dict "repo" "ryanoasis/nerd-fonts" "cache" $githubHeadRevisions }}/patched-fonts/FiraCode/{{ $face }}/complete/Fira%20Code%20{{ $face }}%20Nerd%20Font%20Complete{{ $variant | replace " " "%20" }}.ttf"
 {{      end -}}
 {{-   end -}}
 
