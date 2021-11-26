@@ -26,6 +26,10 @@
 {{- /* This retains the value passed with --source on chezmoi init, which is used in the ./install script */ -}}
 sourceDir: "{{ .chezmoi.sourceDir }}"
 
+diff:
+  exclude:
+    - scripts
+
 # Here we "export" the variables, so we can access them outside this file
 data:
   is_personal: {{ $isPersonal }}
