@@ -73,13 +73,6 @@ echo_task "Initializing zsh"
 echo "Done."
 
 if ! is_devcontainer; then
-  if [[ ! -x "${HOME}/.local/bin/chezmoi" ]]; then
-    echo_task "Installing chezmoi"
-    chezmoi_install_script="$(curl -fsSL https://git.io/chezmoi)"
-    sh -c "${chezmoi_install_script}" -- -b "${HOME}/.local/bin"
-    unset chezmoi_install_script
-  fi
-
   echo_task "Installing brew"
 
   # Fix PATH
@@ -113,7 +106,9 @@ if ! is_devcontainer; then
   fi
 
   echo_task "Installing brew packages"
+
   brew bundle --no-lock --file=/dev/stdin <<'EOF'
+brew "chezmoi"
 brew "yq"
 brew "kubectl"
 brew "helm"
@@ -126,10 +121,14 @@ brew "gh"
 {{ end -}}
 EOF
 
-  if brew list chezmoi &>/dev/null; then
-    echo_task "Removing chezmoi installed by brew"
-    brew uninstall chezmoi
+  # Uninstalling previously installed chezmoi because it was already installed
+  # by Homebrew.
+  local_bin_chezmoi="${HOME}/.local/bin/chezmoi"
+  if [[ -f "${local_bin_chezmoi}" ]]; then
+    echo_task "Uninstalling chezmoi at ${local_bin_chezmoi}"
+    rm -f "${local_bin_chezmoi}"
   fi
+  unset local_bin_chezmoi
 
   echo_task "Installing node, npm, and yarn"
   volta install node npm yarn

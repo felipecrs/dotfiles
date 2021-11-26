@@ -68,9 +68,16 @@ sdk() {
 EOM
 }
 
+if brew --version &>/dev/null; then
+  echo_task "Updating brew"
+  c brew update
+
+  echo_task "Updating brew packages"
+  c brew upgrade
+fi
+
 if chezmoi --version &>/dev/null; then
   echo_task "Updating dotfiles"
-  c chezmoi upgrade
   # Pull latest changes from dotfiles repo
   c chezmoi update --verbose --apply=false
   # Apply changes to chezmoi config
@@ -90,13 +97,8 @@ if timeout 2 snap warnings &>/dev/null; then
   c sudo snap refresh
 fi
 
-if brew --version &>/dev/null; then
-  echo_task "Updating brew"
-  c brew update
-
-  echo_task "Updating brew packages"
-  c brew upgrade
-fi
+echo_task "Updating antigen packages"
+c antigen update
 
 if command -v gnome-shell-extension-installer &>/dev/null; then
   echo_task "Updating gnome extensions"
