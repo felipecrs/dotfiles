@@ -23,6 +23,7 @@ sudo add-apt-repository --no-update -y ppa:communitheme/ppa
 
 readarray -t apt_packages <<'EOF'
 zsh
+direnv
 {{ if not .is_devcontainer -}}
 apt-transport-https
 ca-certificates
