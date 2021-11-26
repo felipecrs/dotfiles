@@ -97,9 +97,6 @@ if timeout 2 snap warnings &>/dev/null; then
   c sudo snap refresh
 fi
 
-echo_task "Updating antigen packages"
-c antigen update
-
 if command -v gnome-shell-extension-installer &>/dev/null; then
   echo_task "Updating gnome extensions"
   c gnome-shell-extension-installer --update --yes
