@@ -102,34 +102,12 @@ if command -v gnome-shell-extension-installer &>/dev/null; then
   c gnome-shell-extension-installer --update --yes
 fi
 
-if deno --version &>/dev/null; then
-  echo_task "Updating deno"
-  c deno upgrade
-fi
-
-if nvm --version &>/dev/null; then
-  echo_task "Updating nvm"
-  # shellcheck disable=SC2016
-  yellow '+ PROFILE=/dev/null bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"'
-  PROFILE=/dev/null bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh)"
-fi
-
 if volta --version &>/dev/null; then
   echo_task "Updating node, npm and yarn with volta"
   c volta install node npm yarn
-
-elif nvm --version &>/dev/null; then
-  echo_task "Updating node with nvm"
-  c nvm install 'lts/*' --reinstall-packages-from=current
-  c nvm alias default 'lts/*'
 fi
 
 if npm --version &>/dev/null; then
-  if ! volta --version &>/dev/null; then
-    echo_task "Updating npm"
-    npm install -g npm@latest
-  fi
-
   echo_task "Updating npm packages"
   c npm update --global
 fi
