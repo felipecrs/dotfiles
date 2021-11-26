@@ -31,6 +31,10 @@ is_first_arg_a_folder() {
   return 1
 }
 
+if [ -n "${DEBUG:-}" ]; then
+  set -x
+fi
+
 # shellcheck disable=SC2310
 if code="$(get_in_path_except_current code)"; then
   # shellcheck disable=SC2310,SC2050
