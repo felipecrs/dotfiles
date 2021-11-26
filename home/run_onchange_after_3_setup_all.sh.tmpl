@@ -187,7 +187,7 @@ EOF
   elif is_gnome; then
     echo_task "Performing GNOME specific steps"
 
-    sudo git config --system --replace-all credential.helper /usr/bin/git-credential-manager-core
+    sudo git config --system --replace-all credential.helper '{{ lookPath "git-credential-manager-core" }}'
     sudo git config --system --replace-all credential.credentialStore secretservice
   fi
 
