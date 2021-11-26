@@ -46,6 +46,15 @@ EOM
 
 set -euo pipefail
 
+function remove_brew_package_if_exists() {
+  for package in "$@"; do
+    if brew list "${package}" &>/dev/null; then
+      echo_task "Removing ${package} installed by brew"
+      brew uninstall "${package}"
+    fi
+  done
+}
+
 # See: https://github.com/microsoft/vscode-remote-release/issues/3531#issuecomment-675278804
 if [[ -z "${USER+x}" ]]; then
   USER="$(id -un)"
@@ -120,6 +129,9 @@ brew "jfrog-cli"
 brew "gh"
 {{ end -}}
 EOF
+
+  # Remove packages previously known to be installed by brew
+  remove_brew_package_if_exists volta deno docker-compose onedrive skopeo podman buildah
 
   # Uninstalling previously installed chezmoi because it was already installed
   # by Homebrew.
