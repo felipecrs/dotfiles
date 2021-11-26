@@ -8,7 +8,7 @@ echo "Installing apt packages"
 {{ if lookPath "add-apt-repository" | not -}}
 echo "Installing add-apt-repository"
 sudo apt update
-sudo apt install -y software-properties-common
+sudo apt install -y software-properties-common ca-certificates curl gnupg
 {{ end -}}
 echo "Setting up repositories"
 sudo add-apt-repository --no-update -y ppa:git-core/ppa
