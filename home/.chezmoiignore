@@ -4,5 +4,5 @@
 
 # waiting for chezmoi to leverage .gitignore from archives:
 # https://github.com/twpayne/chezmoi/issues/1421#issuecomment-964473844
-.oh-my-zsh/cache
+.oh-my-zsh/cache/*
 **/*.zwc
