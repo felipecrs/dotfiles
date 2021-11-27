@@ -37,8 +37,9 @@ fi
 
 # shellcheck disable=SC2310
 if code="$(get_in_path_except_current code)"; then
-  # shellcheck disable=SC2310,SC2050
-  if [ "{{ .is_wsl }}" = true ] && ! is_path_from_windows "${code}"; then
+  # shellcheck disable=SC2310
+  if { [ -n "${WSL_DISTRO_NAME}" ] || [ -n "${IS_WSL}" ]; } &&
+    ! is_path_from_windows "${code}"; then
     echo >&2
     if get_in_path_from_windows code >/dev/null && [ -z "${USE_CODE_FROM_LINUX:-}" ]; then
       echo "using code from Windows (set USE_CODE_FROM_LINUX=1 to use code from Linux)" >&2
