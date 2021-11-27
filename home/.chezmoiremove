@@ -17,6 +17,10 @@
 .local/bin/docker-credential-wincred.exe
 .local/bin/docker-credential-secretservice
 
+{{ if not .is_gnome -}}
+.local/bin/gnome-shell-extension-installer
+{{- end }}
+
 {{- end }}
 
 .antigen/
