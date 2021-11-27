@@ -39,6 +39,7 @@ fi
 if code="$(get_in_path_except_current code)"; then
   # shellcheck disable=SC2310,SC2050
   if [ "{{ .is_wsl }}" = true ] && ! is_path_from_windows "${code}"; then
+    echo >&2
     if get_in_path_from_windows code >/dev/null && [ -z "${USE_CODE_FROM_LINUX:-}" ]; then
       echo "using code from Windows (set USE_CODE_FROM_LINUX=1 to use code from Linux)" >&2
       code="$(get_in_path_from_windows code)"
@@ -56,6 +57,7 @@ if code="$(get_in_path_except_current code)"; then
     for arg; do
       shift
       if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+        echo "removing --wait or -w flag" >&2
         continue
       fi
       set -- "$@" "${arg}"
@@ -63,50 +65,88 @@ if code="$(get_in_path_except_current code)"; then
   fi
 
   exec "${code}" "$@"
-else
-  printf "code is not available, " >&2
-  if command -v code-insiders >/dev/null 2>&1; then
-    echo "using code-insiders instead" >&2
+fi
 
-    # Used to work around https://github.com/twpayne/chezmoi/issues/1068
-    # code duplication here is required because there is no way to set
-    # script level args inside of functions in POSIX (on Bash we can use arrays)
-    if is_first_arg_a_folder "$@"; then
-      # Removes -w and --wait flags
-      for arg; do
-        shift
-        if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
-          continue
+# Check if we are running in SSH
+if who | grep -q .; then
+  # We will try to find an existing connection and reuse it.
+  # This allows opening VS Code windows from a SSH remote
+  # session even out of the VS Code integrated terminal.
+  echo >&2
+  printf "searching for remote ssh session..." >&2
+  if [ -d "${HOME}/.vscode-server/bin" ]; then
+
+    # Find most recent folder inside of ~/.vscode-server/bin
+    if bin_folder=$(find "${HOME}/.vscode-server/bin" \
+      -mindepth 1 -maxdepth 1 -type d -printf "%T@ %p\n" |
+      sort -n | cut -d' ' -f 2- | tail -n 1 | grep .); then
+
+      # Ensure code binary is executable
+      if [ -x "${bin_folder}/bin/code" ]; then
+
+        # Find most recent sock
+        uid=$(id -u)
+        if sock_path=$(find "/run/user/${uid}/" \
+          -mindepth 1 -maxdepth 1 -type s -name "vscode-ipc-*.sock" -printf "%T@ %p\n" |
+          sort -n | cut -d' ' -f 2- | tail -n 1 | grep .); then
+
+          echo " found." >&2
+          export VSCODE_IPC_HOOK_CLI="${sock_path}"
+          exec "${bin_folder}/bin/code" "$@"
         fi
-        set -- "$@" "${arg}"
-      done
+      fi
     fi
+  fi
+  echo " not found." >&2
+fi
 
-    exec code-insiders "$@"
-  else
+echo >&2
+printf "code is not available, " >&2
+if command -v code-insiders >/dev/null 2>&1; then
+  echo "using code-insiders instead" >&2
+
+  # Used to work around https://github.com/twpayne/chezmoi/issues/1068
+  # code duplication here is required because there is no way to set
+  # script level args inside of functions in POSIX (on Bash we can use arrays)
+  # shellcheck disable=SC2310
+  if is_first_arg_a_folder "$@"; then
     # Removes -w and --wait flags
-    # code duplication here is required because there is no way to set
-    # script level args inside of functions in POSIX (on Bash we can use arrays)
     for arg; do
       shift
       if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+        echo "removing --wait or -w flag" >&2
         continue
       fi
       set -- "$@" "${arg}"
     done
-
-    if command -v nano >/dev/null 2>&1; then
-      echo "using nano instead" >&2
-      exec nano "$@"
-    elif command -v vim >/dev/null 2>&1; then
-      echo "using vim instead" >&2
-      exec vim "$@"
-    elif command -v vi >/dev/null 2>&1; then
-      echo "using vi instead" >&2
-      exec vi "$@"
-    else
-      echo "and neither code-insiders, nano, vim or vi." >&2
-      exit 127
-    fi
   fi
+
+  exec code-insiders "$@"
 fi
+
+if command -v nano >/dev/null 2>&1; then
+  editor="nano"
+elif command -v vim >/dev/null 2>&1; then
+  editor="vim"
+elif command -v vi >/dev/null 2>&1; then
+  editor="vi"
+else
+  echo "and neither code-insiders, nano, vim or vi." >&2
+  exit 127
+fi
+
+echo "using ${editor} instead" >&2
+
+# Removes -w and --wait flags
+# code duplication here is required because there is no way to set
+# script level args inside of functions in POSIX (on Bash we can use arrays)
+for arg; do
+  shift
+  if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+    echo "removing --wait or -w flag" >&2
+    continue
+  fi
+  set -- "$@" "${arg}"
+done
+
+exec "${editor}" "$@"
