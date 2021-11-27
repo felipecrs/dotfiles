@@ -87,13 +87,21 @@ if who | grep -q .; then
 
         # Find most recent sock
         uid=$(id -u)
-        if sock_path=$(find "/run/user/${uid}/" \
+        if sock_paths=$(find "/run/user/${uid}/" \
           -mindepth 1 -maxdepth 1 -type s -name "vscode-ipc-*.sock" -printf "%T@ %p\n" |
-          sort -n | cut -d' ' -f 2- | tail -n 1 | grep .); then
+          sort -n | cut -d' ' -f 2- | grep .); then
 
-          echo " found." >&2
-          export VSCODE_IPC_HOOK_CLI="${sock_path}"
-          exec "${bin_folder}/bin/code" "$@"
+          sockets_count=$(echo "${sock_paths}" | wc -l)
+          echo " ${sockets_count} sockets found." >&2
+          echo "trying to connect..." >&2
+          for sock_path in ${sock_paths}; do
+            export VSCODE_IPC_HOOK_CLI="${sock_path}"
+            if "${bin_folder}/bin/code" "$@"; then
+              exit 0
+            else
+              echo "trying next socket..." >&2
+            fi
+          done
         fi
       fi
     fi
