@@ -28,6 +28,6 @@ if [[ "${migrated}" == true ]]; then
   error "
 ❌ Manual action needed. To continue, please run:
 
-👉 chezmoi init --working-tree '{{ .chezmoi.workingTree }}' && chezmoi apply --force
+👉 chezmoi init --source '{{ .chezmoi.workingTree }}' && chezmoi apply --force
 "
 fi
