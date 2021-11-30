@@ -5,11 +5,11 @@ set -euo pipefail
 echo "Installing apt packages"
 
 {{ if not .is_devcontainer -}}
-{{ if lookPath "add-apt-repository" | not -}}
-echo "Installing add-apt-repository"
-sudo apt update
+echo "Installing pre-requisites"
+if ! sudo apt update; then
+  echo "Ignoring failure because it may be due to ca-certificates"
+fi
 sudo apt install -y software-properties-common ca-certificates curl gnupg
-{{ end -}}
 echo "Setting up repositories"
 sudo add-apt-repository --no-update -y ppa:git-core/ppa
 docker_apt_repo="deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ .chezmoi.osRelease.ubuntuCodename }} stable"
