@@ -87,6 +87,14 @@ if ! is_devcontainer; then
     export PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
   fi
 
+  if [[ ":${PATH}:" != *":${HOME}/.volta/bin:"* ]]; then
+    export PATH="${HOME}/.volta/bin:${PATH}"
+  fi
+
+  if [[ ":${PATH}:" != *":${HOME}/.deno/bin:"* ]]; then
+    export PATH="${HOME}/.deno/bin:${PATH}"
+  fi
+
   if [[ ":${PATH}:" != *":${HOME}/.local/bin:"* ]]; then
     export PATH="${HOME}/.local/bin:${PATH}"
   fi
