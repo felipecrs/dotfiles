@@ -1,15 +1,32 @@
 #!/bin/bash
 
 set -euo pipefail
+shopt -s inherit_errexit
+
+yellow() {
+  printf '\e[33;1m%s\e[m\n' "$*"
+}
+
+c() {
+  yellow "➡ $*" >&2
+  "$@"
+}
 
 readonly formula="$1"
 readonly version="$2"
 
 homebrew_core_dir="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core"
-revision=$(git -C "${homebrew_core_dir}" log --grep "${version}" -1 --pretty=format:"%H" -- "Formula/${formula}.rb")
 
-git -C "${homebrew_core_dir}" reset --hard "${revision}"
+c brew update --force
+
+revision=$(c git -C "${homebrew_core_dir}" log --grep "${version}" -1 --pretty=format:"%H" -- "Formula/${formula}.rb")
+
+c git -C "${homebrew_core_dir}" reset --hard "${revision}"
 
 export HOMEBREW_NO_AUTO_UPDATE=1
-brew unlink "${formula}"
-exec brew install "${formula}"
+
+if brew list "${formula}" &>/dev/null; then
+  c brew uninstall --force "${formula}"
+fi
+
+c exec brew install --force "${formula}"
