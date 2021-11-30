@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# This script is executed every time chezmoi apply is run, before
+# anything else. It is meant for handling the migration of data
+# which cannot be managed by chezmoi itself.
+
+red() {
+  printf "\033[0;31m%s\033[0m\n" "$*" >&2
+}
+
+error() {
+  red "$*"
+  exit 1
+}
+
+set -euo pipefail
+
+migrated=false
+
+# Migrate from .chezmoi.toml.tmpl to chezmoi.yaml.tmpl
+# {{ if not (hasSuffix ".yaml" .chezmoi.configFile) }}
+red "⚠️ Detected old configuration file at '{{ .chezmoi.configFile }}'. Deleting it..."
+rm -f "{{ .chezmoi.configFile }}"
+migrated=true
+# {{ end }}
+
+if [[ "${migrated}" == true ]]; then
+  error "
+❌ Manual action needed. To continue, please run:
+
+👉 chezmoi init --working-tree '{{ .chezmoi.workingTree }}' && chezmoi apply --force
+"
+fi

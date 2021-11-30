@@ -21,10 +21,6 @@
 .local/bin/gnome-shell-extension-installer
 {{- end }}
 
-{{ if hasSuffix ".yaml" .chezmoi.configFile -}}
-.config/chezmoi/chezmoi.toml
-{{- end }}
-
 {{- end }}
 
 .antigen/
