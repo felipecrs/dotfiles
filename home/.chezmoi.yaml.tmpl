@@ -26,6 +26,8 @@
 {{- /* This retains the value passed with --source on chezmoi init, which is used in the ../install.sh script */ -}}
 sourceDir: "{{ .chezmoi.workingTree }}"
 
+verbose: true
+
 diff:
   exclude:
     - scripts
