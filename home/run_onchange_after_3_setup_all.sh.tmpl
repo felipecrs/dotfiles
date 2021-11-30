@@ -33,7 +33,8 @@ else
   echo "sdk is not installed" >&2
   exit 127
 fi
-sdk "$@"
+# yes is needed because sdkman keeps waiting for input sometimes
+yes | sdk "$@"
 EOM
   ) "$@"
 }
