@@ -12,9 +12,15 @@ sudo apt install -y software-properties-common ca-certificates curl gnupg
 {{ end -}}
 echo "Setting up repositories"
 sudo add-apt-repository --no-update -y ppa:git-core/ppa
-echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ .chezmoi.osRelease.ubuntuCodename }} stable" | sudo tee /etc/apt/sources.list.d/docker.list
+docker_apt_repo="deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ .chezmoi.osRelease.ubuntuCodename }} stable"
+# This ensures that the docker repo is not inside /etc/apt/sources.list
+sudo add-apt-repository --no-update -y --remove "$docker_apt_repo"
+echo "$dsocker_apt_repo" | sudo tee /etc/apt/sources.list.d/docker.list
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ .chezmoi.osRelease.versionID }}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+kubic_apt_repo="deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ .chezmoi.osRelease.versionID }}/ /"
+# This ensures that the kubic repo is not inside /etc/apt/sources.list
+sudo add-apt-repository --no-update -y --remove "$kubic_apt_repo"
+echo "$kubic_apt_repo" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
 curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ .chezmoi.osRelease.versionID }}/Release.key | sudo apt-key add -
 {{ if eq .chezmoi.osRelease.versionID "18.04" -}}
 sudo add-apt-repository --no-update -y ppa:communitheme/ppa
