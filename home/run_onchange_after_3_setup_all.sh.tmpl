@@ -195,6 +195,9 @@ EOF
   elif is_gnome; then
     echo_task "Performing GNOME specific steps"
 
+    echo_task "Installing VS Code - Remote Development extensio pack"
+    code --install-extension ms-vscode-remote.vscode-remote-extensionpack
+
     sudo git config --system --replace-all credential.helper '{{ lookPath "git-credential-manager-core" }}'
     sudo git config --system --replace-all credential.credentialStore secretservice
   fi
