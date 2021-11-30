@@ -23,14 +23,14 @@
 {{- $isDevcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") | not | not -}}
 {{- $isGnome := lookPath "gnome-shell" | not | not -}}
 
-{{- /* This retains the value passed with --source on chezmoi init, which is used in the ./install script */ -}}
-sourceDir: "{{ .chezmoi.sourceDir }}"
+{{- /* This retains the value passed with --source on chezmoi init, which is used in the ../install.sh script */ -}}
+sourceDir: "{{ .chezmoi.workingTree }}"
 
 diff:
   exclude:
     - scripts
 
-# Here we "export" the variables, so we can access them outside this file
+{{- /* Here we "export" the variables, so we can access them outside this file */ -}}
 data:
   is_personal: {{ $isPersonal }}
   is_work: {{ $isWork }}

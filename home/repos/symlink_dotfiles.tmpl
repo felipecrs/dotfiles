@@ -1,6 +1,1 @@
-{{- /* Workaround for https://github.com/twpayne/chezmoi/issues/1657 */ -}}
-{{- if hasSuffix "/home" .chezmoi.sourceDir -}}
-  {{- joinPath .chezmoi.sourceDir ".." -}}
-{{- else -}}
-  {{- .chezmoi.sourceDir -}}
-{{- end -}}
+{{- .chezmoi.workingTree -}}
