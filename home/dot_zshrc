@@ -106,6 +106,7 @@ plugins=(
   npm
   command-not-found
   common-aliases
+  ubuntu
   sudo
   zsh-syntax-highlighting
   zsh-autosuggestions
