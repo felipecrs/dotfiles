@@ -4,32 +4,31 @@
 {{- template "read-versions-and-revisions-cache" $cache -}}
 
 ".oh-my-zsh":
-  type: archive
+  type: git-archive
   url: "https://github.com/ohmyzsh/ohmyzsh/archive/{{ template "get-github-head-revision" list "ohmyzsh/ohmyzsh" $cache }}.tar.gz"
   stripComponents: 1
-  # waiting for https://github.com/twpayne/chezmoi/issues/1614#issuecomment-966524408
-  # exact: true
+  exact: true
 
 ".oh-my-zsh/custom/themes/powerlevel10k":
-  type: archive
+  type: git-archive
   url: "https://github.com/romkatv/powerlevel10k/archive/{{ template "get-github-head-revision" list "romkatv/powerlevel10k" $cache }}.tar.gz"
   stripComponents: 1
   exact: true
 
 ".oh-my-zsh/custom/plugins/zsh-syntax-highlighting":
-  type: archive
+  type: git-archive
   url: "https://github.com/zsh-users/zsh-syntax-highlighting/archive/{{ template "get-github-head-revision" list "zsh-users/zsh-syntax-highlighting" $cache }}.tar.gz"
   stripComponents: 1
   exact: true
 
 ".oh-my-zsh/custom/plugins/zsh-autosuggestions":
-  type: archive
+  type: git-archive
   url: "https://github.com/zsh-users/zsh-autosuggestions/archive/{{ template "get-github-head-revision" list "zsh-users/zsh-autosuggestions" $cache }}.tar.gz"
   stripComponents: 1
   exact: true
 
 ".oh-my-zsh/custom/plugins/zsh-completions":
-  type: archive
+  type: git-archive
   url: "https://github.com/zsh-users/zsh-completions/archive/{{ template "get-github-head-revision" list "zsh-users/zsh-completions" $cache }}.tar.gz"
   stripComponents: 1
   exact: true
