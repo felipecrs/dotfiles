@@ -53,17 +53,24 @@ docker-ce-cli
 containerd.io
 skopeo
 asciinema
-{{ if .is_gnome -}}
+{{   if .is_gnome -}}
 yaru-theme-gtk
 yaru-theme-icon
 yaru-theme-sound
 gnome-tweaks
-{{ if not .is_wsl -}}
+{{     if not .is_wsl -}}
 yaru-theme-gnome-shell
 libsecret-1-0
 gnome-menus
-{{ end -}}
-{{ end -}}
+{{     end -}}
+{{   end -}}
+{{   if not .is_wsl -}}
+{{     if eq .chezmoi.osRelease.versionID "18.04" -}}
+linux-generic-hwe-18.04
+{{     else if eq .chezmoi.osRelease.versionID "20.04" -}}
+linux-generic-hwe-20.04
+{{     end -}}
+{{   end -}}
 {{ end -}}
 EOF
 
