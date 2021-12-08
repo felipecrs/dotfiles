@@ -22,7 +22,7 @@
 {{-   end -}}
 {{- end -}}
 
-{{-/* Reads the revisions and versions from a cache file, and use them if they are newer than 10 minutes */-}}
+{{- /* Reads the revisions and versions from a cache file, and use them if they are newer than 10 minutes */ -}}
 {{- $cacheDir := joinPath .chezmoi.homeDir ".cache/chezmoi/external" -}}
 {{- $cacheFile := joinPath $cacheDir "versions_and_revisions.yaml" -}}
 {{- $currentTime := now | unixEpoch -}}
