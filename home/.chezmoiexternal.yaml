@@ -22,8 +22,24 @@
 {{-   end -}}
 {{- end -}}
 
+{{-/* Reads the revisions and versions from a cache file, and use them if they are newer than 10 minutes */-}}
+{{- $cacheDir := joinPath .chezmoi.homeDir ".cache/chezmoi/external" -}}
+{{- $cacheFile := joinPath $cacheDir "versions_and_revisions.yaml" -}}
+{{- $currentTime := now | unixEpoch -}}
+{{- $saveCache := true -}}
 {{- $githubHeadRevisions := dict -}}
 {{- $githubLatestVersions := dict -}}
+{{- if stat $cacheFile -}}
+{{-   $cacheContents := include $cacheFile | fromYaml -}}
+{{-   $cacheTime := get $cacheContents "time" -}}
+{{-   $timeDiff := sub $currentTime $cacheTime -}}
+{{-   $refreshExternals := or (has "--refresh-externals" .chezmoi.args) (has "--refresh-externals=true" .chezmoi.args) (has "-R" .chezmoi.args) -}}
+{{-   if or $refreshExternals (lt $timeDiff 600) -}}
+{{-     $githubHeadRevisions = get $cacheContents "revisions" -}}
+{{-     $githubLatestVersions = get $cacheContents "versions" -}}
+{{-     $saveCache = false -}}
+{{-   end -}}
+{{- end -}}
 
 ".oh-my-zsh":
   type: archive
@@ -92,6 +108,11 @@
   type: file
   url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/{{ template "getGithubHeadRevision" dict "repo" "ryanoasis/nerd-fonts" "cache" $githubHeadRevisions }}/patched-fonts/FiraCode/{{ $face }}/complete/Fira%20Code%20{{ $face }}%20Nerd%20Font%20Complete{{ $variant | replace " " "%20" }}.ttf"
 {{      end -}}
+{{-   end -}}
+
+{{-   if $saveCache -}}
+{{-     $cacheContents := dict "time" $currentTime "revisions" $githubHeadRevisions "versions" $githubLatestVersions -}}
+{{-     $_ := output "bash" "-c" (printf "mkdir -p '%s' && echo '%s' > '%s'" $cacheDir (toYaml $cacheContents) $cacheFile) -}}
 {{-   end -}}
 
 {{- end -}}
