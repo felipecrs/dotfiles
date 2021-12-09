@@ -68,12 +68,35 @@ if code="$(get_in_path_except_current code)"; then
   exec "${code}" "$@"
 fi
 
+echo >&2
+printf "code is not available, " >&2
+if command -v code-insiders >/dev/null 2>&1; then
+  echo "using code-insiders instead" >&2
+
+  # Used to work around https://github.com/twpayne/chezmoi/issues/1068
+  # code duplication here is required because there is no way to set
+  # script level args inside of functions in POSIX (on Bash we can use arrays)
+  # shellcheck disable=SC2310
+  if is_first_arg_a_folder "$@"; then
+    # Removes -w and --wait flags
+    for arg; do
+      shift
+      if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+        echo "removing --wait or -w flag" >&2
+        continue
+      fi
+      set -- "$@" "${arg}"
+    done
+  fi
+
+  exec code-insiders "$@"
+fi
+
 # Check if we are running in SSH
 if who | grep -q .; then
   # We will try to find an existing connection and reuse it.
   # This allows opening VS Code windows from a SSH remote
   # session even out of the VS Code integrated terminal.
-  echo >&2
   printf "searching for remote ssh session..." >&2
   if [ -d "${HOME}/.vscode-server/bin" ]; then
 
@@ -107,30 +130,6 @@ if who | grep -q .; then
     fi
   fi
   echo " not found." >&2
-fi
-
-echo >&2
-printf "code is not available, " >&2
-if command -v code-insiders >/dev/null 2>&1; then
-  echo "using code-insiders instead" >&2
-
-  # Used to work around https://github.com/twpayne/chezmoi/issues/1068
-  # code duplication here is required because there is no way to set
-  # script level args inside of functions in POSIX (on Bash we can use arrays)
-  # shellcheck disable=SC2310
-  if is_first_arg_a_folder "$@"; then
-    # Removes -w and --wait flags
-    for arg; do
-      shift
-      if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
-        echo "removing --wait or -w flag" >&2
-        continue
-      fi
-      set -- "$@" "${arg}"
-    done
-  fi
-
-  exec code-insiders "$@"
 fi
 
 if command -v nano >/dev/null 2>&1; then
