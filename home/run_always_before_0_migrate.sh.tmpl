@@ -18,7 +18,7 @@ set -euo pipefail
 migrated=false
 
 # Migrate from .chezmoi.toml.tmpl to chezmoi.yaml.tmpl
-# {{ if not (hasSuffix ".yaml" .chezmoi.configFile) }}
+# {{ if and (stat .chezmoi.configFile) (not (hasSuffix ".yaml" .chezmoi.configFile)) }}
 red "⚠️ Detected old configuration file at '{{ .chezmoi.configFile }}'. Deleting it..."
 rm -f "{{ .chezmoi.configFile }}"
 migrated=true
