@@ -1,0 +1,78 @@
+# shellcheck shell=bash
+
+set -euo pipefail
+
+if [[ -n "${DOTFILES_DEBUG:-}" ]]; then
+  set -x
+fi
+
+function ensure_path_entry() {
+  local entries=("$@")
+
+  for entry in "${entries[@]}"; do
+    if [[ ":${PATH}:" != *":${entry}:"* ]]; then
+      export PATH="${entry}:${PATH}"
+    fi
+  done
+}
+
+function log_color() {
+  local color_code="$1"
+  shift
+
+  printf "\033[${color_code}m%s\033[0m\n" "$*" >&2
+}
+
+function log_red() {
+  log_color "0;31" "$@"
+}
+
+function log_blue() {
+  log_color "0;34" "$@"
+}
+
+function log_green() {
+  log_color "1;32" "$@"
+}
+
+function log_yellow() {
+  log_color "1;33" "$@"
+}
+
+function log_task() {
+  log_blue "🔃" "$@"
+}
+
+function log_manual_action() {
+  log_red "⚠️" "$@"
+}
+
+function log_c() {
+  log_yellow "👉" "$@"
+}
+
+function c() {
+  log_c "$@"
+  "$@"
+}
+
+function log_error() {
+  log_red "❌" "$@"
+}
+
+function log_info() {
+  log_red "ℹ️" "$@"
+}
+
+function error() {
+  log_error "$@"
+  exit 1
+}
+
+function sudo() {
+  if ! command sudo --validate --non-interactive 2>/dev/null; then
+    log_manual_action "Root privileges are required, please enter your password below"
+    command sudo --validate
+  fi
+  command sudo "$@"
+}

@@ -5,6 +5,11 @@ usr/share/keyrings/communitheme-ppa-archive-keyring.gpg
 
 {{ if .is_wsl -}}
 usr/bin/docker-credential-secretservice
+
+# WSL uses GCM Core from Windows
+usr/local/bin/git-credential-manager-core
+usr/local/share/gcm-core
 {{- else -}}
 usr/bin/docker-credential-wincred.exe
+etc/wsl.conf
 {{- end }}

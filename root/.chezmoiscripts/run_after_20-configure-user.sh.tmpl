@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Configure passwordless sudo
+echo '{{ .non_root_user }}  ALL=(ALL) NOPASSWD:ALL' >'/etc/sudoers.d/{{ .non_root_user }}'
+
+# Ensuring non-root user can run docker without sudo
+usermod -aG docker '{{ .non_root_user }}'

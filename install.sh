@@ -33,11 +33,16 @@ fi
 script_dir="$(cd -P -- "$(dirname -- "$(command -v -- "$0")")" && pwd -P)"
 
 if [ -n "${DOTFILES_ONE_SHOT-}" ]; then
-  chezmoi_extra_arg="--one-shot"
+  chezmoi_extra_args="--one-shot"
 else
-  chezmoi_extra_arg="--apply"
+  chezmoi_extra_args="--apply"
+fi
+
+if [ -n "${DOTFILES_DEBUG-}" ]; then
+  chezmoi_extra_args="${chezmoi_extra_args} --debug"
 fi
 
 echo_task "Running chezmoi init"
 # replace current process with chezmoi init
-exec "${chezmoi}" init --source "${script_dir}" "${chezmoi_extra_arg}"
+# shellcheck disable=SC2086
+exec "${chezmoi}" init --source "${script_dir}" ${chezmoi_extra_args}

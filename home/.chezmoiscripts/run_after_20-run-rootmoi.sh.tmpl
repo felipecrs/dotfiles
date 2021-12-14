@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+# shellcheck disable=all
+original_args=({{ range (rest .chezmoi.args) }} {{ . | quote }}{{ end }})
+args=()
+
+# Filter incompatible args
+skip_one_more=false
+for i in "${!original_args[@]}"; do
+  if [[ "${skip_one_more}" == true ]]; then
+    skip_one_more=false
+    continue
+  fi
+
+  if [[ "${original_args[i]}" == "-S" || "${original_args[i]}" == "--source" ]]; then
+    skip_one_more=true
+    continue
+  fi
+
+  if [[ "${original_args[i]}" == "-S="* || "${original_args[i]}" == "--source="* ]]; then
+    continue
+  fi
+
+  args+=("${original_args[i]}")
+done
+
+log_task "Applying root dotfiles"
+log_c "rootmoi" "${args[@]}"
+exec '{{ joinPath .chezmoi.homeDir ".local/bin/rootmoi" }}' "${args[@]}"

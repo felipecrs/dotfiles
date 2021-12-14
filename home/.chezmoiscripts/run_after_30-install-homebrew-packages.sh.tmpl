@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+readonly home_homebrew_prefix="${HOME}/.linuxbrew"
+readonly root_homebrew_prefix="/home/linuxbrew/.linuxbrew"
+
+function is_root_homebrew_prefix_writable() {
+  if [[ -d "${root_homebrew_prefix}" ]]; then
+    return 0
+  elif sudo mkdir -p "${root_homebrew_prefix}" &>/dev/null; then
+    sudo rm -rf "${root_homebrew_prefix}"
+    return 0
+  else
+    return 1
+  fi
+}
+
+function is_brew_package_installed() {
+  local package="$1"
+
+  brew list "${package}" &>/dev/null
+}
+
+ensure_path_entry "${home_homebrew_prefix}/bin" "${root_homebrew_prefix}/bin"
+
+if is_root_homebrew_prefix_writable && [[ -d "${home_homebrew_prefix}" ]]; then
+  log_task "Removing old Homebrew installation"
+  rm -rf "${home_homebrew_prefix}"
+fi
+
+if ! brew --version &>/dev/null; then
+  log_task "Installing Homebrew"
+  if is_root_homebrew_prefix_writable; then
+    brew_install_script=$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)
+    CI=1 bash -c "${brew_install_script}"
+  else
+    readonly homebrew_prefix="${home_homebrew_prefix}"
+    log_info "Installing to '${homebrew_prefix}' due to lack of permissions on '/home/linuxbrew'"
+    c git clone https://github.com/Homebrew/brew "${homebrew_prefix}/Homebrew"
+    c mkdir -p "${homebrew_prefix}/bin"
+    c ln -sfn "../Homebrew/bin/brew" "${homebrew_prefix}/bin"
+    c brew update --force --quiet
+    c chmod -R go-w "${homebrew_prefix}/share/zsh"
+    unset homebrew_prefix
+  fi
+fi
+
+readonly unwanted_packages=(
+  volta
+  deno
+  docker-compose
+  onedrive
+  skopeo
+  podman
+  buildah
+)
+
+for package in "${unwanted_packages[@]}"; do
+  if is_brew_package_installed "${package}"; then
+    log_task "Removing unwanted package '${package}' installed with Homebrew"
+    brew uninstall --force "${package}"
+  fi
+done
+
+readonly wanted_packages=(
+  chezmoi
+  yq
+  kubectl
+  helm
+  kind
+  dive
+  # {{ if .is_work }}
+  jfrog-cli
+  # {{ else }}
+  gh
+  # {{ end }}
+)
+
+missing_packages=()
+
+for package in "${wanted_packages[@]}"; do
+  if ! is_brew_package_installed "${package}"; then
+    missing_packages+=("${package}")
+  fi
+done
+
+if [[ ${#missing_packages[@]} -gt 0 ]]; then
+  log_task "Installing missing packages with Homebrew: ${missing_packages[*]}"
+  brew install --force "${missing_packages[@]}"
+fi
+
+local_bin_chezmoi="${HOME}/.local/bin/chezmoi"
+if [[ -f "${local_bin_chezmoi}" ]]; then
+  log_task "Uninstalling old chezmoi binary at ${local_bin_chezmoi}"
+  rm -f "${local_bin_chezmoi}"
+fi

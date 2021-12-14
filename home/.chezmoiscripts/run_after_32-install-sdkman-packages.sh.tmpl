@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+export SDKMAN_DIR="${HOME}/.sdkman"
+
+function sdk() {
+  if [[ -f "${SDKMAN_DIR}/bin/sdkman-init.sh" ]]; then
+    bash <(
+      # shellcheck disable=SC2312
+      cat <<'EOM'
+source "${SDKMAN_DIR}/bin/sdkman-init.sh"
+
+# yes is needed because sdkman keeps waiting for input sometimes
+yes | sdk "$@"
+EOM
+    ) "$@"
+  else
+    log_error "SDKMAN! is not installed"
+    return 127
+  fi
+}
+
+if ! sdk version &>/dev/null; then
+  log_task "Installing SDKMAN!"
+
+  # chezmoi already created the sdkman dir because of the etc/config file, so we move it temporarily out
+
+  original_sdkman_config="${SDKMAN_DIR}/etc/config"
+  temp_sdkman_config="$(mktemp --dry-run --suffix=sdkman_config)"
+
+  mv -f "${original_sdkman_config}" "${temp_sdkman_config}"
+  rm -rf "${SDKMAN_DIR}"
+
+  sdkman_install_script=$(curl -fsSL "https://get.sdkman.io/?rcupdate=false")
+  bash -c "${sdkman_install_script}"
+
+  mv -f "${temp_sdkman_config}" "${original_sdkman_config}"
+fi
+
+java_version="11"
+identifier="$(sdk list java | grep --only-matching --max-count 1 " ${java_version}.*.hs-adpt " | awk '{print $NF}')"
+if ! sdk current java | grep -q "${identifier}"; then
+  log_task "Installing Java ${java_version} with SDKMAN!"
+  c sdk install java "${identifier}"
+  c sdk default java "${identifier}"
+fi

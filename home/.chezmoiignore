@@ -1,7 +1,20 @@
 {{ if .is_devcontainer -}}
 .local/bin/code
-9_apply_root.sh
-{{- end}}
+
+.chezmoiscripts/*
+!.chezmoiscripts/*-install-prerequisites.sh
+!.chezmoiscripts/*-initialize-zsh.sh
+{{- end }}
+
+{{ if not .is_gnome -}}
+.chezmoiscripts/*-install-gnome-extensions.sh
+.chezmoiscripts/*-configure-gnome.sh
+.chezmoiscripts/*-install-vscode-extensions.sh
+{{- end }}
+
+{{ if not .is_wsl -}}
+.chezmoiscripts/*-sync-wsl-ssh-keys.sh
+{{- end }}
 
 # waiting for chezmoi to leverage .gitignore from archives:
 # https://github.com/twpayne/chezmoi/issues/1421#issuecomment-964473844

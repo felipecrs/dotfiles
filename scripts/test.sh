@@ -107,7 +107,7 @@ run_test() {
   local -r os="$1"
   local -r setup_script="$2"
 
-  cmd time docker run --rm --init --user vscode \
+  cmd time docker run --rm --init --interactive --user vscode \
     --volume "${dotfiles_root}:/home/vscode/.dotfiles:ro" \
     "mcr.microsoft.com/vscode/devcontainers/base:${os}" \
     bash <<EOF
@@ -117,7 +117,7 @@ ${_arg_pre_script}
 
 ${setup_script}
 
-~/.dotfiles/install
+~/.dotfiles/install.sh
 
 set +xeu
 source ~/.profile
