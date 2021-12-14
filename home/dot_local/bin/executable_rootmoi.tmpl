@@ -20,7 +20,7 @@ else
 fi
 
 # exec bypasses the shell and executes the command directly, so we call it here first
-sudo --validate
+sudo true
 
 exec sudo "${executable}" "$@" \
   --config='{{ $configFile }}' \
