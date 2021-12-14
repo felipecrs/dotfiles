@@ -1,17 +1,22 @@
 #!/bin/bash
 
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
 function gsettings_ensure() {
   local schema="$1"
   shift
-  local key="$2"
+  local key="$1"
   shift
-  local value="$3"
+  local value="$1"
   shift
 
   local current_value
   current_value="$(gsettings get "${schema}" "${key}" "$@")"
 
-  if [[ "${current_value}" != "${value}" ]]; then
+  if [[ "${current_value}" != "${value}" && "${current_value}" != "'${value}'" ]]; then
     log_task "Setting ${schema}.${key} to ${value}"
     gsettings set "${schema}" "${key}" "${value}" "$@"
   fi

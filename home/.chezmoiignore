@@ -14,6 +14,8 @@
 
 {{ if not .is_wsl -}}
 .chezmoiscripts/*-sync-wsl-ssh-keys.sh
+{{- else -}}
+.chezmoiscripts/*-install-gnome-extensions.sh
 {{- end }}
 
 # waiting for chezmoi to leverage .gitignore from archives:

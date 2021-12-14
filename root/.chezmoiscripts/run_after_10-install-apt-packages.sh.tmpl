@@ -83,17 +83,21 @@ if [[ ${#missing_packages[@]} -gt 0 ]]; then
 fi
 
 # {{ if .is_gnome }}
-if ! is_apt_package_installed "google-chrome-stable" || [[ -f "/etc/apt/sources.list.d/google-chrome.list" ]]; then
+if ! is_apt_package_installed "google-chrome-stable" || [[ ! -f "/etc/apt/sources.list.d/google-chrome.list" ]]; then
   log_task "Installing Google Chrome"
 
+  # curl fails if file already exists and its owned by someone else
+  rm -f /tmp/google-chrome.deb
   c curl -fsSL 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' --output /tmp/google-chrome.deb
   c sudo apt install --yes --install-recommends /tmp/google-chrome.deb
   c rm -f /tmp/google-chrome.deb
 fi
 
-if ! is_apt_package_installed "code" || [[ -f "/etc/apt/sources.list.d/vscode.list" ]]; then
+if ! is_apt_package_installed "code" || [[ ! -f "/etc/apt/sources.list.d/vscode.list" ]]; then
   log_task "Installing Visual Studio Code"
 
+  # curl fails if file already exists and its owned by someone else
+  rm -f /tmp/code.deb
   c curl -fsSL 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' --output /tmp/code.deb
   c sudo apt install --yes --install-recommends /tmp/code.deb
   c rm -f /tmp/code.deb
