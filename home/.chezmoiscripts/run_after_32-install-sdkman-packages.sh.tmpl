@@ -24,7 +24,8 @@ EOM
   fi
 }
 
-if ! sdk version &>/dev/null; then
+# SDKMAN! is known to fail with  141, but it works if called again
+if ! (sdk version &>/dev/null || sdk version &>/dev/null); then
   log_task "Installing SDKMAN!"
 
   # chezmoi already created the sdkman dir because of the etc/config file, so we move it temporarily out
