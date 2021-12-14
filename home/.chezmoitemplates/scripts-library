@@ -76,3 +76,9 @@ function sudo() {
   fi
   command sudo "$@"
 }
+
+function is_apt_package_installed() {
+  local package="$1"
+
+  dpkg -l "${package}" &>/dev/null
+}

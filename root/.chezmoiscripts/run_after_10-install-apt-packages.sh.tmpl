@@ -5,23 +5,6 @@
 # The following line is for ShellCheck to correctly identify the above included library
 true || source ../.chezmoitemplates/scripts-library
 
-function is_apt_package_installed() {
-  local package="$1"
-
-  dpkg -l "${package}" &>/dev/null
-}
-
-readonly unwanted_packages=(
-  gcmcore
-)
-
-for package in "${unwanted_packages[@]}"; do
-  if is_apt_package_installed "${package}"; then
-    log_task "Removing unwanted package '${package}' installed with APT"
-    c apt remove --yes "${package}"
-  fi
-done
-
 readonly wanted_packages=(
   direnv
   apt-transport-https
@@ -86,20 +69,30 @@ fi
 if ! is_apt_package_installed "google-chrome-stable" || [[ ! -f "/etc/apt/sources.list.d/google-chrome.list" ]]; then
   log_task "Installing Google Chrome"
 
+  extra_args=()
+  if [[ ! -f "/etc/apt/sources.list.d/google-chrome.list" ]]; then
+    extra_args=(--reinstall)
+  fi
+
   # curl fails if file already exists and its owned by someone else
   rm -f /tmp/google-chrome.deb
   c curl -fsSL 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' --output /tmp/google-chrome.deb
-  c sudo apt install --yes --install-recommends /tmp/google-chrome.deb
+  c sudo apt install --yes --install-recommends "${extra_args[@]}" /tmp/google-chrome.deb
   c rm -f /tmp/google-chrome.deb
 fi
 
 if ! is_apt_package_installed "code" || [[ ! -f "/etc/apt/sources.list.d/vscode.list" ]]; then
   log_task "Installing Visual Studio Code"
 
+  extra_args=()
+  if [[ ! -f "/etc/apt/sources.list.d/vscode.list" ]]; then
+    extra_args=(--reinstall)
+  fi
+
   # curl fails if file already exists and its owned by someone else
   rm -f /tmp/code.deb
   c curl -fsSL 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' --output /tmp/code.deb
-  c sudo apt install --yes --install-recommends /tmp/code.deb
+  c sudo apt install --yes --install-recommends "${extra_args[@]}" /tmp/code.deb
   c rm -f /tmp/code.deb
 fi
 # {{ end }}
