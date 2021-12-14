@@ -5,20 +5,25 @@
 # The following line is for ShellCheck to correctly identify the above included library
 true || source ../.chezmoitemplates/scripts-library
 
+set -x
+
 function gsettings_ensure() {
   local schema="$1"
-  shift
-  local key="$1"
-  shift
-  local value="$1"
-  shift
+  local key="$2"
+  local value="$3"
+  local extension="${4:-}"
+
+  local first_args=()
+  if [[ -n "${extension}" ]]; then
+    first_args+=(--schemadir "${HOME}/.local/share/gnome-shell/extensions/${extension}/schemas")
+  fi
 
   local current_value
-  current_value="$(gsettings get "${schema}" "${key}" "$@")"
+  current_value="$(gsettings "${first_args[@]}" get "${schema}" "${key}")"
 
   if [[ "${current_value}" != "${value}" && "${current_value}" != "'${value}'" ]]; then
     log_task "Setting ${schema}.${key} to ${value}"
-    gsettings set "${schema}" "${key}" "${value}" "$@"
+    gsettings "${first_args[@]}" set "${schema}" "${key}" "${value}"
   fi
 }
 
@@ -34,8 +39,7 @@ gsettings_ensure org.gnome.desktop.interface icon-theme "Yaru"
 gsettings_ensure org.gnome.desktop.interface cursor-theme "Yaru"
 gsettings_ensure org.gnome.desktop.sound theme-name "Yaru"
 # {{ if not .is_wsl }}
-gsettings_ensure org.gnome.shell.extensions.user-theme name "Yaru-dark" \
-  --schemadir "${HOME}/.local/share/gnome-shell/extensions/user-theme@gnome-shell-extensions.gcampax.github.com/schemas"
+gsettings_ensure org.gnome.shell.extensions.user-theme name "Yaru-dark" user-theme@gnome-shell-extensions.gcampax.github.com
 # {{ end }}
 
 # Configuring miscellaneous settings
