@@ -34,7 +34,7 @@ gsettings_ensure org.gnome.desktop.interface icon-theme "Yaru"
 gsettings_ensure org.gnome.desktop.interface cursor-theme "Yaru"
 gsettings_ensure org.gnome.desktop.sound theme-name "Yaru"
 # {{ if not .is_wsl }}
-gsettings_ensure set org.gnome.shell.extensions.user-theme name "Yaru-dark" \
+gsettings_ensure org.gnome.shell.extensions.user-theme name "Yaru-dark" \
   --schemadir "${HOME}/.local/share/gnome-shell/extensions/user-theme@gnome-shell-extensions.gcampax.github.com/schemas"
 # {{ end }}
 
