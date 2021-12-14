@@ -1,11 +1,28 @@
 #!/bin/bash
 
+# {{ include (joinPath .chezmoi.sourceDir ".chezmoitemplates/scripts-library") }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../../.chezmoitemplates/scripts-library
+
 # {{ $configDir := joinPath .chezmoi.homeDir ".config/rootmoi" }}
 # {{ $configFile := joinPath $configDir "chezmoi.yaml" }}
 # {{ $persistentStateFile := joinPath $configDir "chezmoistate.boltdb" }}
 # {{ $cacheDir := joinPath .chezmoi.homeDir ".cache/rootmoi" }}
 
-exec sudo '{{ .chezmoi.executable }}' "$@" \
+# We remove chezmoi as part of the installation, so this handles it
+if [[ -f '{{ .chezmoi.executable }}' ]]; then
+  executable='{{ .chezmoi.executable }}'
+else
+  # chezmoi is installed with Homebrew
+  ensure_path_entry "${HOME}/.linuxbrew/bin" "/home/linuxbrew/.linuxbrew/bin"
+  executable='chezmoi'
+fi
+
+# exec bypasses the shell and executes the command directly, so we call it here first
+sudo --validate
+
+exec sudo "${executable}" "$@" \
   --config='{{ $configFile }}' \
   --persistent-state='{{ $persistentStateFile }}' \
   --cache='{{ $cacheDir }}'

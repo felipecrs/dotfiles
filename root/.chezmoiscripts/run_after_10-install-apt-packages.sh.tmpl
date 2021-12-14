@@ -1,0 +1,101 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+function is_apt_package_installed() {
+  local package="$1"
+
+  dpkg -l "${package}" &>/dev/null
+}
+
+readonly unwanted_packages=(
+  gcmcore
+)
+
+for package in "${unwanted_packages[@]}"; do
+  if is_apt_package_installed "${package}"; then
+    log_task "Removing unwanted package '${package}' installed with APT"
+    c apt remove --yes "${package}"
+  fi
+done
+
+readonly wanted_packages=(
+  direnv
+  apt-transport-https
+  ca-certificates
+  gnupg
+  lsb-release
+  build-essential
+  curl
+  zsh
+  wget
+  tree
+  parallel
+  file
+  procps
+  zip
+  gzip
+  git
+  jq
+  crudini
+  docker-ce
+  docker-ce-cli
+  containerd.io
+  skopeo
+  asciinema
+  # {{ if .is_gnome }}
+  yaru-theme-gtk
+  yaru-theme-icon
+  yaru-theme-sound
+  gnome-tweaks
+  gnome-menus
+  python-nautilus
+  # {{   if not .is_wsl }}
+  yaru-theme-gnome-shell
+  libsecret-1-0
+  gnome-menus
+  # {{   end }}
+  # {{ end }}
+  # {{ if not .is_wsl }}
+  # {{   if eq .chezmoi.osRelease.versionCodename "bionic" }}
+  linux-generic-hwe-18.04
+  # {{   else if eq .chezmoi.osRelease.versionCodename "focal" }}
+  linux-generic-hwe-20.04
+  # {{   end }}
+  # {{ end }}
+)
+missing_packages=()
+
+for package in "${wanted_packages[@]}"; do
+  if ! is_apt_package_installed "${package}"; then
+    missing_packages+=("${package}")
+  fi
+done
+
+if [[ ${#missing_packages[@]} -gt 0 ]]; then
+  log_task "Installing missing packages with APT: ${missing_packages[*]}"
+
+  c apt update
+  c apt install --yes --install-recommends "${missing_packages[@]}"
+fi
+
+# {{ if .is_gnome }}
+if ! is_apt_package_installed "google-chrome-stable" || [[ -f "/etc/apt/sources.list.d/google-chrome.list" ]]; then
+  log_task "Installing Google Chrome"
+
+  c curl -fsSL 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' --output /tmp/google-chrome.deb
+  c sudo apt install --yes --install-recommends /tmp/google-chrome.deb
+  c rm -f /tmp/google-chrome.deb
+fi
+
+if ! is_apt_package_installed "code" || [[ -f "/etc/apt/sources.list.d/vscode.list" ]]; then
+  log_task "Installing Visual Studio Code"
+
+  c curl -fsSL 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' --output /tmp/code.deb
+  c sudo apt install --yes --install-recommends /tmp/code.deb
+  c rm -f /tmp/code.deb
+fi
+# {{ end }}

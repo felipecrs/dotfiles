@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+ensure_path_entry "${HOME}/.volta/bin"
+
+readonly desired_packages=(
+  node
+  npm
+  yarn
+  @vscode/dev-container-cli
+)
+
+missing_packages=()
+
+for package in "${desired_packages[@]}"; do
+  # shellcheck disable=SC2312
+  if ! volta list --current --quiet --format plain "${package}" | grep --quiet .; then
+    missing_packages+=("${package}")
+  fi
+done
+
+if [[ ${#missing_packages[@]} -gt 0 ]]; then
+  log_task "Installing missing packages with Volta: ${missing_packages[*]}"
+  volta install "${missing_packages[@]}"
+fi

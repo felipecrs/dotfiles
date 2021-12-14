@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+win_home="$(wslvar USERPROFILE)"
+win_home="$(wslpath "${win_home}")"
+
+if [[ -f "${win_home}/.ssh/id_rsa" ]]; then
+  log_task "Syncing .ssh folder from Windows to WSL"
+  cp -rf "${win_home}/.ssh/." "${HOME}/.ssh"
+  chmod 600 "${HOME}/.ssh/id_rsa"
+fi

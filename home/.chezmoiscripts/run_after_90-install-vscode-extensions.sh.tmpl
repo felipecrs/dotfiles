@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+function is_vscode_extension_installed() {
+  local extension="$1"
+
+  code --list-extensions 2>/dev/null | grep -q "${extension}"
+}
+
+wanted_extensions=(
+  ms-vscode-remote.vscode-remote-extensionpack
+)
+
+for extension in "${wanted_extensions[@]}"; do
+  if ! is_vscode_extension_installed "${extension}"; then
+    log_task "Installing VS Code extension: ${extension}"
+    c code --install-extension "${extension}"
+  fi
+done

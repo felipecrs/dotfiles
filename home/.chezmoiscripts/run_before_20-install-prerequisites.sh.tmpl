@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# {{ include (joinPath .chezmoi.sourceDir ".chezmoitemplates/scripts-library") }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+readonly wanted_packages=(
+  git  # used to find the latest revisions of github repositories
+  curl # used to find the latest version of github repositories
+  jq   # used on modify_ scripts
+  zsh
+  # {{ if not .is_devcontainer }}
+  gzip # used for zcat in .chezmoiexternal.yaml
+  # {{   if .is_wsl }}
+  crudini
+  # {{   end }}
+  # {{ end }}
+)
+missing_packages=()
+
+for package in "${wanted_packages[@]}"; do
+  if ! command -v "${package}" >/dev/null; then
+    missing_packages+=("${package}")
+  fi
+done
+
+if [[ ${#missing_packages[@]} -gt 0 ]]; then
+  log_task "Installing missing packages with APT: ${missing_packages[*]}"
+
+  c sudo apt update
+  c sudo apt install --yes --no-install-recommends "${missing_packages[@]}"
+fi

@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+ensure_path_entry "${HOME}/.local/bin"
+
+function is_gnome_extension_installed() {
+  local extension="$1"
+
+  if [[ -d "${HOME}/.local/share/gnome-shell/extensions/${extension}" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+function enable_extension() {
+  local extension="$1"
+
+  local current_enabled_extensions
+  current_enabled_extensions="$(gsettings get org.gnome.shell enabled-extensions)"
+
+  if [[ "${current_enabled_extensions}" != *"'${extension}'"* ]]; then
+    log_task "Enabling GNOME extension: ${extension}"
+    if [[ "${current_enabled_extensions}" == *"[]"* ]]; then
+      new_enabled_extensions="['${extension}']"
+    else
+      new_enabled_extensions="${current_enabled_extensions%]*}, '${extension}']"
+    fi
+    gsettings set org.gnome.shell enabled-extensions "${new_enabled_extensions}"
+  fi
+}
+
+declare -A extension_codes
+
+extension_codes["user-theme@gnome-shell-extensions.gcampax.github.com"]=19
+extension_codes["dash-to-panel@jderose9.github.com"]=1160
+
+# {{ if eq .chezmoi.osRelease.versionCodename "bionic" }}
+extension_codes["arc-menu@linxgem33.com"]=1228
+# {{ else }}
+extension_codes["arcmenu@arcmenu.com"]=3628
+# {{ end }}
+
+missing_extensions=()
+
+for extension in "${!extension_codes[@]}"; do
+  enable_extension "${extension}"
+  if ! is_gnome_extension_installed "${extension}"; then
+    missing_extensions+=("${extension_codes["${extension}"]}")
+  fi
+done
+
+if [[ ${#missing_extensions[@]} -gt 0 ]]; then
+  log_task "Installing GNOME extensions"
+  extra_args=()
+  if [[ -n "${DISPLAY:-}" ]]; then
+    extra_args=("--restart-shell")
+  fi
+  gnome-shell-extension-installer --yes "${extra_args[@]}" "${missing_extensions[@]}"
+fi

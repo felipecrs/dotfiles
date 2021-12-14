@@ -1,0 +1,37 @@
+#!/bin/bash
+
+function gsettings_ensure() {
+  local schema="$1"
+  shift
+  local key="$2"
+  shift
+  local value="$3"
+  shift
+
+  local current_value
+  current_value="$(gsettings get "${schema}" "${key}" "$@")"
+
+  if [[ "${current_value}" != "${value}" ]]; then
+    log_task "Setting ${schema}.${key} to ${value}"
+    gsettings set "${schema}" "${key}" "${value}" "$@"
+  fi
+}
+
+# Setup VS Code as default text editor on GNOME
+xdg-mime default code.desktop text/plain
+
+# Configuring terminal font
+gsettings_ensure org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font 13'
+
+# Configuring up Yaru-dark theme
+gsettings_ensure org.gnome.desktop.interface gtk-theme "Yaru-dark"
+gsettings_ensure org.gnome.desktop.interface icon-theme "Yaru"
+gsettings_ensure org.gnome.desktop.interface cursor-theme "Yaru"
+gsettings_ensure org.gnome.desktop.sound theme-name "Yaru"
+# {{ if not .is_wsl }}
+gsettings_ensure set org.gnome.shell.extensions.user-theme name "Yaru-dark" \
+  --schemadir "${HOME}/.local/share/gnome-shell/extensions/user-theme@gnome-shell-extensions.gcampax.github.com/schemas"
+# {{ end }}
+
+# Configuring miscellaneous settings
+gsettings_ensure org.gtk.Settings.FileChooser show-hidden true

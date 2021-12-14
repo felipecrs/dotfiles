@@ -4,22 +4,16 @@
 # anything else. It is meant for handling the migration of data
 # which cannot be managed by chezmoi itself.
 
-red() {
-  printf "\033[0;31m%s\033[0m\n" "$*" >&2
-}
+# {{ include (joinPath .chezmoi.sourceDir ".chezmoitemplates/scripts-library") }}
 
-error() {
-  red "$*"
-  exit 1
-}
-
-set -euo pipefail
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
 
 migrated=false
 
 # Migrate from .chezmoi.toml.tmpl to chezmoi.yaml.tmpl
 # {{ if and (stat .chezmoi.configFile) (not (hasSuffix ".yaml" .chezmoi.configFile)) }}
-red "⚠️ Detected old configuration file at '{{ .chezmoi.configFile }}'. Deleting it..."
+log_red "⚠️ Detected old configuration file at '{{ .chezmoi.configFile }}'. Deleting it..."
 rm -f "{{ .chezmoi.configFile }}"
 migrated=true
 # {{ end }}

@@ -35,12 +35,19 @@
   exact: true
 
 {{ if not .is_devcontainer -}}
-{{   if .is_gnome | and (not .is_wsl) -}}
+{{   if .is_gnome -}}
+".local/share/nautilus-python/extensions/code-nautilus.py":
+  type: file
+  url: "https://raw.githubusercontent.com/harry-cpp/code-nautilus/{{ template "get-github-head-revision" list "harry-cpp/code-nautilus" $cache }}/code-nautilus.py"
+
+{{      if not .is_wsl -}}
 ".local/bin/gnome-shell-extension-installer":
   type: file
   url: "https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/{{ template "get-github-head-revision" list "brunelli/gnome-shell-extension-installer" $cache }}/gnome-shell-extension-installer"
   executable: true
-{{-  end }}
+{{-     end }}
+
+{{-   end }}
 
 ".deno/bin/deno":
   type: file

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+zsh_path="/bin/zsh"
+
+if ! getent passwd '{{ .chezmoi.username }}' | cut -d : -f 7- | grep -q "^${zsh_path}$"; then
+  log_task "Configuring ZSH as default shell"
+
+  c sudo chsh --shell "${zsh_path}" '{{ .chezmoi.username }}'
+fi
+
+if [[ ! -f "${HOME}/.cache/gitstatus/gitstatusd-linux-x86_64" ]]; then
+  log_task "Initializing ZSH"
+  bash -e <<'EOF'
+# We need to be in a git repository, so gitstatusd initiliazes
+cd '{{ .chezmoi.workingTree }}'
+
+# We also need to emulate a TTY
+script -qec "zsh -is </dev/null" /dev/null
+EOF
+  log_green "✅ Done initializing ZSH"
+fi
