@@ -1,7 +1,21 @@
 #!/bin/bash
 
-# Configure passwordless sudo
-echo '{{ .non_root_user }}  ALL=(ALL) NOPASSWD:ALL' >'/etc/sudoers.d/{{ .non_root_user }}'
+# {{ template "scripts-library" }}
 
-# Ensuring non-root user can run docker without sudo
-usermod -aG docker '{{ .non_root_user }}'
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+# Configure passwordless sudo
+file='/etc/sudoers.d/{{ .non_root_user }}'
+file_contents='{{ .non_root_user }}  ALL=(ALL) NOPASSWD:ALL'
+if [[ ! -f "${file}" ]] || ! grep -q "${file_contents}" "${file}"; then
+  log_task 'Configuring passwordless sudo for {{ .non_root_user }}'
+  echo "${file_contents}" >"${file}"
+fi
+unset file file_contents
+
+# shellcheck disable=SC2312
+if ! getent group docker | grep -q '\b{{ .non_root_user }}\b'; then
+  log_task 'Adding {{ .non_root_user }} to docker group'
+  usermod -aG docker '{{ .non_root_user }}'
+fi
