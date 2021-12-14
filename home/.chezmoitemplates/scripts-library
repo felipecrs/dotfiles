@@ -70,7 +70,7 @@ function error() {
 }
 
 function sudo() {
-  if ! command sudo --validate --non-interactive 2>/dev/null; then
+  if ! command sudo --non-interactive true 2>/dev/null; then
     log_manual_action "Root privileges are required, please enter your password below"
     command sudo --validate
   fi

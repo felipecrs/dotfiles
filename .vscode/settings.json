@@ -74,6 +74,7 @@
     ".chezmoi*.yaml": "helm",
     ".chezmoiignore": "helm",
     ".chezmoiremove": "helm",
-    "**/.chezmoitemplates/*": "helm"
+    "**/.chezmoitemplates/*": "helm",
+    "**/.chezmoitemplates/scripts-library": "shellscript"
   }
 }
