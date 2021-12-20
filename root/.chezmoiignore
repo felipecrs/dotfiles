@@ -3,13 +3,6 @@ etc/apt/sources.list.d/communitheme-ppa.list
 usr/share/keyrings/communitheme-ppa-archive-keyring.gpg
 {{- end }}
 
-{{ if .is_wsl -}}
-usr/bin/docker-credential-secretservice
-
-# WSL uses GCM Core from Windows
-usr/local/bin/git-credential-manager-core
-usr/local/share/gcm-core
-{{- else -}}
-usr/bin/docker-credential-wincred.exe
+{{ if not .is_wsl -}}
 etc/wsl.conf
 {{- end }}

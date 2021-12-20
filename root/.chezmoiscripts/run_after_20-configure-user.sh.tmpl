@@ -19,3 +19,7 @@ if ! getent group docker | grep -q '\b{{ .non_root_user }}\b'; then
   log_task 'Adding {{ .non_root_user }} to docker group'
   usermod -aG docker '{{ .non_root_user }}'
 fi
+
+# {{ if .is_wsl }}
+chmod +x /usr/local/share/gcm-core/git-credential-manager-core.exe
+# {{ end }}
