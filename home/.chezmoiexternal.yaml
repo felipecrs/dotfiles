@@ -34,6 +34,11 @@
   stripComponents: 1
   exact: true
 
+".local/bin/direnv":
+  type: file
+  url: "https://github.com/direnv/direnv/releases/download/v{{ template "get-github-latest-version" list "direnv/direnv" $cache }}/direnv.linux-{{ .chezmoi.arch }}"
+  executable: true
+
 {{ if not .is_devcontainer -}}
 {{   if .is_gnome -}}
 ".local/share/nautilus-python/extensions/code-nautilus.py":
