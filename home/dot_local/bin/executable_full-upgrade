@@ -91,6 +91,7 @@ if apt --version &>/dev/null; then
   echo_task "Updating apt packages"
   c sudo apt update -y
   c sudo apt upgrade -y
+  c sudo apt autoremove -y
 fi
 
 if timeout 2 snap warnings &>/dev/null; then
