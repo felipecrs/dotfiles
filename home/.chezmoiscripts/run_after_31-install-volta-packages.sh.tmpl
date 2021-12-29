@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # {{ template "scripts-library" }}
+# {{ template "volta-library" }}
 
 # The following line is for ShellCheck to correctly identify the above include
 true || source ../.chezmoitemplates/scripts-library
-
-ensure_path_entry "${HOME}/.volta/bin"
+true || source ../.chezmoitemplates/volta-library
 
 readonly desired_packages=(
   node

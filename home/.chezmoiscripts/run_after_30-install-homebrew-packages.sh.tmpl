@@ -1,12 +1,11 @@
 #!/bin/bash
 
 # {{ template "scripts-library" }}
+# {{ template "homebrew-library" }}
 
 # The following line is for ShellCheck to correctly identify the above include
 true || source ../.chezmoitemplates/scripts-library
-
-readonly home_homebrew_prefix="${HOME}/.linuxbrew"
-readonly root_homebrew_prefix="/home/linuxbrew/.linuxbrew"
+true || source ../.chezmoitemplates/homebrew-library
 
 function is_root_homebrew_prefix_writable() {
   if [[ -d "${root_homebrew_prefix}" ]]; then
@@ -24,8 +23,6 @@ function is_brew_package_installed() {
 
   brew list "${package}" &>/dev/null
 }
-
-ensure_path_entry "${home_homebrew_prefix}/bin" "${root_homebrew_prefix}/bin"
 
 if is_root_homebrew_prefix_writable && [[ -d "${home_homebrew_prefix}" ]]; then
   log_task "Removing old Homebrew installation"

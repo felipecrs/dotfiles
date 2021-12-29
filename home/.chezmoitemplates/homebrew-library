@@ -1,0 +1,6 @@
+# shellcheck shell=bash
+
+readonly home_homebrew_prefix="${HOME}/.linuxbrew"
+readonly root_homebrew_prefix="/home/linuxbrew/.linuxbrew"
+
+ensure_path_entry "${home_homebrew_prefix}/bin" "${root_homebrew_prefix}/bin"

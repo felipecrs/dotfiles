@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+# {{ template "homebrew-library" }}
+# {{ template "volta-library" }}
+# {{ template "sdkman-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../../.chezmoitemplates/scripts-library
+true || source ../../.chezmoitemplates/homebrew-library
+true || source ../../.chezmoitemplates/volta-library
+true || source ../../.chezmoitemplates/sdkman-library
+
+if brew --version &>/dev/null; then
+  log_task "Updating brew"
+  c brew update
+
+  log_task "Updating brew packages"
+  c brew upgrade
+fi
+
+if chezmoi --version &>/dev/null; then
+  log_task "Updating dotfiles"
+  # Pull latest changes from dotfiles repo
+  c chezmoi update --apply=false
+  # Apply changes to chezmoi config
+  c chezmoi init --force
+  # Apply the rest
+  c chezmoi apply --force
+fi
+
+if apt --version &>/dev/null; then
+  log_task "Updating apt packages"
+  c sudo apt update -y
+  c sudo apt upgrade -y
+  c sudo apt autoremove -y
+fi
+
+if timeout 2 snap warnings &>/dev/null; then
+  log_task "Updating snap packages"
+  c sudo snap refresh
+fi
+
+if command -v gnome-shell-extension-installer &>/dev/null; then
+  log_task "Updating gnome extensions"
+  c gnome-shell-extension-installer --update --yes
+fi
+
+if volta --version &>/dev/null; then
+  log_task "Updating node, npm and yarn with volta"
+  c volta install node npm yarn
+fi
+
+if npm --version &>/dev/null; then
+  log_task "Updating npm packages"
+  c npm update --global
+fi
+
+if sdk version &>/dev/null; then
+  log_task "Updating sdk"
+  c sdk selfupdate
+
+  log_task "Updating sdk packages"
+  c sdk update
+fi
