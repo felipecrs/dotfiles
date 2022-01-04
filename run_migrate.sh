@@ -17,5 +17,5 @@ error "
 
 ❌ Manual action needed. To continue, please run:
 
-👉 chezmoi upgrade && chezmoi init --apply
+👉 brew upgrade chezmoi && chezmoi init --apply
 "
