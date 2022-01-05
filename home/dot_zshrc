@@ -1,4 +1,6 @@
-(( ${+commands[direnv]} )) && emulate zsh -c "$(direnv export zsh)"
+if [ -x "${HOME}/.local/bin/direnv" ]; then
+  eval "$("${HOME}/.local/bin/direnv" export zsh)"
+fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -7,7 +9,9 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-(( ${+commands[direnv]} )) && emulate zsh -c "$(direnv hook zsh)"
+if [ -x "${HOME}/.local/bin/direnv" ]; then
+  eval "$("${HOME}/.local/bin/direnv" hook zsh)"
+fi
 
 # Load .profile
 if [ -f "$HOME/.profile" ]; then
