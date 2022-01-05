@@ -110,11 +110,9 @@ plugins=(
   sudo
   zsh-syntax-highlighting
   zsh-autosuggestions
+  zsh-completions
   my-completions
   )
-
-# https://github.com/zsh-users/zsh-completions/issues/603
-fpath+="${ZSH_CUSTOM:-"$ZSH/custom"}/plugins/zsh-completions/src"
 
 source "$ZSH/oh-my-zsh.sh"
 

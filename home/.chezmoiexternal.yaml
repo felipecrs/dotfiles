@@ -5,7 +5,7 @@
 
 ".oh-my-zsh":
   type: archive
-  url: "https://github.com/ohmyzsh/ohmyzsh/archive/{{ template "get-github-head-revision" list "ohmyzsh/ohmyzsh" $cache }}.tar.gz"
+  url: "https://github.com/felipecrs/ohmyzsh/archive/refs/heads/completions-dir.tar.gz"
   stripComponents: 1
   # waiting for https://github.com/twpayne/chezmoi/issues/1614#issuecomment-966524408
   # exact: true
@@ -30,7 +30,7 @@
 
 ".oh-my-zsh/custom/plugins/zsh-completions":
   type: archive
-  url: "https://github.com/zsh-users/zsh-completions/archive/{{ template "get-github-head-revision" list "zsh-users/zsh-completions" $cache }}.tar.gz"
+  url: "https://github.com/felipecrs/zsh-completions/archive/refs/heads/completions-dir.tar.gz"
   stripComponents: 1
   exact: true
 
