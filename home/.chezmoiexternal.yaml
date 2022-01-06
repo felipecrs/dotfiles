@@ -39,6 +39,24 @@
   url: "https://github.com/direnv/direnv/releases/download/v{{ template "get-github-latest-version" list "direnv/direnv" $cache }}/direnv.linux-{{ .chezmoi.arch }}"
   executable: true
 
+".local/bin/kubectx":
+  type: file
+  url: "https://github.com/ahmetb/kubectx/raw/{{ template "get-github-head-revision" list "ahmetb/kubectx" $cache }}/kubectx"
+  executable: true
+
+".oh-my-zsh/custom/plugins/my-completions/_kubectx.zsh":
+  type: file
+  url: "https://github.com/ahmetb/kubectx/raw/{{ template "get-github-head-revision" list "ahmetb/kubectx" $cache }}/completion/_kubectx.zsh"
+
+".local/bin/kubens":
+  type: file
+  url: "https://github.com/ahmetb/kubectx/raw/{{ template "get-github-head-revision" list "ahmetb/kubectx" $cache }}/kubens"
+  executable: true
+
+".oh-my-zsh/custom/plugins/my-completions/_kubens.zsh":
+  type: file
+  url: "https://github.com/ahmetb/kubectx/raw/{{ template "get-github-head-revision" list "ahmetb/kubectx" $cache }}/completion/_kubens.zsh"
+
 {{ if not .is_devcontainer -}}
 {{   if .is_gnome -}}
 ".local/share/nautilus-python/extensions/code-nautilus.py":
