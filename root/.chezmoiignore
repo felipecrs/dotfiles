@@ -3,8 +3,8 @@ etc/apt/sources.list.d/communitheme-ppa.list
 {{ end }}
 
 {{ if not .is_gnome }}
-usr/share/keyrings/vscode-archive-keyring.gpg
-usr/share/keyrings/google-chrome-archive-keyring.gpg
+etc/apt/sources.list.d/vscode.list
+etc/apt/sources.list.d/google-chrome.list
 {{ end }}
 
 {{ if not .is_wsl }}
