@@ -24,15 +24,6 @@
     command: gpg
     args: ["--dearmor"]
 
-{{ if eq .chezmoi.osRelease.versionCodename "bionic" }}
-"usr/share/keyrings/communitheme-ppa-archive-keyring.gpg":
-  type: file
-  url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xDEE9D5E11727231736FD173F03D12CDECFB24D48"
-  filter:
-    command: gpg
-    args: ["--dearmor"]
-{{ end }}
-
 {{ if .is_gnome }}
 "usr/share/keyrings/vscode-archive-keyring.gpg":
   type: file
@@ -47,6 +38,15 @@
   filter:
     command: gpg
     args: ["--dearmor"]
+
+{{ if eq .chezmoi.osRelease.versionCodename "bionic" }}
+"usr/share/keyrings/communitheme-ppa-archive-keyring.gpg":
+  type: file
+  url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xDEE9D5E11727231736FD173F03D12CDECFB24D48"
+  filter:
+    command: gpg
+    args: ["--dearmor"]
+{{ end }}
 {{ end }}
 
 "usr/local/bin/docker-compose":
