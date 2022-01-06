@@ -1,3 +1,8 @@
 etc/apt/sources.list.d/git-core-ubuntu-ppa-*.list*
 etc/apt/sources.list.d/communitheme-ubuntu-ppa-*.list*
 etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list*
+
+{{ if and .is_gnome (not (eq .chezmoi.osRelease.versionCodename "bionic")) }}
+etc/apt/sources.list.d/communitheme-ppa.list
+usr/share/keyrings/communitheme-ppa-archive-keyring.gpg
+{{ end }}

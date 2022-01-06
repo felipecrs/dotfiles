@@ -1,9 +1,10 @@
 {{ if not .is_gnome }}
 etc/apt/sources.list.d/vscode.list
 etc/apt/sources.list.d/google-chrome.list
-{{   if not (eq .chezmoi.osRelease.versionCodename "bionic") }}
+{{ end }}
+
+{{ if and .is_gnome (not (eq .chezmoi.osRelease.versionCodename "bionic")) }}
 etc/apt/sources.list.d/communitheme-ppa.list
-{{   end }}
 {{ end }}
 
 {{ if not .is_wsl }}
