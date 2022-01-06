@@ -8,12 +8,12 @@ true || source ../.chezmoitemplates/scripts-library
 readonly wanted_packages=(
   git  # used to find the latest revisions of github repositories
   curl # used to find the latest version of github repositories
-  jq   # used on modify_ scripts
+  jq   # used on modify_ scripts like docker daemon.json
   zsh
   # {{ if not .is_devcontainer }}
   gzip # used for zcat in .chezmoiexternal.yaml
   # {{   if .is_wsl }}
-  crudini
+  crudini # used to configure wsl.conf
   # {{   end }}
   # {{ end }}
 )
@@ -28,6 +28,13 @@ done
 if [[ ${#missing_packages[@]} -gt 0 ]]; then
   log_task "Installing missing packages with APT: ${missing_packages[*]}"
 
-  c sudo apt update
-  c sudo apt install --yes --no-install-recommends "${missing_packages[@]}"
+  # This script also gets called when running rootmoi
+  # {{ if eq .chezmoi.username "root" }}
+  apt_command=(apt)
+  # {{ else }}
+  apt_command=(sudo apt)
+  # {{ end }}
+
+  c "${apt_command[@]}" update
+  c "${apt_command[@]}" install --yes --no-install-recommends "${missing_packages[@]}"
 fi
