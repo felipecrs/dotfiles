@@ -24,12 +24,30 @@
     command: gpg
     args: ["--dearmor"]
 
+{{ if eq .chezmoi.osRelease.versionCodename "bionic" }}
 "usr/share/keyrings/communitheme-ppa-archive-keyring.gpg":
   type: file
   url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xDEE9D5E11727231736FD173F03D12CDECFB24D48"
   filter:
     command: gpg
     args: ["--dearmor"]
+{{ end }}
+
+{{ if .is_gnome }}
+"usr/share/keyrings/vscode-archive-keyring.gpg":
+  type: file
+  url: "https://packages.microsoft.com/keys/microsoft.asc"
+  filter:
+    command: gpg
+    args: ["--dearmor"]
+
+"usr/share/keyrings/google-chrome-archive-keyring.gpg":
+  type: file
+  url: "https://dl.google.com/linux/linux_signing_key.pub"
+  filter:
+    command: gpg
+    args: ["--dearmor"]
+{{ end }}
 
 "usr/local/bin/docker-compose":
   type: file

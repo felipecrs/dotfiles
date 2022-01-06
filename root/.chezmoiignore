@@ -1,10 +1,14 @@
-{{- if not (eq .chezmoi.osRelease.versionCodename "bionic") -}}
+{{ if not (eq .chezmoi.osRelease.versionCodename "bionic") }}
 etc/apt/sources.list.d/communitheme-ppa.list
-usr/share/keyrings/communitheme-ppa-archive-keyring.gpg
-{{- end }}
+{{ end }}
 
-{{ if not .is_wsl -}}
+{{ if not .is_gnome }}
+usr/share/keyrings/vscode-archive-keyring.gpg
+usr/share/keyrings/google-chrome-archive-keyring.gpg
+{{ end }}
+
+{{ if not .is_wsl }}
 etc/wsl.conf
 .chezmoiscripts/*-fix-permissions.sh
 .chezmoiscripts/*-restore-permissions.sh
-{{- end }}
+{{ end }}

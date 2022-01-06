@@ -35,6 +35,8 @@ readonly wanted_packages=(
   gnome-tweaks
   gnome-menus
   python-nautilus
+  code
+  google-chrome-stable
   # {{   if not .is_wsl }}
   yaru-theme-gnome-shell
   libsecret-1-0
@@ -63,35 +65,3 @@ if [[ ${#missing_packages[@]} -gt 0 ]]; then
   c apt update
   c apt install --yes --install-recommends "${missing_packages[@]}"
 fi
-
-# {{ if .is_gnome }}
-if ! is_apt_package_installed "google-chrome-stable" || [[ ! -f "/etc/apt/sources.list.d/google-chrome.list" ]]; then
-  log_task "Installing Google Chrome"
-
-  extra_args=()
-  if [[ ! -f "/etc/apt/sources.list.d/google-chrome.list" ]]; then
-    extra_args=(--reinstall)
-  fi
-
-  # curl fails if file already exists and its owned by someone else
-  rm -f /tmp/google-chrome.deb
-  c curl -fsSL 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' --output /tmp/google-chrome.deb
-  c sudo apt install --yes --install-recommends "${extra_args[@]}" /tmp/google-chrome.deb
-  c rm -f /tmp/google-chrome.deb
-fi
-
-if ! is_apt_package_installed "code" || [[ ! -f "/etc/apt/sources.list.d/vscode.list" ]]; then
-  log_task "Installing Visual Studio Code"
-
-  extra_args=()
-  if [[ ! -f "/etc/apt/sources.list.d/vscode.list" ]]; then
-    extra_args=(--reinstall)
-  fi
-
-  # curl fails if file already exists and its owned by someone else
-  rm -f /tmp/code.deb
-  c curl -fsSL 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' --output /tmp/code.deb
-  c sudo apt install --yes --install-recommends "${extra_args[@]}" /tmp/code.deb
-  c rm -f /tmp/code.deb
-fi
-# {{ end }}
