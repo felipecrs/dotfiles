@@ -1,21 +1,9 @@
 #!/bin/bash
 
-# {{ include (joinPath .chezmoi.sourceDir ".chezmoitemplates/scripts-library") }}
+# {{ template "scripts-library" }}
 
 # The following line is for ShellCheck to correctly identify the above included library
 true || source ../.chezmoitemplates/scripts-library
-
-readonly unwanted_packages=(
-  gcmcore
-  direnv
-)
-
-for package in "${unwanted_packages[@]}"; do
-  if is_apt_package_installed "${package}"; then
-    log_task "Removing unwanted package '${package}' installed with APT"
-    c apt remove --yes "${package}"
-  fi
-done
 
 readonly wanted_packages=(
   apt-transport-https
