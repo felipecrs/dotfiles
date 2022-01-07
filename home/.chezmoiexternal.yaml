@@ -93,6 +93,14 @@
   url: "https://github.com/docker/buildx/releases/download/v{{ template "get-github-latest-version" list "docker/buildx" $cache }}/buildx-v{{ template "get-github-latest-version" list "docker/buildx" $cache }}.linux-amd64"
   executable: true
 
+".local/bin/shellcheck":
+  type: file
+  url: "https://github.com/koalaman/shellcheck/releases/download/v0.8.0/shellcheck-v0.8.0.linux.x86_64.tar.xz"
+  executable: true
+  filter:
+    command: tar
+    args: ["-xJOf-", "shellcheck-v0.8.0/shellcheck"]
+
 # Downloads all the variants of Fira Code Nerd Font
 {{-   range $_, $face := list "Regular" "Light" "Medium" "Bold" "Retina" "SemiBold" -}}
 {{-     range $_, $variant := list "" " Mono" }}
