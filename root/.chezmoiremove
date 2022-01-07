@@ -1,10 +1,3 @@
 etc/apt/sources.list.d/git-core-ubuntu-ppa-*.list*
 etc/apt/sources.list.d/communitheme-ubuntu-ppa-*.list*
 etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list*
-
-{{ if not (eq .chezmoi.osRelease.versionCodename "bionic") }}
-# This does not work anyway, see:
-# https://github.com/twpayne/chezmoi/discussions/1789#discussioncomment-1920082
-etc/apt/sources.list.d/communitheme-ppa.list
-usr/share/keyrings/communitheme-ppa-archive-keyring.gpg
-{{ end }}

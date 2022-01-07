@@ -19,10 +19,6 @@
 
 .local/share/gnome-shell/extensions/clipboard-indicator@tudmotu.com
 
-{{ if not .is_gnome -}}
-.local/bin/gnome-shell-extension-installer
-{{- end }}
-
 {{- end }}
 
 .antigen/
