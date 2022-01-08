@@ -8,6 +8,9 @@ true || source ../.chezmoitemplates/scripts-library
 readonly unwanted_packages=(
   gcmcore
   direnv
+  # {{ if not (eq .chezmoi.osRelease.versionCodename "bionic") }}
+  python-nautilus
+  # {{ end }}
 )
 
 for package in "${unwanted_packages[@]}"; do

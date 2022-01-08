@@ -34,9 +34,13 @@ readonly wanted_packages=(
   yaru-theme-sound
   gnome-tweaks
   gnome-menus
-  python-nautilus
   code
   google-chrome-stable
+  # {{   if eq .chezmoi.osRelease.versionCodename "bionic" }}
+  python-nautilus
+  # {{   else }}
+  python3-nautilus
+  # {{   end }}
   # {{   if not .is_wsl }}
   yaru-theme-gnome-shell
   libsecret-1-0
