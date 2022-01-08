@@ -66,7 +66,8 @@
 {{      if not .is_wsl -}}
 ".local/bin/gnome-shell-extension-installer":
   type: file
-  url: "https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/{{ template "get-github-head-revision" list "brunelli/gnome-shell-extension-installer" $cache }}/gnome-shell-extension-installer"
+  # https://github.com/brunelli/gnome-shell-extension-installer/pull/17
+  url: "https://raw.githubusercontent.com/felipecrs/gnome-shell-extension-installer/{{ template "get-github-head-revision" list "brunelli/gnome-shell-extension-installer" $cache }}/gnome-shell-extension-installer"
   executable: true
 {{-     end }}
 
