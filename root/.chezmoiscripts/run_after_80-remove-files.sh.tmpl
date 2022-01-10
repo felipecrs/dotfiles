@@ -15,6 +15,9 @@ readonly unwanted_files=(
   /etc/apt/sources.list.d/communitheme-ppa.list
   /usr/share/keyrings/communitheme-ppa-archive-keyring.gpg
   # {{ end }}
+  # {{ if not .is_gnome }}
+  /usr/bin/docker-credential-secretservice
+  # {{ end }}
 )
 
 remove_files "${unwanted_files[@]}"
