@@ -18,6 +18,12 @@
 .chezmoiscripts/*-install-gnome-extensions.sh
 {{- end }}
 
+{{ if .is_dockerfile }}
+# The .gitconfig will be copied from the host machine by VS Code
+.gitconfig
+repos/
+{{ end }}
+
 # waiting for chezmoi to leverage .gitignore from archives:
 # https://github.com/twpayne/chezmoi/issues/1421#issuecomment-964473844
 .oh-my-zsh/cache/*

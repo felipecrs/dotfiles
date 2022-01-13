@@ -20,14 +20,17 @@ readonly wanted_packages=(
   procps
   zip
   gzip
+  xz-utils
   git
   jq
   crudini
-  docker-ce
-  docker-ce-cli
-  containerd.io
   skopeo
   asciinema
+  docker-ce-cli
+  # {{ if not .is_dockerfile }}
+  docker-ce
+  containerd.io
+  # {{ end }}
   # {{ if .is_gnome }}
   yaru-theme-gtk
   yaru-theme-icon
@@ -47,7 +50,7 @@ readonly wanted_packages=(
   gnome-menus
   # {{   end }}
   # {{ end }}
-  # {{ if not .is_wsl }}
+  # {{ if and (not .is_wsl) (not .is_dockerfile) }}
   # {{   if eq .chezmoi.osRelease.versionCodename "bionic" }}
   linux-generic-hwe-18.04
   # {{   else if eq .chezmoi.osRelease.versionCodename "focal" }}
@@ -67,5 +70,10 @@ if [[ ${#missing_packages[@]} -gt 0 ]]; then
   log_task "Installing missing packages with APT: ${missing_packages[*]}"
 
   c apt update
-  c apt install --yes --install-recommends "${missing_packages[@]}"
+  # {{ if .is_dockerfile }}
+  extra_args=("--no-install-recommends")
+  # {{ else }}
+  extra_args=("--install-recommends")
+  # {{ end }}
+  c apt install --yes "${extra_args[@]}" "${missing_packages[@]}"
 fi

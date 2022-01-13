@@ -21,6 +21,7 @@
 
 {{- $isWsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
 {{- $isDevcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") | not | not -}}
+{{- $isDockerfile := env "DOTFILES_DOCKERFILE" | not | not -}}
 {{- $isGnome := lookPath "gnome-shell" | not | not -}}
 
 {{- /* This retains the value passed with --source on chezmoi init, which is used in the ../install.sh script */ -}}
@@ -38,6 +39,7 @@ data:
   is_work: {{ $isWork }}
   is_wsl: {{ $isWsl }}
   is_devcontainer: {{ $isDevcontainer }}
+  is_dockerfile: {{ $isDockerfile }}
   is_gnome: {{ $isGnome }}
 
   personal_name: "{{ $personalName }}"

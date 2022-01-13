@@ -70,7 +70,7 @@
   type: archive
   url: "https://glare.vercel.app/GitCredentialManager/git-credential-manager@v{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}/gcmcore-win-x86.+.zip$"
   exact: true
-{{ else }}
+{{ else if not .is_dockerfile }}
 "usr/local/share/gcm-core":
   type: archive
   url: "https://glare.vercel.app/GitCredentialManager/git-credential-manager@v{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}/gcmcore-linux_amd64.+.tar.gz$"
