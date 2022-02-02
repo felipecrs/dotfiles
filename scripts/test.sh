@@ -117,6 +117,8 @@ ${_arg_pre_script}
 
 ${setup_script}
 
+export DOTFILES_TEST=true
+
 ~/.dotfiles/install.sh
 
 set +xeu
