@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+# daemon.json hash: {{ include "/etc/docker/daemon.json" | sha256sum }}
+
+log_task "Restarting docker daemon"
+c service docker restart
