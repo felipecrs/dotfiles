@@ -113,8 +113,6 @@ run_test() {
     bash <<EOF
 set -euxo pipefail
 
-export DOTFILES_TEST=true
-
 ${_arg_pre_script}
 
 ${setup_script}

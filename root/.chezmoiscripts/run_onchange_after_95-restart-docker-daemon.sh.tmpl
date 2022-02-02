@@ -7,18 +7,13 @@ true || source ../.chezmoitemplates/scripts-library
 
 # daemon.json hash: {{ include "/etc/docker/daemon.json" | sha256sum }}
 
-function not_during_test() {
-  if [[ "${DOTFILES_TEST:-}" == "true" ]]; then
-    log_c "${@}"
-    log_info "Skipping because we are in test mode"
-  else
-    c "${@}"
-  fi
-}
-
-log_task "Restarting docker daemon"
+log_task "Restarting/reloading Docker daemon"
 # {{ if .is_wsl }}
-not_during_test service docker restart
+command=(service docker restart)
 # {{ else }}
-not_during_test systemctl restart docker
+command=(systemctl reload docker)
 # {{ end }}
+
+if ! c "${command[@]}"; then
+  log_manual_action "Docker daemon restart/reload failed, you may need to restart the 'docker' service manually for changes to take effect."
+fi
