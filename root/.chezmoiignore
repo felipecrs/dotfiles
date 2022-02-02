@@ -8,6 +8,7 @@ etc/apt/sources.list.d/communitheme-ppa.list
 
 {{ if .is_wsl }}
 etc/ssh
+.chezmoiscripts/*-reload-sshd.sh
 {{ else }}
 etc/wsl.conf
 .chezmoiscripts/*-fix-permissions.sh
