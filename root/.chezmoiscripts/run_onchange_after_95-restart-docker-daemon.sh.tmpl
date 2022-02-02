@@ -20,5 +20,5 @@ log_task "Restarting/reloading Docker daemon"
 # {{ if .is_wsl }}
 not_during_test service docker restart
 # {{ else }}
-not_during_test systemctl try-reload-or-restart docker
+not_during_test systemctl reload-or-restart docker
 # {{ end }}
