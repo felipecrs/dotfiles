@@ -117,6 +117,9 @@ ${_arg_pre_script}
 
 ${setup_script}
 
+export DOTFILES_TEST=true
+echo 'Defaults env_keep += "DOTFILES_TEST"' | sudo tee /etc/sudoers.d/env_keep
+
 ~/.dotfiles/install.sh
 
 set +xeu
