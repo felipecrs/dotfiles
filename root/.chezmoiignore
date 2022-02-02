@@ -6,7 +6,10 @@ etc/apt/sources.list.d/communitheme-ppa.list
 etc/apt/sources.list.d/communitheme-ppa.list
 {{ end }}
 
-{{ if not .is_wsl }}
+{{ if .is_wsl }}
+etc/ssh
+.chezmoiscripts/*-reload-sshd.sh
+{{ else }}
 etc/wsl.conf
 .chezmoiscripts/*-fix-permissions.sh
 .chezmoiscripts/*-restore-permissions.sh

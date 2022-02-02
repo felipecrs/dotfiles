@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+# custom_sshd_config.conf hash: {{ include "/etc/ssh/sshd_config.d/custom_sshd_config.conf" | sha256sum }}
+
+log_task "Reloading SSH daemon"
+c systemctl try-reload-or-restart sshd
