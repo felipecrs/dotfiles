@@ -16,9 +16,9 @@ function not_during_test() {
   fi
 }
 
-log_task "Restarting/reloading Docker daemon"
+log_task "Restarting Docker daemon"
 # {{ if .is_wsl }}
 not_during_test service docker restart
 # {{ else }}
-not_during_test systemctl reload-or-restart docker
+not_during_test systemctl restart docker
 # {{ end }}
