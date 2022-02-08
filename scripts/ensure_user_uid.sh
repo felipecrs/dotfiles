@@ -12,6 +12,11 @@ old_user="${1}"
 old_uid=$(id -u "${old_user}")
 new_uid="${2}"
 
+if [[ "${old_uid}" == "${new_uid}" ]]; then
+  echo "User ${old_user} already has uid as ${new_uid}"
+  exit 0
+fi
+
 function get_user_name() {
   id -nu "${1}"
 }
@@ -55,9 +60,9 @@ function relocate_user() {
 
   id "${name}"
 
-  find / -ignore_readdir_race -group "${old}" -user "${old}" -print0 | xargs -0 --no-run-if-empty chown -ch "${name}:${name}"
-  find / -ignore_readdir_race -group "${old}" -print0 | xargs -0 --no-run-if-empty chgrp -ch "${name}"
-  find / -ignore_readdir_race -user "${old}" -print0 | xargs -0 --no-run-if-empty chown -ch "${name}"
+  find / -path /proc -prune -o -group "${old}" -user "${old}" -print0 | xargs -0 --no-run-if-empty chown -ch "${name}:${name}"
+  find / -path /proc -prune -o -group "${old}" -print0 | xargs -0 --no-run-if-empty chgrp -ch "${name}"
+  find / -path /proc -prune -o -user "${old}" -print0 | xargs -0 --no-run-if-empty chown -ch "${name}"
 
   echo "Finished moving."
 }
