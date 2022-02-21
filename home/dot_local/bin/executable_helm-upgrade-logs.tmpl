@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../../.chezmoitemplates/scripts-library
+
+function prefix_output() {
+  local prefix="$1"
+  shift
+  local sed_text
+  sed_text=$(printf "\033[34m%s: &\033[0m" "${prefix}")
+  # shellcheck disable=SC2312
+  "$@" &> >(sed "s,^.*$,${sed_text}," >&2)
+}
+
+watching_pods=()
+
+function pod_logs() {
+  local pod="$1"
+
+  watching_pods+=("${pod}")
+
+  prefix_output "pod ${pod}" c kubectl logs --all-containers --prefix --follow "${pod}"
+
+  # remove from watch list (it may be added again)
+  watching_pods=("${watched_pods[@]/"${pod}"/}")
+}
+
+function get_release_pod_lods() {
+  local release="$1"
+
+  while true; do
+    # Fetch a list of helm pods
+    # shellcheck disable=SC2207
+    pods=($(kubectl get pods --selector "app.kubernetes.io/managed-by=Helm,app.kubernetes.io/instance=${release}" --output jsonpath='{.items[*].metadata.name}'))
+
+    for pod in "${pods[@]}"; do
+      if [[ " ${watching_pods[*]} " != *" ${pod} "* ]]; then
+        pod_logs "${pod}" &
+      fi
+    done
+    sleep 1
+  done
+}
+
+function get_first_non_option() {
+  for arg in "$@"; do
+    if [[ "${arg}" != "-"* ]]; then
+      echo "${arg}"
+      return
+    fi
+  done
+}
+
+release="$(get_first_non_option "$@")"
+
+# kill jobs started in background, like pod logs
+trap 'kill $(jobs -p)' EXIT
+
+c helm upgrade "$@" --wait &
+pid="$!"
+
+get_release_pod_lods "${release}" &
+
+wait "${pid}"
