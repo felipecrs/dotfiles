@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../../.chezmoitemplates/scripts-library
+
+# https://stackoverflow.com/a/49035906/12156188
+# shellcheck disable=SC2312
+function slugify() {
+  echo "$@" | iconv -t ascii//TRANSLIT | sed -r "s/[~\^]+//g" | sed -r "s/[^a-zA-Z0-9]+/-/g" | sed -r "s/^-+\|-+$//g" | tr "[:upper:]" "[:lower:]"
+}
+
+container_name="kpfd-$(slugify "$@")"
+
+kubeconfig="${KUBECONFIG:-"${HOME}/.kube/config"}"
+
+# shellcheck disable=SC2312
+user="$(id -u):$(id -g)"
+
+c docker rm --force "${container_name}"
+
+c docker run --name "${container_name}" \
+  --detach \
+  --restart=unless-stopped \
+  --pull=always \
+  --volume="${kubeconfig}:/.kube/config" \
+  --user="${user}" \
+  --network=host \
+  "bitnami/kubectl:${K8S_VERSION:-"latest"}" \
+  port-forward "${@}"
+
+c docker logs --follow "${container_name}" &
+
+sleep 3
+
+log_green "Port-forward is now running in background."
+
+log_info "Check the logs above for possible issues."
+
+log_manual_action "You can manually stop the port-forward by running:"
+
+echo
+
+log_c docker rm --force "${container_name}"

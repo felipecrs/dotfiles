@@ -56,6 +56,11 @@ function c() {
   "$@"
 }
 
+function c_exec() {
+  log_c "$@"
+  exec "$@"
+}
+
 function log_error() {
   log_red "❌" "$@"
 }
