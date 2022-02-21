@@ -33,7 +33,7 @@ function watch_pods() {
 
   sleep 3 # Prevent flodding the logs with the initial output
   prefix_output "pods" "1;32" c kubectl get pods \
-    --watch-only \
+    --watch \
     --selector "app.kubernetes.io/managed-by=Helm,app.kubernetes.io/instance=${release}"
 }
 
