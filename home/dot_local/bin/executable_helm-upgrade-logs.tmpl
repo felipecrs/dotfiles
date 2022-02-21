@@ -21,7 +21,7 @@ function pod_logs() {
 
   watching_pods+=("${pod}")
 
-  prefix_output "pod ${pod}" c kubectl logs --all-containers --prefix --follow "${pod}"
+  prefix_output "pod ${pod}" c kubectl logs --all-containers --prefix --follow "${pod}" || true
 
   # remove from watch list (it may be added again)
   watching_pods=("${watched_pods[@]/"${pod}"/}")
