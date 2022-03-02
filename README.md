@@ -93,7 +93,7 @@ The convenience script supports some environment variables:
 - `DOTFILES_USER`: Default to `felipecrs`.
 - `DOTFILES_BRANCH`: Default to `master`.
 
-For example, you can clone use it to clone the dotfiles repository on branch `beta` with:
+For example, you can use it to clone the dotfiles repository on branch `beta` with:
 
 ```bash
 DOTFILES_BRANCH=beta sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
