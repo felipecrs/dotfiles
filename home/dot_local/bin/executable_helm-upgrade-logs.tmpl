@@ -10,8 +10,7 @@ watching_pods_events_file=$(mktemp /dev/shm/helm-upgrade-logs.watching-pods-even
 
 function cleanup() {
   rm -f "${watching_pods_logs_file}" "${watching_pods_events_file}" || true
-  # https://spin.atomicobject.com/2017/08/24/start-stop-bash-background-process/
-  kill 0
+  jobs -pr | xargs -r kill
 }
 
 trap cleanup EXIT

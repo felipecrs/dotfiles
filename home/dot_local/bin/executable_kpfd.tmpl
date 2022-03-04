@@ -5,12 +5,7 @@
 # The following line is for ShellCheck to correctly identify the above include
 true || source ../../.chezmoitemplates/scripts-library
 
-function cleanup() {
-  # https://spin.atomicobject.com/2017/08/24/start-stop-bash-background-process/
-  kill 0
-}
-
-trap cleanup EXIT
+trap 'jobs -pr | xargs -r kill' EXIT
 
 # https://stackoverflow.com/a/49035906/12156188
 # shellcheck disable=SC2312
@@ -24,6 +19,10 @@ kubeconfig="${KUBECONFIG:-"${HOME}/.kube/config"}"
 
 # shellcheck disable=SC2312
 user="$(id -u):$(id -g)"
+extra_args=()
+if [[ -f "${kubeconfig}" ]]; then
+  extra_args+=(--volume="${kubeconfig}:/.kube/config:ro")
+fi
 
 c docker rm --force "${container_name}"
 
@@ -31,9 +30,9 @@ c docker run --name "${container_name}" \
   --detach \
   --restart=unless-stopped \
   --pull=always \
-  --volume="${kubeconfig}:/.kube/config" \
   --user="${user}" \
   --network=host \
+  "${extra_args[@]}" \
   "bitnami/kubectl:${K8S_VERSION:-"latest"}" \
   port-forward "${@}"
 
