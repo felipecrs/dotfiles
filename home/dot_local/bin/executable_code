@@ -35,6 +35,19 @@ if [ -n "${DEBUG:-}" ]; then
   set -x
 fi
 
+# Used to work around the issue: https://github.com/twpayne/chezmoi/issues/1068
+if is_first_arg_a_folder "$@"; then
+  # Removes -w and --wait flags
+  for arg; do
+    shift
+    if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+      echo "dropping --wait or -w flag" >&2
+      continue
+    fi
+    set -- "$@" "${arg}"
+  done
+fi
+
 # shellcheck disable=SC2310
 if code="$(get_in_path_except_current code)"; then
   # shellcheck disable=SC2310
@@ -50,21 +63,6 @@ if code="$(get_in_path_except_current code)"; then
     fi
   fi
 
-  # Used to work around https://github.com/twpayne/chezmoi/issues/1068
-  # code duplication here is required because there is no way to set
-  # script level args inside of functions in POSIX (on Bash we can use arrays)
-  if is_first_arg_a_folder "$@"; then
-    # Removes -w and --wait flags
-    for arg; do
-      shift
-      if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
-        echo "removing --wait or -w flag" >&2
-        continue
-      fi
-      set -- "$@" "${arg}"
-    done
-  fi
-
   exec "${code}" "$@"
 fi
 
@@ -72,23 +70,6 @@ echo >&2
 printf "code is not available, " >&2
 if command -v code-insiders >/dev/null 2>&1; then
   echo "using code-insiders instead" >&2
-
-  # Used to work around https://github.com/twpayne/chezmoi/issues/1068
-  # code duplication here is required because there is no way to set
-  # script level args inside of functions in POSIX (on Bash we can use arrays)
-  # shellcheck disable=SC2310
-  if is_first_arg_a_folder "$@"; then
-    # Removes -w and --wait flags
-    for arg; do
-      shift
-      if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
-        echo "removing --wait or -w flag" >&2
-        continue
-      fi
-      set -- "$@" "${arg}"
-    done
-  fi
-
   exec code-insiders "$@"
 fi
 
@@ -106,20 +87,20 @@ if who | grep -q .; then
       sort -n | cut -d' ' -f 2- | tail -n 1 | grep .); then
 
       # Ensure code binary is executable
-      if [ -x "${bin_folder}/bin/code" ]; then
+      bin_path="${bin_folder}/bin/remote-cli/code"
+      if [ -x "${bin_path}" ]; then
 
         # Find most recent sock
         uid=$(id -u)
         if sock_paths=$(find "/run/user/${uid}/" \
           -mindepth 1 -maxdepth 1 -type s -name "vscode-ipc-*.sock" -printf "%T@ %p\n" |
-          sort -n | cut -d' ' -f 2- | grep .); then
+          sort --numeric-sort --reverse | cut -d' ' -f 2- | grep .); then
 
           sockets_count=$(echo "${sock_paths}" | wc -l)
           echo " ${sockets_count} sockets found." >&2
           echo "trying to connect..." >&2
           for sock_path in ${sock_paths}; do
-            export VSCODE_IPC_HOOK_CLI="${sock_path}"
-            if "${bin_folder}/bin/code" "$@"; then
+            if VSCODE_IPC_HOOK_CLI="${sock_path}" "${bin_path}" "$@"; then
               exit 0
             else
               echo "trying next socket..." >&2
@@ -130,6 +111,11 @@ if who | grep -q .; then
     fi
   fi
   echo " not found." >&2
+fi
+
+if is_first_arg_a_folder "$@"; then
+  echo "not falling back to nano, vim or vi since you are trying to open a folder." >&2
+  exit 127
 fi
 
 if command -v nano >/dev/null 2>&1; then
@@ -151,7 +137,7 @@ echo "using ${editor} instead" >&2
 for arg; do
   shift
   if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
-    echo "removing --wait or -w flag" >&2
+    echo "dropping --wait or -w flag" >&2
     continue
   fi
   set -- "$@" "${arg}"
