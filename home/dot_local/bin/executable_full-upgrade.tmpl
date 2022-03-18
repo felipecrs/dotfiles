@@ -41,6 +41,11 @@ if timeout 2 snap warnings &>/dev/null; then
   c sudo snap refresh
 fi
 
+if flatpak --version &>/dev/null; then
+  log_task "Updating flatpak packages"
+  c sudo flatpak update -y
+fi
+
 if command -v gnome-shell-extension-installer &>/dev/null; then
   log_task "Updating gnome extensions"
   c gnome-shell-extension-installer --update --yes
