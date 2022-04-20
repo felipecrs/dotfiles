@@ -6,6 +6,10 @@ etc/apt/sources.list.d/communitheme-ppa.list
 etc/apt/sources.list.d/communitheme-ppa.list
 {{ end }}
 
+{{ if semverCompare ">20.04" .chezmoi.osRelease.versionID }}
+etc/apt/sources.list.d/kubic.list
+{{ end }}
+
 {{ if .is_wsl }}
 etc/ssh
 .chezmoiscripts/*-reload-sshd.sh
