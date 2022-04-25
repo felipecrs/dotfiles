@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         variant: [devcontainer, wsl, gnome]
-        os: [ubuntu-18.04, ubuntu-20.04]
+        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
