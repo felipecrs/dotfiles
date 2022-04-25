@@ -57,9 +57,13 @@
   type: file
   url: "https://github.com/ahmetb/kubectx/raw/{{ template "get-github-head-revision" list "ahmetb/kubectx" $cache }}/completion/_kubens.zsh"
 
+{{ $openSslVersion := "1.1" }}
+{{ if semverCompare ">=22.04" .chezmoi.osRelease.versionID }}
+{{   $openSslVersion = "3.0" }}
+{{ end }}
 ".volta/bin":
   type: archive
-  url: "https://github.com/volta-cli/volta/releases/download/v{{ template "get-github-latest-version" list "volta-cli/volta" $cache }}/volta-{{ template "get-github-latest-version" list "volta-cli/volta" $cache }}-linux-openssl-1.1.tar.gz"
+  url: "https://github.com/volta-cli/volta/releases/download/v{{ template "get-github-latest-version" list "volta-cli/volta" $cache }}/volta-{{ template "get-github-latest-version" list "volta-cli/volta" $cache }}-linux-openssl-{{ $openSslVersion }}.tar.gz"
 
 {{ if not .is_devcontainer -}}
 {{   if .is_gnome -}}
