@@ -26,7 +26,10 @@ readonly wanted_packages=(
   docker-ce
   docker-ce-cli
   containerd.io
+  # {{ if semverCompare ">20.04" .chezmoi.osRelease.versionID }}
+  # Because of https://github.com/containers/skopeo/issues/1648
   skopeo
+  # {{ end }}
   asciinema
   # {{ if .is_gnome }}
   yaru-theme-gtk
