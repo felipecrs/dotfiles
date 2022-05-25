@@ -20,7 +20,7 @@
 {{- $isPersonal := not $isWork -}}
 
 {{- $isWsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
-{{- $isDevcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") | not | not -}}
+{{- $isDevcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") (env "GITPOD_HOST") | not | not -}}
 {{- $isGnome := lookPath "gnome-shell" | not | not -}}
 
 {{- /* This retains the value passed with --source on chezmoi init, which is used in the ../install.sh script */ -}}
