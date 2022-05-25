@@ -1,6 +1,5 @@
 vscode:
   extensions:
-    - timonwong.shellcheck@0.12.2:rNYWy8+G5JQ4FGeagKUjeg==
-    - foxundermoon.shell-format@7.0.1:dJqOSN173jVh12b+ScTqtw==
-    - mads-hartmann.bash-ide-vscode@1.11.0:VLESO/tPCjrfzzLcJy83aQ==
-    - rogalmic.bash-debug@0.3.9:8w+xOBwrJt9TA7S1JlrZng==
+    - timonwong.shellcheck
+    - foxundermoon.shell-format
+    - mads-hartmann.bash-ide-vscode
