@@ -60,6 +60,7 @@
 "usr/bin/docker-credential-wincred.exe":
   type: file
   url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}/docker-credential-wincred-v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}-{{ .chezmoi.arch }}.zip"
+  # This is needed because the binary inside of the archive does not come with execution permission by default
   executable: true
   filter:
     command: zcat
@@ -75,13 +76,11 @@
   exact: true
 
 {{   if .is_gnome }}
-"usr/bin/docker-credential-secretservice":
-  type: file
+"usr/bin":
+  type: archive
   url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}/docker-credential-secretservice-v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}-{{ .chezmoi.arch }}.tar.gz"
-  executable: true
-  filter:
-    command: tar
-    args: ["-xzOf-"]
+  include:
+    - docker-credential-secretservice
 {{   end }}
 {{ end }}
 

@@ -80,12 +80,11 @@
 
 {{-   end }}
 
-".deno/bin/deno":
-  type: file
+".deno/bin":
+  type: archive
   url: "https://github.com/denoland/deno/releases/download/v{{ template "get-github-latest-version" list "denoland/deno" $cache }}/deno-x86_64-unknown-linux-gnu.zip"
-  executable: true
-  filter:
-    command: zcat
+  include:
+    - deno
 
 ".docker/cli-plugins/docker-compose":
   type: file
