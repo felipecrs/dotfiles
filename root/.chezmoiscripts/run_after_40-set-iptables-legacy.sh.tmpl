@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
 # Docker on Ubuntu 22.04 for WSL needs this additional step.
 # shellcheck disable=SC2312
 if ! update-alternatives --display iptables | grep -q 'link currently points to /usr/sbin/iptables-legacy'; then
