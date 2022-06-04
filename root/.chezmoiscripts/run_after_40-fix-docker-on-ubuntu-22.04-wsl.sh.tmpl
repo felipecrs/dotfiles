@@ -1,4 +1,8 @@
 #!/bin/bash
 
 # Docker on Ubuntu 22.04 for WSL needs this additional step.
-sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+# shellcheck disable=SC2312
+if ! update-alternatives --list iptables | head --lines=1 | grep -q /usr/sbin/iptables-legacy; then
+  log_task "Setting iptables to iptables-legacy due to Docker"
+  sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+fi
