@@ -8,9 +8,11 @@ true || source ../.chezmoitemplates/scripts-library
 # shellcheck disable=all
 original_args=({{ range (rest .chezmoi.args) }} {{ . | quote }}{{ end }})
 args=()
+final_args=()
 
 # Filter incompatible args
 skip_one_more=false
+remove_apply=false
 for i in "${!original_args[@]}"; do
   if [[ "${skip_one_more}" == true ]]; then
     skip_one_more=false
@@ -30,12 +32,23 @@ for i in "${!original_args[@]}"; do
   # or init with --apply.
   if [[ "${original_args[i]}" == "update" || "${original_args[i]}" == "init" ]]; then
     args+=("apply")
+    remove_apply=true
     continue
   fi
 
   args+=("${original_args[i]}")
 done
 
+if [[ "${remove_apply}" == true ]]; then
+  for i in "${!args[@]}"; do
+    if [[ "${args[i]}" == "-a" || "${args[i]}" == "-a="* || "${args[i]}" == "--apply" || "${args[i]}" == "--apply="* ]]; then
+      continue
+    fi
+
+    final_args+=("${args[i]}")
+  done
+fi
+
 log_task "Applying root dotfiles"
-log_c "rootmoi" "${args[@]}"
-exec '{{ joinPath .chezmoi.homeDir ".local/bin/rootmoi" }}' "${args[@]}"
+log_c "rootmoi" "${final_args[@]}"
+exec '{{ joinPath .chezmoi.homeDir ".local/bin/rootmoi" }}' "${final_args[@]}"
