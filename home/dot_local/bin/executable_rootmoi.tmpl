@@ -16,7 +16,7 @@ if [[ -f '{{ .chezmoi.executable }}' ]]; then
 else
   # chezmoi is installed with Homebrew
   ensure_path_entry "${HOME}/.linuxbrew/bin" "/home/linuxbrew/.linuxbrew/bin"
-  executable='chezmoi'
+  executable=$(command -v chezmoi)
 fi
 
 # exec bypasses the shell and executes the command directly, so we call it here first
