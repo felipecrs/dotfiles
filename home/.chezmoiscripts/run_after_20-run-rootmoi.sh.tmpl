@@ -26,6 +26,13 @@ for i in "${!original_args[@]}"; do
     continue
   fi
 
+  # If we get here, it's because we ran update without --apply=false,
+  # or init with --apply.
+  if [[ "${original_args[i]}" == "update" || "${original_args[i]}" == "init" ]]; then
+    args+=("apply")
+    continue
+  fi
+
   args+=("${original_args[i]}")
 done
 
