@@ -7,8 +7,7 @@ true || source ../.chezmoitemplates/scripts-library
 
 # shellcheck disable=all
 original_args=({{ range (rest .chezmoi.args) }} {{ . | quote }}{{ end }})
-args=()
-final_args=()
+args=(apply)
 
 # Filter incompatible args
 skip_one_more=false
@@ -28,27 +27,19 @@ for i in "${!original_args[@]}"; do
     continue
   fi
 
-  # If we get here, it's because we ran update without --apply=false,
-  # or init with --apply.
-  if [[ "${original_args[i]}" == "update" || "${original_args[i]}" == "init" ]]; then
-    args+=("apply")
-    remove_apply=true
+  # We will always apply, so we don't need any --apply flags
+  if [[ "${original_args[i]}" == "-a" || "${original_args[i]}" == "-a="* || "${original_args[i]}" == "--apply" || "${original_args[i]}" == "--apply="* ]]; then
+    continue
+  fi
+
+  # Remove any positional args, as we will always use apply
+  if [[ "${original_args[i]}" != "-"* ]]; then
     continue
   fi
 
   args+=("${original_args[i]}")
 done
 
-if [[ "${remove_apply}" == true ]]; then
-  for i in "${!args[@]}"; do
-    if [[ "${args[i]}" == "-a" || "${args[i]}" == "-a="* || "${args[i]}" == "--apply" || "${args[i]}" == "--apply="* ]]; then
-      continue
-    fi
-
-    final_args+=("${args[i]}")
-  done
-fi
-
 log_task "Applying root dotfiles"
-log_c "rootmoi" "${final_args[@]}"
-exec '{{ joinPath .chezmoi.homeDir ".local/bin/rootmoi" }}' "${final_args[@]}"
+log_c "rootmoi" "${args[@]}"
+exec '{{ joinPath .chezmoi.homeDir ".local/bin/rootmoi" }}' "${args[@]}"
