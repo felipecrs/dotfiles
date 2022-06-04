@@ -17,4 +17,7 @@ etc/ssh
 etc/wsl.conf
 .chezmoiscripts/*-fix-permissions.sh
 .chezmoiscripts/*-restore-permissions.sh
+{{   if semverCompare "<22.04" .chezmoi.osRelease.versionID }}
+.chezmoiscripts/*-fix-docker-on-ubuntu-22.04-wsl.sh
+{{   end }}
 {{ end }}
