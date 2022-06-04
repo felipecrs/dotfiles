@@ -13,11 +13,12 @@ etc/apt/sources.list.d/kubic.list
 {{ if .is_wsl }}
 etc/ssh
 .chezmoiscripts/*-reload-sshd.sh
+{{   if semverCompare "<22.04" .chezmoi.osRelease.versionID }}
+.chezmoiscripts/*-set-iptables-legacy.sh
+{{   end }}
 {{ else }}
 etc/wsl.conf
 .chezmoiscripts/*-fix-permissions.sh
 .chezmoiscripts/*-restore-permissions.sh
-{{   if semverCompare "<22.04" .chezmoi.osRelease.versionID }}
-.chezmoiscripts/*-fix-docker-on-ubuntu-22.04-wsl.sh
-{{   end }}
+.chezmoiscripts/*-set-iptables-legacy.sh
 {{ end }}
