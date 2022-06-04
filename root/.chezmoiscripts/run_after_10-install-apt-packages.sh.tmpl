@@ -41,15 +41,15 @@ readonly wanted_packages=(
   # {{   else }}
   python3-nautilus
   # {{   end }}
-  # {{   if .is_wsl }}
-  wslu
-  # {{   else }}
+  # {{   if not .is_wsl }}
   yaru-theme-gnome-shell
   libsecret-1-0
   gnome-menus
   # {{   end }}
   # {{ end }}
-  # {{ if not .is_wsl }}
+  # {{ if .is_wsl }}
+  wslu
+  # {{ else }}
   # {{   if eq .chezmoi.osRelease.versionCodename "bionic" }}
   linux-generic-hwe-18.04
   # {{   else if eq .chezmoi.osRelease.versionCodename "focal" }}
