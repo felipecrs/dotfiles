@@ -41,7 +41,9 @@ readonly wanted_packages=(
   # {{   else }}
   python3-nautilus
   # {{   end }}
-  # {{   if not .is_wsl }}
+  # {{   if .is_wsl }}
+  wslu
+  # {{   else }}
   yaru-theme-gnome-shell
   libsecret-1-0
   gnome-menus
