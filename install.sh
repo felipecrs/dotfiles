@@ -1,22 +1,41 @@
 #!/bin/sh
 
-echo_task() {
-  printf "\033[0;34m--> %s\033[0m\n" "$*"
-}
-
-error() {
-  printf "\033[0;31m%s\033[0m\n" "$*" >&2
-  exit 1
-}
-
 # -e: exit on error
 # -u: exit on unset variables
 set -eu
 
+log_color() {
+  color_code="$1"
+  shift
+
+  printf "\033[${color_code}m%s\033[0m\n" "$*" >&2
+}
+
+log_red() {
+  log_color "0;31" "$@"
+}
+
+log_blue() {
+  log_color "0;34" "$@"
+}
+
+log_task() {
+  log_blue "🔃" "$@"
+}
+
+log_error() {
+  log_red "❌" "$@"
+}
+
+error() {
+  log_error "$@"
+  exit 1
+}
+
 if ! chezmoi="$(command -v chezmoi)"; then
   bin_dir="${HOME}/.local/bin"
   chezmoi="${bin_dir}/chezmoi"
-  echo_task "Installing chezmoi to ${chezmoi}"
+  log_task "Installing chezmoi to ${chezmoi}"
   if command -v curl >/dev/null; then
     chezmoi_install_script="$(curl -fsSL https://git.io/chezmoi)"
   elif command -v wget >/dev/null; then
@@ -42,7 +61,7 @@ if [ -n "${DOTFILES_DEBUG-}" ]; then
   chezmoi_extra_args="${chezmoi_extra_args} --debug"
 fi
 
-echo_task "Running chezmoi init"
+log_task "Running chezmoi init"
 # replace current process with chezmoi init
 # shellcheck disable=SC2086
 exec "${chezmoi}" init --source "${script_dir}" ${chezmoi_extra_args}
