@@ -75,7 +75,10 @@ function error() {
 }
 
 function sudo() {
-  if ! command sudo --non-interactive true 2>/dev/null; then
+  # shellcheck disable=SC2312
+  if [[ "$(id -u)" -eq 0 ]]; then
+    "$@"
+  elif ! command sudo --non-interactive true 2>/dev/null; then
     log_manual_action "Root privileges are required, please enter your password below"
     command sudo --validate
   fi
