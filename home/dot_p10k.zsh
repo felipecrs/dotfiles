@@ -85,6 +85,7 @@
     gcloud                  # google cloud cli account and project (https://cloud.google.com/)
     google_app_cred         # google application credentials (https://cloud.google.com/docs/authentication/production)
     toolbox                 # toolbox name (https://github.com/containers/toolbox)
+    my_devcontainer         # devcontainer indicator
     context                 # user@hostname
     nordvpn                 # nordvpn connection status, linux only (https://nordvpn.com/)
     ranger                  # ranger shell (https://github.com/ranger/ranger)
@@ -1589,6 +1590,12 @@
   # User-defined prompt segments can be customized the same way as built-in segments.
   # typeset -g POWERLEVEL9K_EXAMPLE_FOREGROUND=208
   # typeset -g POWERLEVEL9K_EXAMPLE_VISUAL_IDENTIFIER_EXPANSION='⭐'
+
+  function prompt_my_devcontainer() {
+    if [[ -n $REMOTE_CONTAINERS$CODESPACES$VSCODE_REMOTE_CONTAINERS_SESSION$GITPOD_HOST ]]; then
+      p10k segment -f blue -i 'ﰭ' -t 'devcontainer'
+    fi
+  }
 
   # Transient prompt works similarly to the builtin transient_rprompt option. It trims down prompt
   # when accepting a command line. Supported values:
