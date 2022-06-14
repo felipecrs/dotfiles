@@ -1,23 +1,58 @@
-{{- /* The following variables are only available within this file */ -}}
-
-{{- $personalName := "Felipe Santos" -}}
-{{- $personalEmail := "felipecassiors@gmail.com" -}}
-
-{{- $workName := "Felipe de Cássio Rocha Santos" -}}
-{{- $workEmail := "felipesantos@inatel.br" -}}
+{{- $name := "Felipe Santos" -}}
+{{- $email := "felipecassiors@gmail.com" -}}
 
 {{- $chezmoiForce := or (has "--force" .chezmoi.args) (has "--force=true" .chezmoi.args) -}}
+{{- $interactive := and stdinIsATTY (not $chezmoiForce) -}}
 
-{{- $isWork := false -}}
-{{- if hasKey . "is_work" -}}
-{{-   $isWork = .is_work -}}
+{{- if hasKey . "name" -}}
+{{-   $name = .name -}}
 {{- end -}}
-{{- if and stdinIsATTY (not $chezmoiForce) -}}
-{{-   $isWork = promptBool "Is this a work environment" $isWork -}}
+{{- if $interactive -}}
+{{-   range until 999 -}}
+{{-     $question := "❔ What is your full name" -}}
+{{-     $answer := "" -}}
+{{-     if $name -}}
+{{-       $answer = promptString $question $name -}}
+{{-     else -}}
+{{-       $answer = promptString $question -}}
+{{-     end -}}
+{{-     if regexMatch "^[A-Z][-' a-zA-Z]+$" $answer -}}
+{{-       $name = $answer -}}
+{{-       writeToStdout (printf "✅ Name set as '%s'\n" $name) -}}
+{{-       break -}}
+{{-     else -}}
+{{-       writeToStdout (printf "❌ '%s' is an invalid name\n" $answer) -}}
+{{-       continue -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+
+{{- if hasKey . "email" -}}
+{{-   $email = .email -}}
+{{- end -}}
+{{- if $interactive -}}
+{{-   range until 999 -}}
+{{-     $question := "❔ What is your email" -}}
+{{-     $answer := "" -}}
+{{-     if $email -}}
+{{-       $answer = promptString $question $email | lower -}}
+{{-     else -}}
+{{-       $answer = promptString $question | lower -}}
+{{-     end -}}
+{{-     if regexMatch "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$" $answer -}}
+{{-       $email = $answer -}}
+{{-       writeToStdout (printf "✅ Email set as '%s'\n" $email) -}}
+{{-       break -}}
+{{-     else -}}
+{{-       writeToStdout (printf "❌ '%s' is an invalid email\n" $answer) -}}
+{{-       continue -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+
+{{- if $interactive -}}
 {{-   writeToStdout "\n💡 Tip: you can always make chezmoi ask this again by running `chezmoi init` without `--force`.\n" -}}
 {{- end -}}
-
-{{- $isPersonal := not $isWork -}}
 
 {{- $isWsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
 {{- $isDevcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") (env "GITPOD_HOST") | not | not -}}
@@ -34,24 +69,11 @@ diff:
 
 {{/* Here we "export" the variables, so we can access them outside this file */ -}}
 data:
-  is_personal: {{ $isPersonal }}
-  is_work: {{ $isWork }}
   is_wsl: {{ $isWsl }}
   is_devcontainer: {{ $isDevcontainer }}
   is_gnome: {{ $isGnome }}
 
-  personal_name: "{{ $personalName }}"
-  personal_email: "{{ $personalEmail }}"
-
-  work_name: "{{ $workName }}"
-  work_email: "{{ $workEmail }}"
-
-{{- if $isPersonal }}
-  name: "{{ $personalName }}"
-  email: "{{ $personalEmail }}"
-{{- else }}
-  name: "{{ $workName }}"
-  email: "{{ $workEmail }}"
-{{- end }}
+  name: "{{ $name }}"
+  email: "{{ $email }}"
 
   editor: "code --wait"
