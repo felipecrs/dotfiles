@@ -2,7 +2,7 @@
 
 Bootstrap your Ubuntu in a few minutes!
 
-![Hello dotfiles! image](https://user-images.githubusercontent.com/29582865/112045407-95518600-8b29-11eb-8218-128fd2e9805a.png)
+![Sample dotfiles image](https://user-images.githubusercontent.com/29582865/173688885-acd1e312-4741-4ec1-bc9d-b1f31e289749.png)
 
 This dotfiles repository is currently aimed for [**Ubuntu on WSL**](https://ubuntu.com/wsl), [**Ubuntu Server**](https://ubuntu.com/server), and [**Ubuntu Desktop**](https://ubuntu.com/desktop), tested against versions **18.04**, **20.04**, and **22.04**. See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10).
 
