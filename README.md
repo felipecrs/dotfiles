@@ -43,6 +43,10 @@ sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
 >  sh -c "$(curl -fsSL https://git.io/felipecrs-dotfiles)"
 > ```
 
+### Demo
+
+https://user-images.githubusercontent.com/29582865/173691636-63a016b2-3e9b-49a4-bb7c-5514c28a77a3.mp4
+
 ## Configuring the terminal font
 
 This dotfiles uses the ZSH theme [Powerlevel10k](https://github.com/romkatv/powerlevel10k), so it requires you to install a font on your host machine with support for the [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) glyphs. I recommend the [`FiraCode Nerd Font`](https://github.com/ryanoasis/nerd-fonts/tree/HEAD/patched-fonts/FiraCode#readme).
