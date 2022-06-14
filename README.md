@@ -10,25 +10,6 @@ It's also suitable for use in [**GitHub Codespaces**](https://docs.github.com/co
 
 This repository is managed with [`chezmoi`](https://chezmoi.io).
 
-## Table of contents <!-- omit in toc -->
-
-- [Getting started](#getting-started)
-- [Configuring the terminal font](#configuring-the-terminal-font)
-  - [Installing the font on **Windows**](#installing-the-font-on-windows)
-  - [Configuring the font in **VS Code**](#configuring-the-font-in-vs-code)
-  - [Configuring the font in **Windows Terminal**](#configuring-the-font-in-windows-terminal)
-- [Documentation](#documentation)
-  - [Convenience script](#convenience-script)
-  - [Installing without the convenience script](#installing-without-the-convenience-script)
-  - [Forking guide](#forking-guide)
-  - [Extra scripts](#extra-scripts)
-    - [`create_alternative_chrome_shortcut.sh`](#create_alternative_chrome_shortcutsh)
-      - [Usage](#usage)
-      - [Examples](#examples)
-      - [Demo](#demo)
-
----
-
 ## Getting started
 
 You can use the [convenience script](./scripts/install_dotfiles.sh) to install the dotfiles on any machine with a single command. Simply run the following command in your terminal:
