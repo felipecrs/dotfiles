@@ -1,6 +1,6 @@
-# Felipe Santos' dotfiles <!-- omit in toc -->
+# Felipe Santos' dotfiles
 
-Bootstrap your Ubuntu in a few minutes!
+Bootstrap your Ubuntu in a single command!
 
 ![Sample dotfiles image](https://user-images.githubusercontent.com/29582865/173688885-acd1e312-4741-4ec1-bc9d-b1f31e289749.png)
 
@@ -8,7 +8,7 @@ This dotfiles repository is currently aimed for [**Ubuntu on WSL**](https://ubun
 
 It's also suitable for use in [**GitHub Codespaces**](https://docs.github.com/codespaces/customizing-your-codespace/personalizing-codespaces-for-your-account#dotfiles), [**Gitpod**](https://www.gitpod.io/docs/config-dotfiles), and [**VS Code Remote - Containers**](https://code.visualstudio.com/docs/remote/containers#_personalizing-with-dotfile-repositories).
 
-This repository is managed with [`chezmoi`](https://chezmoi.io).
+Managed with [`chezmoi`](https://chezmoi.io), a great dotfiles manager.
 
 ## Getting started
 
