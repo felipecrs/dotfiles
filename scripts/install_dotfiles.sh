@@ -40,30 +40,27 @@ sudo() {
   # shellcheck disable=SC2312
   if [ "$(id -u)" -eq 0 ]; then
     "$@"
-  elif ! command sudo --non-interactive true 2>/dev/null; then
-    log_manual_action "Root privileges are required, please enter your password below"
-    command sudo --validate
+  else
+    if ! command sudo --non-interactive true 2>/dev/null; then
+      log_manual_action "Root privileges are required, please enter your password below"
+      command sudo --validate
+    fi
+    command sudo "$@"
   fi
-  command sudo "$@"
-}
-
-get_default_branch() {
-  path=$1
-  git -C "${path}" remote show origin | grep 'HEAD branch' | cut -d' ' -f5
 }
 
 git_clean() {
   path=$(realpath "$1")
-  branch="$(get_default_branch "${path}")"
-  log_task "Cleaning ${path} with branch ${branch}"
+  remote="$2"
+  branch="$3"
+
+  log_task "Cleaning '${path}' with '${remote}' at branch '${branch}'"
   git="git -C ${path}"
-  ${git} checkout "${branch}"
-  ${git} fetch origin "${branch}"
+  ${git} checkout -B "${branch}"
+  ${git} fetch "${remote}" "${branch}"
   ${git} reset --hard FETCH_HEAD
   ${git} clean -fdx
-  unset path
-  unset branch
-  unset git
+  unset path remote branch git
 }
 
 DOTFILES_REPO_HOST=${DOTFILES_REPO_HOST:-"https://github.com"}
@@ -79,10 +76,10 @@ if ! command -v git >/dev/null 2>&1; then
 fi
 
 if [ -d "${DOTFILES_DIR}" ]; then
-  git_clean "${DOTFILES_DIR}"
+  git_clean "${DOTFILES_DIR}" "${DOTFILES_REPO}" "${DOTFILES_BRANCH}"
 else
-  log_task "Cloning ${DOTFILES_REPO} on branch ${DOTFILES_BRANCH} to ${DOTFILES_DIR}"
-  git clone -b "${DOTFILES_BRANCH}" "${DOTFILES_REPO}" "${DOTFILES_DIR}"
+  log_task "Cloning '${DOTFILES_REPO}' at branch '${DOTFILES_BRANCH}' to '${DOTFILES_DIR}'"
+  git clone --branch "${DOTFILES_BRANCH}" "${DOTFILES_REPO}" "${DOTFILES_DIR}"
 fi
 
 if [ -f "${DOTFILES_DIR}/install.sh" ]; then
@@ -93,5 +90,5 @@ else
   error "No install script found in the dotfiles."
 fi
 
-log_task "Running ${INSTALL_SCRIPT}"
+log_task "Running '${INSTALL_SCRIPT}'"
 exec "${INSTALL_SCRIPT}"
