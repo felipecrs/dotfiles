@@ -13,9 +13,9 @@ if ! getent passwd '{{ .chezmoi.username }}' | cut -d : -f 7- | grep -q "^${zsh_
   c sudo chsh --shell "${zsh_path}" '{{ .chezmoi.username }}'
 fi
 
-if [[ ! -f "${HOME}/.cache/gitstatus/gitstatusd-linux-x86_64" ]]; then
+if [[ ! -d "${HOME}/.cache/gitstatus" ]]; then
   log_task "Initializing ZSH"
-  bash -e <<'EOF'
+  bash -e <<'EOF' >/dev/null
 # We need to be in a git repository, so gitstatusd initiliazes
 cd '{{ .chezmoi.workingTree }}'
 
