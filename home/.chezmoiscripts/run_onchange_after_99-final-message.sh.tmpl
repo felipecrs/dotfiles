@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# We need to install ca-certificates before we add the APT repos, because some of them
+# may use newer CAs.
+
+# {{ include (joinPath .chezmoi.sourceDir ".chezmoitemplates/scripts-library") }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+log_green "✅ Dotfiles installation finished successfully"
+
+# {{ if .is_gnome }}
+log_info "If this is a first time installation, please logout and log back in" "to get started. You can temporarily preview the changes by running:"
+# {{ else }}
+log_info "If this is a first time installation, get started by running:"
+# {{ end }}
+log_c "exec zsh"
