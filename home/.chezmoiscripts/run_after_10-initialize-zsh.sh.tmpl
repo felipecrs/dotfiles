@@ -13,7 +13,8 @@ if ! getent passwd '{{ .chezmoi.username }}' | cut -d : -f 7- | grep -q "^${zsh_
   c sudo usermod --shell "${zsh_path}" '{{ .chezmoi.username }}'
 fi
 
-if [[ ! -d "${HOME}/.cache/gitstatus" ]]; then
+# Alpine frequently does not come with script (from util-linux) installed
+if command -v script >/dev/null && [[ ! -d "${HOME}/.cache/gitstatus" ]]; then
   log_task "Initializing ZSH"
   bash -e <<'EOF' >/dev/null
 # We need to be in a git repository, so gitstatusd initiliazes
