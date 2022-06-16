@@ -4,6 +4,13 @@
 {{- $chezmoiForce := or (has "--force" .chezmoi.args) (has "--force=true" .chezmoi.args) -}}
 {{- $interactive := and stdinIsATTY (not $chezmoiForce) -}}
 
+{{- $ubuntu := and .chezmoi.osRelease.ubuntuCodename true -}}
+{{- $wsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
+{{- $devcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") (env "GITPOD_HOST") | not | not -}}
+{{- $gnome := lookPath "gnome-shell" | not | not -}}
+
+{{- $minimum := or $devcontainer (not $ubuntu) -}}
+
 {{- if hasKey . "name" -}}
 {{-   $name = .name -}}
 {{- end -}}
@@ -35,10 +42,11 @@
 {{-     $question := "❔ What is your email" -}}
 {{-     $answer := "" -}}
 {{-     if $email -}}
-{{-       $answer = promptString $question $email | lower -}}
+{{-       $answer = promptString $question $email -}}
 {{-     else -}}
-{{-       $answer = promptString $question | lower -}}
+{{-       $answer = promptString $question -}}
 {{-     end -}}
+{{-     $answer = lower $answer -}}
 {{-     if regexMatch "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$" $answer -}}
 {{-       $email = $answer -}}
 {{-       writeToStdout (printf "✅ Email set as '%s'\n" $email) -}}
@@ -50,13 +58,22 @@
 {{-   end -}}
 {{- end -}}
 
+{{- if hasKey . "is_devcontainer" -}}
+{{-   $minimum = .is_devcontainer -}}
+{{- end -}}
+{{- if $interactive -}}
+{{-   $question := "❔ Should install in minimum mode (see README)" -}}
+{{-   $minimum = promptBool $question $minimum -}}
+{{-   if $minimum -}}
+{{-     writeToStdout "✅ Minimum mode enabled\n" -}}
+{{-   else -}}
+{{-     writeToStdout "✅ Minimum mode disabled\n" -}}
+{{-   end -}}
+{{- end -}}
+
 {{- if $interactive -}}
 {{-   writeToStdout "\n💡 Tip: you can always make chezmoi ask this again by running `chezmoi init` without `--force`.\n" -}}
 {{- end -}}
-
-{{- $isWsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
-{{- $isDevcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") (env "GITPOD_HOST") | not | not -}}
-{{- $isGnome := lookPath "gnome-shell" | not | not -}}
 
 {{- /* This retains the value passed with --source on chezmoi init, which is used in the ../install.sh script */ -}}
 sourceDir: "{{ .chezmoi.workingTree }}"
@@ -69,9 +86,9 @@ diff:
 
 {{/* Here we "export" the variables, so we can access them outside this file */ -}}
 data:
-  is_wsl: {{ $isWsl }}
-  is_devcontainer: {{ $isDevcontainer }}
-  is_gnome: {{ $isGnome }}
+  is_wsl: {{ $wsl }}
+  is_devcontainer: {{ $minimum }}
+  is_gnome: {{ $gnome }}
 
   name: "{{ $name }}"
   email: "{{ $email }}"

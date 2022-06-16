@@ -28,6 +28,12 @@ sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
 
 https://user-images.githubusercontent.com/29582865/173691636-63a016b2-3e9b-49a4-bb7c-5514c28a77a3.mp4
 
+### Minimum mode
+
+The installation will ask if you want a **minimum mode installation**. The minimum mode only installs the needed dotfiles for the command prompt and is compatible with more distributions other than Ubuntu.
+
+It will be enabled by default when running in a Dev Container or in distributions other than Ubuntu. For example, I use it in order to bring my environment to the [Home Assistant VS Code Add-on](https://github.com/hassio-addons/addon-vscode).
+
 ## Configuring the terminal font
 
 This dotfiles uses the ZSH theme [Powerlevel10k](https://github.com/romkatv/powerlevel10k), so it requires you to install a font on your host machine with support for the [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) glyphs. I recommend the [`FiraCode Nerd Font`](https://github.com/ryanoasis/nerd-fonts/tree/HEAD/patched-fonts/FiraCode#readme).
