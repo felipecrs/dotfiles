@@ -4,6 +4,7 @@
 .chezmoiscripts/*
 !.chezmoiscripts/*-install-prerequisites.sh
 !.chezmoiscripts/*-initialize-zsh.sh
+!.chezmoiscripts/*-final-message.sh
 {{- end }}
 
 {{ if not .is_gnome -}}
