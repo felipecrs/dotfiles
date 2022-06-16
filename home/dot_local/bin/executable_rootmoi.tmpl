@@ -19,10 +19,7 @@ else
   executable=$(command -v chezmoi)
 fi
 
-# exec bypasses the shell and executes the command directly, so we call it here first
-sudo true
-
-exec sudo "${executable}" "$@" \
+sudo exec "${executable}" "$@" \
   --config='{{ $configFile }}' \
   --persistent-state='{{ $persistentStateFile }}' \
   --cache='{{ $cacheDir }}'
