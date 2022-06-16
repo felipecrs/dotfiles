@@ -32,6 +32,11 @@ for i in "${!original_args[@]}"; do
     continue
   fi
 
+  # --init never makes sense, because rootmoi's configuration is handled by chezmoi earlier
+  if [[ "${original_args[i]}" == "--init" ]]; then
+    continue
+  fi
+
   # Remove any positional args, as we will always use apply
   if [[ "${original_args[i]}" != "-"* ]]; then
     continue
