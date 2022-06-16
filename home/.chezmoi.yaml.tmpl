@@ -15,7 +15,7 @@
 {{-   $name = .name -}}
 {{- end -}}
 {{- if $interactive -}}
-{{-   range until 999 -}}
+{{-   range $i := until 99 -}}
 {{-     $question := "❔ What is your full name" -}}
 {{-     $answer := "" -}}
 {{-     if $name -}}
@@ -27,9 +27,11 @@
 {{-       $name = $answer -}}
 {{-       writeToStdout (printf "✅ Name set as '%s'\n" $name) -}}
 {{-       break -}}
-{{-     else -}}
-{{-       writeToStdout (printf "❌ '%s' is an invalid name\n" $answer) -}}
-{{-       continue -}}
+{{-     end -}}
+{{-     writeToStdout (printf "❌ '%s' is an invalid name\n" $answer) -}}
+{{-     if eq $i 98 -}}
+{{-       writeToStdout "❌ ERROR: maximum tries exceeded\n" -}}
+{{-       exit 1 -}}
 {{-     end -}}
 {{-   end -}}
 {{- end -}}
@@ -38,7 +40,7 @@
 {{-   $email = .email -}}
 {{- end -}}
 {{- if $interactive -}}
-{{-   range until 999 -}}
+{{-   range $i := until 99 -}}
 {{-     $question := "❔ What is your email" -}}
 {{-     $answer := "" -}}
 {{-     if $email -}}
@@ -51,9 +53,11 @@
 {{-       $email = $answer -}}
 {{-       writeToStdout (printf "✅ Email set as '%s'\n" $email) -}}
 {{-       break -}}
-{{-     else -}}
-{{-       writeToStdout (printf "❌ '%s' is an invalid email\n" $answer) -}}
-{{-       continue -}}
+{{-     end -}}
+{{-     writeToStdout (printf "❌ '%s' is an invalid email\n" $answer) -}}
+{{-     if eq $i 98 -}}
+{{-       writeToStdout "❌ ERROR: maximum tries exceeded\n" -}}
+{{-       exit 1 -}}
 {{-     end -}}
 {{-   end -}}
 {{- end -}}
