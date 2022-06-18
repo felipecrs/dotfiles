@@ -35,7 +35,7 @@ error() {
 if ! chezmoi="$(command -v chezmoi)"; then
   bin_dir="${HOME}/.local/bin"
   chezmoi="${bin_dir}/chezmoi"
-  log_task "Installing chezmoi to ${chezmoi}"
+  log_task "Installing chezmoi to '${chezmoi}'"
   if command -v curl >/dev/null; then
     chezmoi_install_script="$(curl -fsSL https://git.io/chezmoi)"
   elif command -v wget >/dev/null; then
