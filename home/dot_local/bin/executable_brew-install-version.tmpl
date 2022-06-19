@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../../.chezmoitemplates/scripts-library
+
+readonly formula="$1"
+readonly version="$2"
+
+homebrew_core_dir="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core"
+
+c brew update --force
+
+formula_file="$(brew info "${formula}" | grep --only-matching "Formula/.*.rb")"
+
+revision=$(c git -C "${homebrew_core_dir}" log --grep "${version}" -1 --pretty=format:"%H" -- "${formula_file}")
+
+if [[ -z "${revision}" ]]; then
+  error "No revision found for formula '${formula}' with version '${version}'"
+fi
+
+c git -C "${homebrew_core_dir}" reset --hard "${revision}"
+
+export HOMEBREW_NO_AUTO_UPDATE=1
+
+if brew list "${formula}" &>/dev/null; then
+  c brew uninstall --force "${formula}"
+fi
+
+c exec brew install --force "${formula}"
