@@ -19,6 +19,12 @@ else
   executable=$(command -v chezmoi)
 fi
 
+# Ensure the folders are created, because otherwise they will be created as
+# root, including the ~/.cache and ~/.config, which can cause other programs
+# to stop working.
+# shellcheck disable=SC2016
+mkdir -p '{{ $configDir }}' '{{ $cacheParentDir }}'
+
 sudo exec "${executable}" "$@" \
   --config='{{ $configFile }}' \
   --persistent-state='{{ $persistentStateFile }}' \
