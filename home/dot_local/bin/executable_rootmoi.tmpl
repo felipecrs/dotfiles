@@ -23,7 +23,7 @@ fi
 # root, including the ~/.cache and ~/.config, which can cause other programs
 # to stop working.
 # shellcheck disable=SC2016
-mkdir -p '{{ $configDir }}' '{{ $cacheParentDir }}'
+mkdir -p '{{ $configDir }}' '{{ $cacheDir }}'
 
 sudo exec "${executable}" "$@" \
   --config='{{ $configFile }}' \
