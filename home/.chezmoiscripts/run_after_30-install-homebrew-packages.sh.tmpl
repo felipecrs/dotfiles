@@ -35,7 +35,7 @@ if ! brew --version &>/dev/null; then
     brew_install_script=$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)
     CI=1 bash -c "${brew_install_script}"
   else
-    readonly homebrew_prefix="${home_homebrew_prefix}"
+    homebrew_prefix="${home_homebrew_prefix}"
     log_info "Installing to '${homebrew_prefix}' due to lack of permissions on '/home/linuxbrew'"
     c git clone https://github.com/Homebrew/brew "${homebrew_prefix}/Homebrew"
     c mkdir -p "${homebrew_prefix}/bin"
