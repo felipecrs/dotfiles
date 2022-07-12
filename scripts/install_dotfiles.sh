@@ -71,7 +71,7 @@ DOTFILES_DIR="${HOME}/.dotfiles"
 
 if ! command -v git >/dev/null 2>&1; then
   log_task "Installing git"
-  sudo apt update
+  sudo apt update --yes
   sudo apt install git --yes
 fi
 

@@ -181,7 +181,7 @@ EOF
       run_test "${os}" "$(
         # shellcheck disable=SC2312
         cat <<'EOF'
-sudo apt update
+sudo apt update --yes
 sudo apt install -y --no-install-recommends gnome-shell
 EOF
       )"

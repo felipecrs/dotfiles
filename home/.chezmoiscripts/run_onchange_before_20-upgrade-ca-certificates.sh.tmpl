@@ -12,7 +12,7 @@ log_task "Upgrading ca-certificates"
 
 # Ignore apt update error if it is due to expired certificate (because chances are that
 # the next command will fix it.
-if output="$(c sudo apt update)" || [[ "${output}" == *"The certificate chain uses expired certificate."* ]]; then
+if output="$(c sudo apt update --yes)" || [[ "${output}" == *"The certificate chain uses expired certificate."* ]]; then
   echo "${output}"
   true
 else

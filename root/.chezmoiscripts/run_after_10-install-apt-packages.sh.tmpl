@@ -68,6 +68,6 @@ done
 if [[ ${#missing_packages[@]} -gt 0 ]]; then
   log_task "Installing missing packages with APT: ${missing_packages[*]}"
 
-  c apt update
+  c apt update --yes
   c apt install --yes --install-recommends "${missing_packages[@]}"
 fi

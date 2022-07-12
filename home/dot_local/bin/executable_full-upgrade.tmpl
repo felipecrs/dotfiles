@@ -31,9 +31,9 @@ fi
 
 if apt --version &>/dev/null; then
   log_task "Updating apt packages"
-  c sudo apt update -y
-  c sudo apt upgrade -y
-  c sudo apt autoremove -y
+  c sudo apt update --yes
+  c sudo apt upgrade --yes
+  c sudo apt autoremove --yes
 fi
 
 if timeout 2 snap warnings &>/dev/null; then
@@ -43,7 +43,7 @@ fi
 
 if flatpak --version &>/dev/null; then
   log_task "Updating flatpak packages"
-  c sudo flatpak update -y
+  c sudo flatpak update --assumeyes
 fi
 
 if command -v gnome-shell-extension-installer &>/dev/null; then
