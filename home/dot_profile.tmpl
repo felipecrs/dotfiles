@@ -8,19 +8,6 @@ elif [ -x "${HOME}/.linuxbrew/bin/brew" ]; then
   eval "$("${HOME}/.linuxbrew/bin/brew" shellenv)"
 fi
 
-if [ -n "${XDG_CONFIG_HOME}" ]; then
-  NVM_DIR="${XDG_CONFIG_HOME}/nvm"
-else
-  NVM_DIR="${HOME}/.nvm"
-fi
-if [ -r "${NVM_DIR}/nvm.sh" ]; then
-  # shellcheck disable=SC1091
-  . "${NVM_DIR}/nvm.sh"
-  export NVM_DIR
-else
-  unset NVM_DIR
-fi
-
 if [ -d "${HOME}/.volta/bin" ]; then
   export VOLTA_HOME="${HOME}/.volta"
   export PATH="${VOLTA_HOME}/bin:${PATH}"
