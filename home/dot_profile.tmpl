@@ -1,67 +1,57 @@
 #!/bin/sh
 
-# {{ if .is_wsl }}
-# The boot.command in /etc/wsl.conf is only for Windows 11, so this workaround is needed
-if service docker status 2>&1 | grep -q "is not running"; then
-  wsl.exe -d "${WSL_DISTRO_NAME}" -u root -e /usr/sbin/service docker start >/dev/null 2>&1
-fi
-# {{ end }}
-
 if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  # shellcheck disable=SC2312
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-elif [ -x "$HOME/.linuxbrew/bin/brew" ]; then
-  eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
+elif [ -x "${HOME}/.linuxbrew/bin/brew" ]; then
+  # shellcheck disable=SC2312
+  eval "$("${HOME}/.linuxbrew/bin/brew" shellenv)"
 fi
 
-# shellcheck disable=SC2031
-NVM_DIR="$([ -n "$XDG_CONFIG_HOME" ] && echo "$XDG_CONFIG_HOME/nvm" || echo "$HOME/.nvm")"
-if [ -f "$NVM_DIR/nvm.sh" ]; then
+if [ -n "${XDG_CONFIG_HOME}" ]; then
+  NVM_DIR="${XDG_CONFIG_HOME}/nvm"
+else
+  NVM_DIR="${HOME}/.nvm"
+fi
+if [ -r "${NVM_DIR}/nvm.sh" ]; then
   # shellcheck disable=SC1091
-  . "$NVM_DIR/nvm.sh"
+  . "${NVM_DIR}/nvm.sh"
   export NVM_DIR
 else
   unset NVM_DIR
 fi
 
-if [ -d "$HOME/.volta/bin" ]; then
-  export VOLTA_HOME="$HOME/.volta"
-  export PATH="$VOLTA_HOME/bin:$PATH"
+if [ -d "${HOME}/.volta/bin" ]; then
+  export VOLTA_HOME="${HOME}/.volta"
+  export PATH="${VOLTA_HOME}/bin:${PATH}"
 fi
 
-if [ -d "$HOME/.deno/bin" ]; then
-  export DENO_INSTALL="$HOME/.deno"
-  export PATH="$DENO_INSTALL/bin:$PATH"
+if [ -d "${HOME}/.deno/bin" ]; then
+  export DENO_INSTALL="${HOME}/.deno"
+  export PATH="${DENO_INSTALL}/bin:${PATH}"
 fi
 
-if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
-  export SDKMAN_DIR="$HOME/.sdkman"
+if [ -r "${HOME}/.sdkman/bin/sdkman-init.sh" ]; then
+  export SDKMAN_DIR="${HOME}/.sdkman"
   # shellcheck disable=SC1091
-  . "$HOME/.sdkman/bin/sdkman-init.sh"
+  . "${HOME}/.sdkman/bin/sdkman-init.sh"
 fi
 
-if [ -d "$HOME/.local/share/flutter/bin" ]; then
-  export PATH="$HOME/.local/share/flutter/bin:$PATH"
+if [ -d "${HOME}/.local/share/flutter/bin" ]; then
+  export PATH="${HOME}/.local/share/flutter/bin:${PATH}"
 fi
 
-if [ -d "$HOME/bin" ]; then
-  export PATH="$HOME/bin:$PATH"
+if [ -d "${HOME}/bin" ]; then
+  export PATH="${HOME}/bin:${PATH}"
 fi
 
-if [ -d "$HOME/.local/bin" ]; then
-  export PATH="$HOME/.local/bin:$PATH"
-fi
-
-if [ -n "$WSL_DISTRO_NAME" ] || [ -n "$IS_WSL" ]; then
-  if [ "$(command -v wslview)" ]; then
-    export BROWSER="wslview"
-  fi
-  if [ "$(command -v wslpath)" ] && [ "$(command -v wslvar)" ]; then
-    WIN_HOME=$(wslpath "$(wslvar USERPROFILE)")
-    export WIN_HOME
-  fi
+if [ -d "${HOME}/.local/bin" ]; then
+  export PATH="${HOME}/.local/bin:${PATH}"
 fi
 
 export VISUAL="{{ .editor }}"
 export EDITOR="{{ .editor }}"
 
-export REPOS_HOME="$HOME/repos"
+# {{ if .is_wsl }}
+export BROWSER="wslview"
+# {{ end }}

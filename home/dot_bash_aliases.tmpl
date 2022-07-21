@@ -1,39 +1,57 @@
-#!/bin/bash
+# shellcheck shell=bash
 
 # This file is automatically sourced by bash, and it's also sourced in .zshrc
 # in order to keep the same aliases on both shells. So keep in mind that any
 # code here must be compatible with bash and zsh.
 
-refreshenv() {
-  local -r shell=$(ps -p $$ -ocomm=)
+refreshenv() { (
+  set -e
 
-  exec "$shell"
-}
+  local shell
+  shell=$(ps -p $$ -ocomm=)
 
-mcd() {
-  # shellcheck disable=SC2164
-  mkdir -p "$1" && cd "$1"
-}
+  exec "${shell}"
+); }
+
+mcd() { (
+  set -e
+
+  local dir="$1"
+
+  mkdir -p "${dir}"
+  cd "${dir}"
+); }
 
 cdr() {
-  # shellcheck disable=SC2164
-  cd "${REPOS_HOME?}"
+  cd "${HOME}/repos"
 }
 
 # See: https://github.com/twpayne/chezmoi/issues/854#issuecomment-675160348
-chezmoi-re-run-scripts() {
-  rm -f "$HOME/.config/chezmoi/chezmoistate.boltdb" &&
-    chezmoi init --apply
-}
+chezmoi-re-run-scripts() { (
+  set -ex
+
+  rm -f "${HOME}/.config/chezmoi/chezmoistate.boltdb"
+  chezmoi init --apply
+); }
 
 # {{ if .is_wsl }}
-gsudo() {
-  local shell && shell=$(ps -p $$ -ocomm=) &&
-    gsudo.exe wsl -d "${WSL_DISTRO_NAME?}" -e "$shell" "-c" "$*"
-}
+gsudo() { (
+  set -e
 
-cdw() {
-  # shellcheck disable=SC2164
-  cd "${WIN_HOME?}"
-}
+  local shell
+  shell=$(ps -p $$ -ocomm=)
+
+  gsudo.exe wsl -d "${WSL_DISTRO_NAME?}" -e "${shell}" "-c" "$*"
+); }
+
+cdw() { (
+  set -e
+
+  local user_profile
+  user_profile=$(wslvar USERPROFILE)
+  local win_home
+  win_home=$(wslpath "${user_profile}")
+
+  cd "${win_home}"
+); }
 # {{ end }}
