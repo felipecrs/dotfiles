@@ -1,6 +1,7 @@
 # Load .profile
 if [[ -r "${HOME}/.profile" ]]; then
-  emulate sh -c ". '${HOME}/.profile'"
+  # Do not use emulate here, as SDKMAN! will produce errors otherwise
+  source "${HOME}/.profile"
 fi
 
 # https://github.com/romkatv/powerlevel10k#how-do-i-initialize-direnv-when-using-instant-prompt
