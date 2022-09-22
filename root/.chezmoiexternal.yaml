@@ -78,7 +78,7 @@
 {{   if .is_gnome }}
 "usr/bin":
   type: archive
-  url: "https://github.com/docker/docker-credential-helpers/releases/download/v0.6.4/docker-credential-secretservice-v-{{ .chezmoi.arch }}.tar.gz"
+  url: "https://github.com/docker/docker-credential-helpers/releases/download/v0.6.4/docker-credential-secretservice-v0.6.4-{{ .chezmoi.arch }}.tar.gz"
   include:
     - docker-credential-secretservice
 {{   end }}
