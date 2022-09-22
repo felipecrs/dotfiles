@@ -64,7 +64,8 @@
 
 "usr/local/share/gcm-core":
   type: archive
-  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}/gcm-win-x86-{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}.zip"
+  # https://github.com/GitCredentialManager/git-credential-manager/issues/869
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.696/gcmcore-win-x86-2.0.696.zip"
   exact: true
 {{ else }}
 "usr/local/share/gcm-core":
