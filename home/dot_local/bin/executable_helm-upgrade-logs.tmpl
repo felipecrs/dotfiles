@@ -8,9 +8,11 @@ true || source ../../.chezmoitemplates/scripts-library
 watching_pods_logs_file=$(mktemp /dev/shm/helm-upgrade-logs.watching-pods-logs.XXXXXX)
 watching_pods_events_file=$(mktemp /dev/shm/helm-upgrade-logs.watching-pods-events.XXXXXX)
 
+extra_processes=()
+
 function cleanup() {
+  jobs -pr | xargs --no-run-if-empty --max-args=1 kill || true
   rm -f "${watching_pods_logs_file}" "${watching_pods_events_file}" || true
-  jobs -pr | xargs -r kill
 }
 
 trap cleanup EXIT
