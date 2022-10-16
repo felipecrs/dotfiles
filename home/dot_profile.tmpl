@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # {{ if .is_wsl }}
-# The boot.command in /etc/wsl.conf is only for Windows 11, so this workaround is needed
+# The boot.systemd in /etc/wsl.conf is only for Windows 11, so this workaround is needed
 if service docker status 2>&1 | grep -q "is not running"; then
   wsl.exe -d "${WSL_DISTRO_NAME?}" -u root -e /usr/sbin/service docker start >/dev/null 2>&1
 fi
