@@ -16,13 +16,6 @@ if [[ -r "${XDG_CACHE_HOME:-${HOME}/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" 
   source "${XDG_CACHE_HOME:-${HOME}/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# {{ if .is_wsl }}
-# The boot.command in /etc/wsl.conf is only for Windows 11, so this workaround is needed
-if service docker status 2>&1 | grep -q "is not running"; then
-  wsl.exe -d "${WSL_DISTRO_NAME?}" -u root -e /usr/sbin/service docker start >/dev/null 2>&1
-fi
-# {{ end }}
-
 # https://github.com/romkatv/powerlevel10k#how-do-i-initialize-direnv-when-using-instant-prompt
 if (( ${+commands[direnv]} )); then
   emulate zsh -c "$(direnv hook zsh)"
