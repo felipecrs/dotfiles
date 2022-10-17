@@ -11,11 +11,7 @@ readonly wanted_packages=(
   jq   # used on modify_ scripts like docker daemon.json
   zsh
   # {{ if not .is_devcontainer }}
-  gpg  # used to decrypt the gpg keys of the apt repositories
-  gzip # used for zcat in .chezmoiexternal.yaml
-  # {{   if .is_wsl }}
-  crudini # used to configure wsl.conf
-  # {{   end }}
+  gpg # used to decrypt the gpg keys of the apt repositories
   # {{ end }}
 )
 missing_packages=()

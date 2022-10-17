@@ -8,6 +8,7 @@ true || source ../.chezmoitemplates/scripts-library
 readonly unwanted_packages=(
   gcmcore
   direnv
+  crudini
   # {{ if not (eq .chezmoi.osRelease.versionCodename "bionic") }}
   python-nautilus
   # {{ end }}
