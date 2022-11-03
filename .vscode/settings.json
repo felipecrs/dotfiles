@@ -1,5 +1,6 @@
 {
   "editor.codeActionsOnSave": {
+    // https://github.com/vscode-shellcheck/vscode-shellcheck/issues/807
     "source.fixAll.shellcheck": false
   },
   "cSpell.words": [
