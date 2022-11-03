@@ -4,7 +4,7 @@
 {{- $chezmoiForce := or (has "--force" .chezmoi.args) (has "--force=true" .chezmoi.args) -}}
 {{- $interactive := and stdinIsATTY (not $chezmoiForce) -}}
 
-{{- $ubuntu := and .chezmoi.osRelease.ubuntuCodename true -}}
+{{- $ubuntu := hasKey .chezmoi.osRelease "ubuntuCodename" -}}
 {{- $wsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
 {{- $devcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") (env "GITPOD_HOST") | not | not -}}
 {{- $gnome := lookPath "gnome-shell" | not | not -}}
