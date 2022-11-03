@@ -44,7 +44,7 @@
   url: "https://github.com/ahmetb/kubectx/releases/download/v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}/kubectx_v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}_linux_{{ .uname_arch }}.tar.gz"
   filter:
     command: tar
-    args: ["--extract", "--gunzip", "--to-stdout", "kubectx"]
+    args: ["-x", "-z", "-O", "kubectx"]
   executable: true
 
 ".oh-my-zsh/custom/plugins/my-completions/_kubectx.zsh":
@@ -57,7 +57,7 @@
   url: "https://github.com/ahmetb/kubectx/releases/download/v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}/kubens_v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}_linux_{{ .uname_arch }}.tar.gz"
   filter:
     command: tar
-    args: ["--extract", "--gunzip", "--to-stdout", "kubens"]
+    args: ["-x", "-z", "-O", "kubens"]
   executable: true
 
 ".oh-my-zsh/custom/plugins/my-completions/_kubens.zsh":
@@ -71,7 +71,7 @@
   url: "https://github.com/junegunn/fzf/releases/download/{{ template "get-github-latest-version" list "junegunn/fzf" $cache }}/fzf-{{ template "get-github-latest-version" list "junegunn/fzf" $cache }}-linux_{{ .chezmoi.arch }}.tar.gz"
   filter:
     command: tar
-    args: ["--extract", "--gunzip", "--to-stdout", "fzf"]
+    args: ["-x", "-z", "-O", "fzf"]
   executable: true
 
 ".volta/bin":
