@@ -65,6 +65,15 @@
   # TODO: switch to get-github-latest-version once a newer version gets released
   url: "https://github.com/ahmetb/kubectx/raw/{{ template "get-github-head-revision" list "ahmetb/kubectx" $cache }}/completion/_kubens.zsh"
 
+# Required by kubectx and kubens
+".local/bin/fzf":
+  type: file
+  url: "https://github.com/junegunn/fzf/releases/download/{{ template "get-github-latest-version" list "junegunn/fzf" $cache }}/fzf-{{ template "get-github-latest-version" list "junegunn/fzf" $cache }}-linux_{{ .chezmoi.arch }}.tar.gz"
+  filter:
+    command: tar
+    args: ["--extract", "--gunzip", "--to-stdout", "fzf"]
+  executable: true
+
 ".volta/bin":
   type: archive
   url: "https://github.com/volta-cli/volta/releases/download/v{{ template "get-github-latest-version" list "volta-cli/volta" $cache }}/volta-{{ template "get-github-latest-version" list "volta-cli/volta" $cache }}-linux.tar.gz"
