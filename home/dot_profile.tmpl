@@ -35,6 +35,10 @@ if [ -d "${HOME}/.local/share/flutter/bin" ]; then
   export PATH="${HOME}/.local/share/flutter/bin:${PATH}"
 fi
 
+if [ -d "${HOME}/go/bin" ]; then
+  export PATH="${HOME}/go/bin:${PATH}"
+fi
+
 if [ -d "${HOME}/bin" ]; then
   export PATH="${HOME}/bin:${PATH}"
 fi
