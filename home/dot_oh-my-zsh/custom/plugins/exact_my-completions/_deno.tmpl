@@ -1,4 +1,4 @@
-{{- $deno := lookPath (joinPath .chezmoi.homeDir ".deno/bin/deno") | or (lookPath "deno") -}}
-{{- if $deno -}}
-{{- output $deno "completions" "zsh" -}}
+{{- $bin := lookPath (joinPath .chezmoi.homeDir ".deno/bin/deno") | or (lookPath "deno") -}}
+{{- if $bin -}}
+{{- output $bin "completions" "zsh" -}}
 {{- end -}}

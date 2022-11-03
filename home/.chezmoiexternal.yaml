@@ -74,6 +74,14 @@
     args: ["-x", "-z", "-O", "fzf"]
   executable: true
 
+".local/bin/stern":
+  type: file
+  url: "https://github.com/stern/stern/releases/download/v{{ template "get-github-latest-version" list "stern/stern" $cache }}/stern_{{ template "get-github-latest-version" list "stern/stern" $cache }}_linux_{{ .chezmoi.arch }}.tar.gz"
+  filter:
+    command: tar
+    args: ["-x", "-z", "-O", "stern"]
+  executable: true
+
 ".volta/bin":
   type: archive
   url: "https://github.com/volta-cli/volta/releases/download/v{{ template "get-github-latest-version" list "volta-cli/volta" $cache }}/volta-{{ template "get-github-latest-version" list "volta-cli/volta" $cache }}-linux.tar.gz"
