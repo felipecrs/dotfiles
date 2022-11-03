@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ARG_OPTIONAL_REPEATED([variant],[v],[The variant of the test to run. Possible values are devcontainer, wsl and gnome.],[devcontainer])
-# ARG_OPTIONAL_REPEATED([os],[o],[The OS to run the tests against. Examples: ubuntu-18.04, ubuntu-20.04. The full list can be found at:\nhttps://mcr.microsoft.com/v2/vscode/devcontainers/base/tags/list],[ubuntu-20.04])
+# ARG_OPTIONAL_REPEATED([os],[o],[The OS to run the tests against. Examples: ubuntu-18.04, ubuntu-20.04. The full list can be found at:\nhttps://mcr.microsoft.com/v2/devcontainers/base/tags/list],[ubuntu-20.04])
 # ARG_OPTIONAL_BOOLEAN([debug],[d],[Whether to enable debug logs or not],[on])
 # ARG_OPTIONAL_SINGLE([pre-script],[],[The custom script to run before the installation],[])
 # ARG_HELP([Tests the installation of the dotfiles in differents scenarios],[])
@@ -22,7 +22,7 @@ die() {
 begins_with_short_option() {
   local first_option all_short_options='vodh'
   first_option="${1:0:1}"
-  test "$all_short_options" = "${all_short_options/$first_option/}" && return 1 || return 0
+  test "${all_short_options}" = "${all_short_options/${first_option}/}" && return 1 || return 0
 }
 
 # THE DEFAULTS INITIALIZATION - OPTIONALS
@@ -38,7 +38,7 @@ print_help() {
   printf " '%s'" devcontainer
   printf ')\n'
   printf '\t%s' "-o, --os: The OS to run the tests against. Examples: ubuntu-18.04, ubuntu-20.04. The full list can be found at:
-		https://mcr.microsoft.com/v2/vscode/devcontainers/base/tags/list (default array elements:"
+		https://mcr.microsoft.com/v2/devcontainers/base/tags/list (default array elements:"
   printf " '%s'" ubuntu-20.04
   printf ')\n'
   printf '\t%s\n' "-d, --debug, --no-debug: Whether to enable debug logs or not (on by default)"
@@ -49,9 +49,9 @@ print_help() {
 parse_commandline() {
   while test $# -gt 0; do
     _key="$1"
-    case "$_key" in
+    case "${_key}" in
     -v | --variant)
-      test $# -lt 2 && die "Missing value for the optional argument '$_key'." 1
+      test $# -lt 2 && die "Missing value for the optional argument '${_key}'." 1
       _arg_variant+=("$2")
       shift
       ;;
@@ -62,7 +62,7 @@ parse_commandline() {
       _arg_variant+=("${_key##-v}")
       ;;
     -o | --os)
-      test $# -lt 2 && die "Missing value for the optional argument '$_key'." 1
+      test $# -lt 2 && die "Missing value for the optional argument '${_key}'." 1
       _arg_os+=("$2")
       shift
       ;;
@@ -79,12 +79,12 @@ parse_commandline() {
     -d*)
       _arg_debug="on"
       _next="${_key##-d}"
-      if test -n "$_next" -a "$_next" != "$_key"; then
-        { begins_with_short_option "$_next" && shift && set -- "-d" "-${_next}" "$@"; } || die "The short option '$_key' can't be decomposed to ${_key:0:2} and -${_key:2}, because ${_key:0:2} doesn't accept value and '-${_key:2:1}' doesn't correspond to a short option."
+      if test -n "${_next}" -a "${_next}" != "${_key}"; then
+        { begins_with_short_option "${_next}" && shift && set -- "-d" "-${_next}" "$@"; } || die "The short option '${_key}' can't be decomposed to ${_key:0:2} and -${_key:2}, because ${_key:0:2} doesn't accept value and '-${_key:2:1}' doesn't correspond to a short option."
       fi
       ;;
     --pre-script)
-      test $# -lt 2 && die "Missing value for the optional argument '$_key'." 1
+      test $# -lt 2 && die "Missing value for the optional argument '${_key}'." 1
       _arg_pre_script="$2"
       shift
       ;;
@@ -155,6 +155,8 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 dotfiles_root="$(realpath "${script_dir}/..")"
+
+set -x
 
 variants=("${_arg_variant[@]}")
 oses=("${_arg_os[@]}")
