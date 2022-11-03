@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# ARG_OPTIONAL_REPEATED([variant],[v],[The variant of the test to run. Possible values are devcontainer, wsl and gnome.],[devcontainer])
-# ARG_OPTIONAL_REPEATED([os],[o],[The OS to run the tests against. Examples: ubuntu-18.04, ubuntu-20.04. The full list can be found at:\nhttps://mcr.microsoft.com/v2/devcontainers/base/tags/list],[ubuntu-20.04])
+# ARG_OPTIONAL_REPEATED([variant],[v],[The variant of the test to run. Possible values: devcontainer, wsl, and gnome. Default: devcontainer.],[])
+# ARG_OPTIONAL_REPEATED([os],[o],[The OS to run the tests against. The list of possible values can be found at https://mcr.microsoft.com/v2/devcontainers/base/tags/list. Examples: ubuntu-18.04, ubuntu-22.04, and alpine. Default: ubuntu-20.04.],[])
 # ARG_OPTIONAL_BOOLEAN([debug],[d],[Whether to enable debug logs or not],[on])
 # ARG_OPTIONAL_SINGLE([pre-script],[],[The custom script to run before the installation],[])
 # ARG_HELP([Tests the installation of the dotfiles in differents scenarios],[])
@@ -26,21 +26,16 @@ begins_with_short_option() {
 }
 
 # THE DEFAULTS INITIALIZATION - OPTIONALS
-_arg_variant=(devcontainer)
-_arg_os=(ubuntu-20.04)
+_arg_variant=()
+_arg_os=()
 _arg_debug="on"
 _arg_pre_script=
 
 print_help() {
   printf '%s\n' "Tests the installation of the dotfiles in differents scenarios"
   printf 'Usage: %s [-v|--variant <arg>] [-o|--os <arg>] [-d|--(no-)debug] [--pre-script <arg>] [-h|--help]\n' "$0"
-  printf '\t%s' "-v, --variant: The variant of the test to run. Possible values are devcontainer, wsl and gnome. (default array elements:"
-  printf " '%s'" devcontainer
-  printf ')\n'
-  printf '\t%s' "-o, --os: The OS to run the tests against. Examples: ubuntu-18.04, ubuntu-20.04. The full list can be found at:
-		https://mcr.microsoft.com/v2/devcontainers/base/tags/list (default array elements:"
-  printf " '%s'" ubuntu-20.04
-  printf ')\n'
+  printf '\t%s\n' "-v, --variant: The variant of the test to run. Possible values: devcontainer, wsl, and gnome. Default: devcontainer. (empty by default)"
+  printf '\t%s\n' "-o, --os: The OS to run the tests against. The list of possible values can be found at https://mcr.microsoft.com/v2/devcontainers/base/tags/list. Examples: ubuntu-18.04, ubuntu-22.04, and alpine. Default: ubuntu-20.04. (empty by default)"
   printf '\t%s\n' "-d, --debug, --no-debug: Whether to enable debug logs or not (on by default)"
   printf '\t%s\n' "--pre-script: The custom script to run before the installation (no default)"
   printf '\t%s\n' "-h, --help: Prints help"
@@ -156,11 +151,15 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 dotfiles_root="$(realpath "${script_dir}/..")"
 
-set -x
-
-variants=("${_arg_variant[@]}")
-oses=("${_arg_os[@]}")
 debug="${_arg_debug}"
+variants=("${_arg_variant[@]}")
+if ((${#variants[@]} == 0)); then
+  variants=("devcontainer")
+fi
+oses=("${_arg_os[@]}")
+if ((${#oses[@]} == 0)); then
+  oses=("ubuntu-20.04")
+fi
 
 for variant in "${variants[@]}"; do
   for os in "${oses[@]}"; do
