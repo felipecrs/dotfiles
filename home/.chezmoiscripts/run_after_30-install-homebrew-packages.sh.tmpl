@@ -56,6 +56,7 @@ readonly unwanted_packages=(
   podman
   buildah
   asciinema
+  kind
 )
 
 for package in "${unwanted_packages[@]}"; do
@@ -70,7 +71,6 @@ readonly wanted_packages=(
   yq
   kubectl
   helm
-  kind
   k3d
   dive
   gh
