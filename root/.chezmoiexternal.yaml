@@ -70,7 +70,8 @@
 {{ else }}
 "usr/local/share/gcm":
   type: archive
-  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}/gcm-linux_amd64.{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}.tar.gz"
+  # https://github.com/GitCredentialManager/git-credential-manager/pull/551
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.866/gcm-linux_amd64.2.0.866.tar.gz"
   exact: true
 
 {{   if .is_gnome }}
