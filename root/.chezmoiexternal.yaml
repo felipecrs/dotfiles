@@ -62,13 +62,13 @@
   url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}/docker-credential-wincred-v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}.windows-{{ .chezmoi.arch }}.exe"
   executable: true
 
-"usr/local/share/gcm-core":
+"usr/local/share/gcm":
   type: archive
   # https://github.com/GitCredentialManager/git-credential-manager/issues/869
-  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.696/gcmcore-win-x86-2.0.696.zip"
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.866/gcm-win-x86-2.0.866.zip"
   exact: true
 {{ else }}
-"usr/local/share/gcm-core":
+"usr/local/share/gcm":
   type: archive
   url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}/gcm-linux_amd64.{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}.tar.gz"
   exact: true

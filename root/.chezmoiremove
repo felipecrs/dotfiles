@@ -1,3 +1,6 @@
 etc/apt/sources.list.d/git-core-ubuntu-ppa-*.list*
 etc/apt/sources.list.d/communitheme-ubuntu-ppa-*.list*
 etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list*
+# GCM Core got renamed to GCM only
+usr/local/bin/git-credential-manager-core
+usr/local/share/gcm-core
