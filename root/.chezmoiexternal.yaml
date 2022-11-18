@@ -65,13 +65,13 @@
 "usr/local/share/gcm":
   type: archive
   # https://github.com/GitCredentialManager/git-credential-manager/issues/869
-  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.866/gcm-win-x86-2.0.866.zip"
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.877/gcm-win-x86-2.0.877.zip"
   exact: true
 {{ else }}
 "usr/local/share/gcm":
   type: archive
   # https://github.com/GitCredentialManager/git-credential-manager/pull/551
-  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.866/gcm-linux_amd64.2.0.866.tar.gz"
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.877/gcm-linux_amd64.2.0.877.tar.gz"
   exact: true
 
 {{   if .is_gnome }}
