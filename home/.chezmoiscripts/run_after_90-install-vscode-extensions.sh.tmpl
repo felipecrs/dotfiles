@@ -18,6 +18,6 @@ wanted_extensions=(
 for extension in "${wanted_extensions[@]}"; do
   if ! is_vscode_extension_installed "${extension}"; then
     log_task "Installing VS Code extension: ${extension}"
-    c code --install-extension "${extension}"
+    USE_NATIVE_CODE=1 c code --install-extension "${extension}"
   fi
 done

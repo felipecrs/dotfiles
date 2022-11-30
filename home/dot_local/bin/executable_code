@@ -48,12 +48,12 @@ if is_first_arg_a_folder "$@"; then
   done
 fi
 
-# Check if we are running in SSH
-if who -m | grep -q .; then
+# Check if we are running in SSH, unless USE_NATIVE_CODE is set
+if [ -z "${USE_NATIVE_CODE:-}" ] && who -m | grep -q .; then
   # We will try to find an existing connection and reuse it.
   # This allows opening VS Code windows from a SSH remote
   # session even out of the VS Code integrated terminal.
-  printf "searching for remote ssh session..." >&2
+  printf "searching for remote ssh session (set USE_NATIVE_CODE=1 to use code from Linux)..." >&2
   if [ -d "${HOME}/.vscode-server/bin" ]; then
 
     # Find most recent folder inside of ~/.vscode-server/bin
@@ -94,11 +94,11 @@ if code="$(get_in_path_except_current code)"; then
   if { [ -n "${WSL_DISTRO_NAME:-}" ] || [ -n "${IS_WSL:-}" ]; } &&
     ! is_path_from_windows "${code}"; then
     echo >&2
-    if get_in_path_from_windows code >/dev/null && [ -z "${USE_CODE_FROM_LINUX:-}" ]; then
-      echo "using code from Windows (set USE_CODE_FROM_LINUX=1 to use code from Linux)" >&2
+    if get_in_path_from_windows code >/dev/null && [ -z "${USE_NATIVE_CODE:-}" ]; then
+      echo "using code from Windows (set USE_NATIVE_CODE=1 to use code from Linux)" >&2
       code="$(get_in_path_from_windows code)"
     else
-      echo "using code from Linux (unset USE_CODE_FROM_LINUX to use code from Windows)" >&2
+      echo "using code from Linux (unset USE_NATIVE_CODE to use code from Windows)" >&2
       export DONT_PROMPT_WSL_INSTALL=1
     fi
   fi
