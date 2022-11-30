@@ -48,33 +48,8 @@ if is_first_arg_a_folder "$@"; then
   done
 fi
 
-# shellcheck disable=SC2310
-if code="$(get_in_path_except_current code)"; then
-  # shellcheck disable=SC2310
-  if { [ -n "${WSL_DISTRO_NAME:-}" ] || [ -n "${IS_WSL:-}" ]; } &&
-    ! is_path_from_windows "${code}"; then
-    echo >&2
-    if get_in_path_from_windows code >/dev/null && [ -z "${USE_CODE_FROM_LINUX:-}" ]; then
-      echo "using code from Windows (set USE_CODE_FROM_LINUX=1 to use code from Linux)" >&2
-      code="$(get_in_path_from_windows code)"
-    else
-      echo "using code from Linux (unset USE_CODE_FROM_LINUX to use code from Windows)" >&2
-      export DONT_PROMPT_WSL_INSTALL=1
-    fi
-  fi
-
-  exec "${code}" "$@"
-fi
-
-echo >&2
-printf "code is not available, " >&2
-if command -v code-insiders >/dev/null 2>&1; then
-  echo "using code-insiders instead" >&2
-  exec code-insiders "$@"
-fi
-
 # Check if we are running in SSH
-if who | grep -q .; then
+if who -m | grep -q .; then
   # We will try to find an existing connection and reuse it.
   # This allows opening VS Code windows from a SSH remote
   # session even out of the VS Code integrated terminal.
@@ -111,6 +86,31 @@ if who | grep -q .; then
     fi
   fi
   echo " not found." >&2
+fi
+
+# shellcheck disable=SC2310
+if code="$(get_in_path_except_current code)"; then
+  # shellcheck disable=SC2310
+  if { [ -n "${WSL_DISTRO_NAME:-}" ] || [ -n "${IS_WSL:-}" ]; } &&
+    ! is_path_from_windows "${code}"; then
+    echo >&2
+    if get_in_path_from_windows code >/dev/null && [ -z "${USE_CODE_FROM_LINUX:-}" ]; then
+      echo "using code from Windows (set USE_CODE_FROM_LINUX=1 to use code from Linux)" >&2
+      code="$(get_in_path_from_windows code)"
+    else
+      echo "using code from Linux (unset USE_CODE_FROM_LINUX to use code from Windows)" >&2
+      export DONT_PROMPT_WSL_INSTALL=1
+    fi
+  fi
+
+  exec "${code}" "$@"
+fi
+
+echo >&2
+printf "code is not available, " >&2
+if command -v code-insiders >/dev/null 2>&1; then
+  echo "using code-insiders instead" >&2
+  exec code-insiders "$@"
 fi
 
 if is_first_arg_a_folder "$@"; then
