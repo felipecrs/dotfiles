@@ -5,6 +5,10 @@
 # The following line is for ShellCheck to correctly identify the above include
 true || source ../.chezmoitemplates/scripts-library
 
+function code() {
+  USE_NATIVE_CODE=1 command code "$@"
+}
+
 function is_vscode_extension_installed() {
   local extension="$1"
 
@@ -18,6 +22,6 @@ wanted_extensions=(
 for extension in "${wanted_extensions[@]}"; do
   if ! is_vscode_extension_installed "${extension}"; then
     log_task "Installing VS Code extension: ${extension}"
-    USE_NATIVE_CODE=1 c code --install-extension "${extension}"
+    c code --install-extension "${extension}"
   fi
 done
