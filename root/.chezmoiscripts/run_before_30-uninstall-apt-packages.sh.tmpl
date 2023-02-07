@@ -10,9 +10,6 @@ readonly unwanted_packages=(
   direnv
   crudini
   fzf
-  # {{ if not (eq .chezmoi.osRelease.versionCodename "bionic") }}
-  python-nautilus
-  # {{ end }}
 )
 
 for package in "${unwanted_packages[@]}"; do

@@ -11,10 +11,6 @@ true || source ../.chezmoitemplates/remove-files-library
 # https://github.com/twpayne/chezmoi/discussions/1789#discussioncomment-1920082
 
 readonly unwanted_files=(
-  # {{ if not (eq .chezmoi.osRelease.versionCodename "bionic") }}
-  /etc/apt/sources.list.d/communitheme-ppa.list
-  /usr/share/keyrings/communitheme-ppa-archive-keyring.gpg
-  # {{ end }}
   # {{ if not .is_gnome }}
   /usr/bin/docker-credential-secretservice
   # {{ end }}
