@@ -34,11 +34,7 @@ readonly wanted_packages=(
   gnome-menus
   code
   google-chrome-stable
-  # {{   if eq .chezmoi.osRelease.versionCodename "bionic" }}
-  python-nautilus
-  # {{   else }}
   python3-nautilus
-  # {{   end }}
   # {{   if not .is_wsl }}
   yaru-theme-gnome-shell
   libsecret-1-0
@@ -48,9 +44,7 @@ readonly wanted_packages=(
   # {{ if .is_wsl }}
   wslu
   # {{ else }}
-  # {{   if eq .chezmoi.osRelease.versionCodename "bionic" }}
-  linux-generic-hwe-18.04
-  # {{   else if eq .chezmoi.osRelease.versionCodename "focal" }}
+  # {{   if eq .chezmoi.osRelease.versionCodename "focal" }}
   linux-generic-hwe-20.04
   # {{   end }}
   # {{ end }}
