@@ -10,7 +10,7 @@ true || source ../.chezmoitemplates/scripts-library
 log_task "Restarting Docker daemon"
 # {{ if .is_wsl }}
 # service restart fails if the service was never started
-c service docker restart || c service docker start
+c service docker restart || not_during_test c service docker start
 # {{ else }}
 c systemctl restart docker
 # {{ end }}
