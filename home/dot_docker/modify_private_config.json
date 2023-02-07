@@ -21,7 +21,5 @@
 {{- /* If there is no output, chezmoi deletes the file */ -}}
 {{- $result := pruneEmptyDicts $result -}}
 {{- if not (empty $result) -}}
-{{- /* TODO: find a way to use tabs to indent */ -}}
-{{- /* https://github.com/twpayne/chezmoi/issues/2749 */ -}}
-{{-   toPrettyJson $result -}}
+{{-   toPrettyJson "\t" $result -}}
 {{- end -}}
