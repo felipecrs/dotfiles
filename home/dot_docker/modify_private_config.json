@@ -3,33 +3,10 @@
 {{- $result := fromJson .chezmoi.stdin -}}
 
 {{- /* Delete features.buildkit as it is now the default */ -}}
-{{- /* https://github.com/twpayne/chezmoi/issues/2748 */ -}}
-{{- $parentKeyName := "features" -}}
-{{- $subKeyName := "buildkit" -}}
-{{- if hasKey $result $parentKeyName -}}
-{{-   $parentKey := get $result $parentKeyName -}}
-{{-   if hasKey $parentKey $subKeyName -}}
-{{-     $_ := unset $parentKey $subKeyName -}}
-{{-   end -}}
-{{-   $_ := set $result $parentKeyName $parentKey -}}
-{{-   if empty (get $result $parentKeyName) -}}
-{{-     $_ := unset $result $parentKeyName -}}
-{{-   end -}}
-{{- end -}}
+{{- $result := deleteValueAtPath "features.buildkit" $result -}}
 
 {{- /* Delete aliases.builder=buildx as it is now the default */ -}}
-{{- $parentKeyName := "aliases" -}}
-{{- $subKeyName := "builder" -}}
-{{- if hasKey $result $parentKeyName -}}
-{{-   $parentKey := get $result $parentKeyName -}}
-{{-   if hasKey $parentKey $subKeyName -}}
-{{-     $_ := unset $parentKey $subKeyName -}}
-{{-   end -}}
-{{-   $_ := set $result $parentKeyName $parentKey -}}
-{{-   if empty (get $result $parentKeyName) -}}
-{{-     $_ := unset $result $parentKeyName -}}
-{{-   end -}}
-{{- end -}}
+{{- $result := deleteValueAtPath "aliases.builder" $result -}}
 
 {{- /* Set credentials helper */ -}}
 {{- $keyName := "credsStore" -}}
@@ -38,13 +15,11 @@
 {{- else if and .is_gnome (not .is_headless) -}}
 {{-   $result = setValueAtPath $keyName "secretservice" $result -}}
 {{- else -}}
-{{- /* Unset credentials helper */ -}}
-{{-   if hasKey $result $keyName -}}
-{{-     $_ := unset $result $keyName -}}
-{{-   end -}}
+{{-   $result := deleteValueAtPath $keyName $result -}}
 {{- end -}}
 
 {{- /* If there is no output, chezmoi deletes the file */ -}}
+{{- $result := pruneEmptyDicts $result -}}
 {{- if not (empty $result) -}}
 {{- /* TODO: find a way to use tabs to indent */ -}}
 {{- /* https://github.com/twpayne/chezmoi/issues/2749 */ -}}
