@@ -107,16 +107,6 @@
   include:
     - deno
 
-".docker/cli-plugins/docker-compose":
-  type: file
-  url: "https://github.com/docker/compose/releases/download/v{{ template "get-github-latest-version" list "docker/compose" $cache }}/docker-compose-linux-x86_64"
-  executable: true
-
-".docker/cli-plugins/docker-buildx":
-  type: file
-  url: "https://github.com/docker/buildx/releases/download/v{{ template "get-github-latest-version" list "docker/buildx" $cache }}/buildx-v{{ template "get-github-latest-version" list "docker/buildx" $cache }}.linux-amd64"
-  executable: true
-
 # Downloads all the variants of Fira Code Nerd Font
 {{-   range $_, $face := list "Regular" "Light" "Medium" "Bold" "Retina" "SemiBold" -}}
 {{-     range $_, $variant := list "" " Mono" }}

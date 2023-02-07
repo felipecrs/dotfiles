@@ -5,7 +5,9 @@
 # The following line is for ShellCheck to correctly identify the above included library
 true || source ../.chezmoitemplates/scripts-library
 
+# {{ if stat "/etc/docker/daemon.json" }}
 # daemon.json hash: {{ include "/etc/docker/daemon.json" | sha256sum }}
+# {{ end }}
 
 log_task "Restarting Docker daemon"
 # {{ if .is_wsl }}

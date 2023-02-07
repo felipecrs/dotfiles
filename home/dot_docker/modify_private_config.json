@@ -1,0 +1,52 @@
+{{- /* chezmoi:modify-template */ -}}
+
+{{- $result := fromJson .chezmoi.stdin -}}
+
+{{- /* Delete features.buildkit as it is now the default */ -}}
+{{- /* https://github.com/twpayne/chezmoi/issues/2748 */ -}}
+{{- $parentKeyName := "features" -}}
+{{- $subKeyName := "buildkit" -}}
+{{- if hasKey $result $parentKeyName -}}
+{{-   $parentKey := get $result $parentKeyName -}}
+{{-   if hasKey $parentKey $subKeyName -}}
+{{-     $_ := unset $parentKey $subKeyName -}}
+{{-   end -}}
+{{-   $_ := set $result $parentKeyName $parentKey -}}
+{{-   if empty (get $result $parentKeyName) -}}
+{{-     $_ := unset $result $parentKeyName -}}
+{{-   end -}}
+{{- end -}}
+
+{{- /* Delete aliases.builder=buildx as it is now the default */ -}}
+{{- $parentKeyName := "aliases" -}}
+{{- $subKeyName := "builder" -}}
+{{- if hasKey $result $parentKeyName -}}
+{{-   $parentKey := get $result $parentKeyName -}}
+{{-   if hasKey $parentKey $subKeyName -}}
+{{-     $_ := unset $parentKey $subKeyName -}}
+{{-   end -}}
+{{-   $_ := set $result $parentKeyName $parentKey -}}
+{{-   if empty (get $result $parentKeyName) -}}
+{{-     $_ := unset $result $parentKeyName -}}
+{{-   end -}}
+{{- end -}}
+
+{{- /* Set credentials helper */ -}}
+{{- $keyName := "credsStore" -}}
+{{- if .is_wsl -}}
+{{-   $result = setValueAtPath $keyName "wincred.exe" $result -}}
+{{- else if .is_gnome -}}
+{{-   $result = setValueAtPath $keyName "secretservice" $result -}}
+{{- else -}}
+{{- /* Unset credentials helper */ -}}
+{{-   if hasKey $result $keyName -}}
+{{-     $_ := unset $result $keyName -}}
+{{-   end -}}
+{{- end -}}
+
+{{- /* If there is no output, chezmoi deletes the file */ -}}
+{{- if not (empty $result) -}}
+{{- /* TODO: find a way to use tabs to indent */ -}}
+{{- /* https://github.com/twpayne/chezmoi/issues/2749 */ -}}
+{{-   toPrettyJson $result -}}
+{{- end -}}

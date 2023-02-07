@@ -70,7 +70,7 @@
     "*_bash_aliases.tmpl": "shellscript",
     "**/home/**/run_*": "shellscript",
     "**/home/**/executable_*": "shellscript",
-    "**/home/**/modify_*": "shellscript",
+    "**/home/**/modify_*": "helm",
     "*.yaml.tmpl": "helm",
     ".chezmoi*.yaml": "helm",
     ".chezmoiignore": "helm",

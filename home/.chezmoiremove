@@ -18,6 +18,8 @@
 .local/bin/docker-credential-secretservice
 
 .local/share/gnome-shell/extensions/clipboard-indicator@tudmotu.com
+.docker/cli-plugins/docker-compose
+.docker/cli-plugins/docker-buildx
 
 {{- end }}
 
