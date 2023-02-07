@@ -8,6 +8,7 @@
 {{- $wsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
 {{- $devcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") (env "GITPOD_HOST") | not | not -}}
 {{- $gnome := lookPath "gnome-shell" | not | not -}}
+{{- $headless := or (env "DISPLAY") (env "WAYLAND_DISPLAY") | not -}}
 
 {{- $minimum := or $devcontainer (not $ubuntu) -}}
 
@@ -96,6 +97,7 @@ data:
   is_wsl: {{ $wsl }}
   is_devcontainer: {{ $minimum }}
   is_gnome: {{ $gnome }}
+  is_headless: {{ $headless }}
 
   name: "{{ $name }}"
   email: "{{ $email }}"

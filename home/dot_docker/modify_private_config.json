@@ -35,7 +35,7 @@
 {{- $keyName := "credsStore" -}}
 {{- if .is_wsl -}}
 {{-   $result = setValueAtPath $keyName "wincred.exe" $result -}}
-{{- else if .is_gnome -}}
+{{- else if and .is_gnome (not .is_headless) -}}
 {{-   $result = setValueAtPath $keyName "secretservice" $result -}}
 {{- else -}}
 {{- /* Unset credentials helper */ -}}
