@@ -10,7 +10,7 @@ Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 
 # WSL Interop (https://github.com/mikebattista/PowerShell-WSL-Interop)
 # Installation: Install-Module WslInterop
-Import-WslCommand "cp", "find", "grep", "head", "ls", "mv", "rm", "sed", "touch", "tree"
+Import-WslCommand "cat", "cp", "echo", "find", "grep", "head", "ls", "mv", "rm", "sed", "touch", "tree"
 
 # Chocolatey (https://github.com/chocolatey/choco)
 # Installation: https://chocolatey.org/install#individual
@@ -30,6 +30,19 @@ Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
     winget complete --word="$Local:word" --commandline "$Local:ast" --position $cursorPosition | ForEach-Object {
       [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
     }
+}
+
+# gsudo (https://github.com/gerardog/gsudo)
+# Installation: winget install gerardog.gsudo
+# PSWindowsUpdate (https://github.com/mgajda83/PSWindowsUpdate)
+# Installation: Install-Module PSWindowsUpdate
+function Full-Upgrade {
+  gsudo {
+    Set-PSDebug -Trace 1
+    choco upgrade all --yes
+    winget upgrade --all
+    Get-WindowsUpdate -Install -AcceptAll
+  }
 }
 
 Clear-Host
