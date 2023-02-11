@@ -3,23 +3,10 @@
 {{- $result := fromJson .chezmoi.stdin -}}
 
 {{- /* Delete features.buildkit as it is now the default */ -}}
-{{- /* https://github.com/twpayne/chezmoi/issues/2748 */ -}}
-{{- $parentKeyName := "features" -}}
-{{- $subKeyName := "buildkit" -}}
-{{- if hasKey $result $parentKeyName -}}
-{{-   $parentKey := get $result $parentKeyName -}}
-{{-   if hasKey $parentKey $subKeyName -}}
-{{-     $_ := unset $parentKey $subKeyName -}}
-{{-   end -}}
-{{-   $_ := set $result $parentKeyName $parentKey -}}
-{{-   if empty (get $result $parentKeyName) -}}
-{{-     $_ := unset $result $parentKeyName -}}
-{{-   end -}}
-{{- end -}}
+{{- $result := deleteValueAtPath "features.buildkit" $result -}}
 
 {{- /* If there is no output, chezmoi deletes the file */ -}}
+{{- $result := pruneEmptyDicts $result -}}
 {{- if not (empty $result) -}}
-{{- /* TODO: find a way to use tabs to indent */ -}}
-{{- /* https://github.com/twpayne/chezmoi/issues/2749 */ -}}
-{{-   toPrettyJson $result -}}
+{{-   toPrettyJson "\t" $result -}}
 {{- end -}}
