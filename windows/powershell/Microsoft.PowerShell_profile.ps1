@@ -42,6 +42,9 @@ function Full-Upgrade {
     choco upgrade all --yes
     winget upgrade --all
     Get-WindowsUpdate -Install -AcceptAll
+    # Trigger Microsoft Store updates
+    # Source: https://social.technet.microsoft.com/Forums/windows/en-US/5ac7daa9-54e6-43c0-9746-293dcb8ef2ec
+    Get-CimInstance -Namespace "Root\cimv2\mdm\dmmap" -ClassName "MDM_EnterpriseModernAppManagement_AppManagement01" | Invoke-CimMethod -MethodName UpdateScanMethod > $null
   }
 }
 
