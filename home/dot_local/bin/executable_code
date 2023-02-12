@@ -22,6 +22,7 @@ is_first_arg_a_folder() {
     # Skip options like --wait
     if [ "${arg#-}" = "${arg}" ]; then
       if [ -d "${arg}" ]; then
+        echo "${arg}"
         return 0
       else
         return 1
@@ -36,7 +37,7 @@ if [ -n "${DEBUG:-}" ]; then
 fi
 
 # Used to work around the issue: https://github.com/twpayne/chezmoi/issues/1068
-if is_first_arg_a_folder "$@"; then
+if is_first_arg_a_folder "$@" >/dev/null; then
   # Removes -w and --wait flags
   for arg; do
     shift
@@ -47,6 +48,33 @@ if is_first_arg_a_folder "$@"; then
     set -- "$@" "${arg}"
   done
 fi
+
+# Check for a --devcontainer flag
+for arg; do
+  shift
+  if [ "${arg}" = "--devcontainer" ]; then
+    echo "dropping --devcontainer flag" >&2
+
+    if workspace_folder=$(is_first_arg_a_folder "$@"); then
+      workspace_folder="$(realpath "${workspace_folder}")"
+    else
+      echo "when using --devcontainer, the first arg must be a folder."
+      exit 1
+    fi
+
+    if [ -d "${workspace_folder}" ]; then
+      basename_workspace_folder="$(basename "${workspace_folder}")"
+      if [ -n "${WSL_DISTRO_NAME}" ]; then
+        workspace_folder=$(wslpath -w "${workspace_folder}")
+      fi
+      path_id=$(printf "%s" "${workspace_folder}" | xxd -ps -c 256)
+
+      set -- --folder-uri "vscode-remote://dev-container%2B${path_id}/workspaces/${basename_workspace_folder}"
+      break
+    fi
+  fi
+  set -- "$@" "${arg}"
+done
 
 # Check if we are running in SSH, unless USE_NATIVE_CODE is set
 if [ -z "${USE_NATIVE_CODE:-}" ] && who -m | grep -q .; then
@@ -113,7 +141,7 @@ if command -v code-insiders >/dev/null 2>&1; then
   exec code-insiders "$@"
 fi
 
-if is_first_arg_a_folder "$@"; then
+if is_first_arg_a_folder "$@" >/dev/null; then
   echo "not falling back to nano, vim or vi since you are trying to open a folder." >&2
   exit 127
 fi
