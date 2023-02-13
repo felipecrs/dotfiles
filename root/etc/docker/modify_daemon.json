@@ -1,12 +1,16 @@
 {{- /* chezmoi:modify-template */ -}}
 
-{{- $result := fromJson .chezmoi.stdin -}}
+{{- /* Load existing configuration */ -}}
+{{- $result := dict -}}
+{{- if not (empty .chezmoi.stdin) -}}
+{{-   $result = fromJson .chezmoi.stdin -}}
+{{- end -}}
 
 {{- /* Delete features.buildkit as it is now the default */ -}}
-{{- $result := deleteValueAtPath "features.buildkit" $result -}}
+{{- $result = deleteValueAtPath "features.buildkit" $result -}}
 
 {{- /* If there is no output, chezmoi deletes the file */ -}}
-{{- $result := pruneEmptyDicts $result -}}
+{{- $result = pruneEmptyDicts $result -}}
 {{- if not (empty $result) -}}
 {{-   toPrettyJson "\t" $result -}}
 {{- end -}}
