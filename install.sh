@@ -51,7 +51,12 @@ fi
 # shellcheck disable=SC2312
 script_dir="$(cd -P -- "$(dirname -- "$(command -v -- "$0")")" && pwd -P)"
 
-set -- init --source="${script_dir}" --verbose=false --progress
+set -- init --source="${script_dir}" --verbose=false
+
+# If interactive, add TTY flag
+if [ -t 0 ]; then
+  set -- "$@" --progress
+fi
 
 if [ -n "${DOTFILES_ONE_SHOT-}" ]; then
   set -- "$@" --one-shot
