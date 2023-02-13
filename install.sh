@@ -53,7 +53,7 @@ script_dir="$(cd -P -- "$(dirname -- "$(command -v -- "$0")")" && pwd -P)"
 
 set -- init --source="${script_dir}" --verbose=false
 
-# If interactive, add TTY flag
+# If interactive, display progress bar
 if [ -t 0 ]; then
   set -- "$@" --progress
 fi
