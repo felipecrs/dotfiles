@@ -10,7 +10,7 @@ Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 
 # WSL Interop (https://github.com/mikebattista/PowerShell-WSL-Interop)
 # Installation: Install-Module WslInterop
-Import-WslCommand "cat", "cp", "echo", "find", "grep", "head", "ls", "mv", "rm", "sed", "touch", "tree"
+Import-WslCommand "cat", "cp", "echo", "find", "grep", "head", "ls", "mv", "rm", "sed", "touch", "tree", "which"
 
 # Chocolatey (https://github.com/chocolatey/choco)
 # Installation: https://chocolatey.org/install#individual

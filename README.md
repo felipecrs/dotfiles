@@ -59,7 +59,7 @@ But on other systems or terminal emulators, **you will need to configure it manu
 
 1. On **Windows Terminal**, press <kbd>Ctrl</kbd>+<kbd>,</kbd> to open the settings.
 2. Go to **_Profiles -> Defaults_** in the left panel. Then, go to **_Additional settings -> Appearance_**.
-3. At **_Text -> Font face_**, enable the **_Show all fonts_** option and select **_FiraCode Nerd Font Mono_**. Like below:
+3. At **_Text -> Font face_**, select **_FiraCode Nerd Font Mono_**. Like below:
 
    ![Windows Terminal font configuration example](https://user-images.githubusercontent.com/29582865/218276062-1b8a299c-cef3-4e80-b557-66cb5ff8a78b.png)
 
