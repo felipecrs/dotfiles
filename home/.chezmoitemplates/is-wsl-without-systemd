@@ -1,1 +1,4 @@
-{{- and .is_wsl (ne (output "ps" "--no-headers" "-o" "comm" "1" | trim) "systemd") -}}
+{{- /* Check if WSL is not capable of running systemd. */ -}}
+{{- /* To support systemd, wsl needs to be installed from Microsoft Store, */ -}}
+{{- /* and it is the only version that also supports the --version flag. */ -}}
+{{- and .is_wsl (output "bash" "-c" "wsl.exe --version &>/dev/null || echo true" | trim) -}}
