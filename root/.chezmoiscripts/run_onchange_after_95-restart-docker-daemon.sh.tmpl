@@ -10,7 +10,7 @@ true || source ../.chezmoitemplates/scripts-library
 # {{ end }}
 
 log_task "Restarting Docker daemon"
-# {{ if .is_wsl }}
+# {{ if includeTemplate "is-wsl-without-systemd" . }}
 # service restart fails if the service was never started
 c service docker restart || not_during_test c service docker start
 # {{ else }}
