@@ -53,8 +53,6 @@ fi
 for arg; do
   shift
   if [ "${arg}" = "--devcontainer" ]; then
-    echo "dropping --devcontainer flag" >&2
-
     if workspace_folder=$(is_first_arg_a_folder "$@"); then
       workspace_folder="$(realpath "${workspace_folder}")"
     else
@@ -63,13 +61,18 @@ for arg; do
     fi
 
     if [ -d "${workspace_folder}" ]; then
-      basename_workspace_folder="$(basename "${workspace_folder}")"
+      workspace_folder_in_devcontainer=$(
+        # https://github.com/microsoft/vscode-remote-release/issues/2133#issuecomment-1430651840
+        devcontainer read-configuration --workspace-folder "${workspace_folder}" 2>/dev/null |
+          jq --exit-status --raw-output .workspace.workspaceFolder
+      )
+
       if [ -n "${WSL_DISTRO_NAME}" ]; then
         workspace_folder=$(wslpath -w "${workspace_folder}")
       fi
       path_id=$(printf "%s" "${workspace_folder}" | xxd -ps -c 256)
 
-      set -- --folder-uri "vscode-remote://dev-container%2B${path_id}/workspaces/${basename_workspace_folder}"
+      set -- --folder-uri "vscode-remote://dev-container%2B${path_id}${workspace_folder_in_devcontainer}"
       break
     fi
   fi
