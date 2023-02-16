@@ -3,13 +3,13 @@
 oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\powerlevel10k_lean.omp.json" | Invoke-Expression
 
 # PSReadLine (https://github.com/PowerShell/PSReadLine)
-# Installation: Install-Module PSReadLine
+# Installation: Install-Module PSReadLine -Force
 Set-PSReadLineOption -PredictionSource History
 Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 
 # WSL Interop (https://github.com/mikebattista/PowerShell-WSL-Interop)
-# Installation: Install-Module WslInterop
+# Installation: Install-Module WslInterop -Force
 Import-WslCommand "cat", "cp", "echo", "find", "grep", "head", "ls", "mv", "rm", "sed", "touch", "tree", "which"
 
 # Chocolatey (https://github.com/chocolatey/choco)
@@ -35,7 +35,7 @@ Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
 # gsudo (https://github.com/gerardog/gsudo)
 # Installation: winget install gerardog.gsudo
 # PSWindowsUpdate (https://github.com/mgajda83/PSWindowsUpdate)
-# Installation: Install-Module PSWindowsUpdate
+# Installation: Install-Module PSWindowsUpdate -Force
 function Full-Upgrade {
   gsudo {
     Set-PSDebug -Trace 1
