@@ -99,7 +99,7 @@
   executable: true
 {{-     end }}
 
-{{-   end }}
+{{-  end }}
 
 ".deno/bin":
   type: archive
