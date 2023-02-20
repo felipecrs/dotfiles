@@ -67,7 +67,7 @@ for arg; do
           jq --exit-status --raw-output .workspace.workspaceFolder
       )
 
-      if [ -n "${WSL_DISTRO_NAME}" ]; then
+      if [ -n "${WSL_DISTRO_NAME:-}" ]; then
         workspace_folder=$(wslpath -w "${workspace_folder}")
       fi
       path_id=$(printf "%s" "${workspace_folder}" | xxd -ps -c 256)
