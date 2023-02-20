@@ -1,5 +1,5 @@
+external-sources=true
 # To list all: shellcheck --list-optional
-
 enable=add-default-case
 enable=avoid-nullary-conditions
 enable=check-extra-masked-returns
