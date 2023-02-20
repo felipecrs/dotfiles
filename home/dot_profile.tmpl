@@ -1,7 +1,7 @@
 # shellcheck shell=sh
 # chezmoi:template:left-delimiter="# {{" right-delimiter=}}
 
-# {{ if includeTemplate "is-wsl-without-systemd" . -}}
+# {{ if and .is_wsl (not (includeTemplate "is-wsl-capable-of-systemd" .)) -}}
 # The boot.systemd in /etc/wsl.conf is only for Windows 11, so this workaround
 # is needed when running Windows 10.
 if service docker status 2>&1 | grep -q "is not running"; then
@@ -49,8 +49,8 @@ if [ -d "${HOME}/.local/bin" ]; then
   export PATH="${HOME}/.local/bin:${PATH}"
 fi
 
-export VISUAL="{{ .editor }}"
-export EDITOR="{{ .editor }}"
+export VISUAL="# {{ .editor }}"
+export EDITOR="# {{ .editor }}"
 
 # {{ if .is_wsl -}}
 export BROWSER="wslview"
