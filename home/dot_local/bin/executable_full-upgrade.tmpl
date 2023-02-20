@@ -31,9 +31,9 @@ fi
 
 if apt --version &>/dev/null; then
   log_task "Updating apt packages"
-  c sudo apt update --yes
-  c sudo apt upgrade --yes
-  c sudo apt autoremove --yes
+  c sudo DEBIAN_FRONTEND=noninteractive apt update --yes
+  c sudo DEBIAN_FRONTEND=noninteractive apt upgrade --yes
+  c sudo DEBIAN_FRONTEND=noninteractive apt autoremove --yes
 fi
 
 if timeout 2 snap warnings &>/dev/null; then
