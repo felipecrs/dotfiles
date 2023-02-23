@@ -67,7 +67,7 @@ for arg; do
           jq --exit-status --raw-output .workspace.workspaceFolder |
           grep .
       ); then
-        echo "Failed to read the devcontainer workspace folder." >&2
+        echo "failed to read the devcontainer workspace folder." >&2
         exit 1
       fi
 
