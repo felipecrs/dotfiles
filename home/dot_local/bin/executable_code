@@ -61,11 +61,15 @@ for arg; do
     fi
 
     if [ -d "${workspace_folder}" ]; then
-      workspace_folder_in_devcontainer=$(
+      if ! workspace_folder_in_devcontainer=$(
         # https://github.com/microsoft/vscode-remote-release/issues/2133#issuecomment-1430651840
         devcontainer read-configuration --workspace-folder "${workspace_folder}" 2>/dev/null |
-          jq --exit-status --raw-output .workspace.workspaceFolder
-      )
+          jq --exit-status --raw-output .workspace.workspaceFolder |
+          grep .
+      ); then
+        echo "Failed to read the devcontainer workspace folder." >&2
+        exit 1
+      fi
 
       if [ -n "${WSL_DISTRO_NAME:-}" ]; then
         workspace_folder=$(wslpath -w "${workspace_folder}")
