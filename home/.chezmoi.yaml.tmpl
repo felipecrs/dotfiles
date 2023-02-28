@@ -85,10 +85,6 @@ sourceDir: "{{ .chezmoi.workingTree }}"
 
 verbose: true
 
-{{ if stdinIsATTY -}}
-progress: true
-{{- end }}
-
 diff:
   exclude:
     - scripts
