@@ -55,14 +55,12 @@
 
 "usr/local/share/gcm":
   type: archive
-  # https://github.com/GitCredentialManager/git-credential-manager/issues/869
-  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.877/gcm-win-x86-2.0.877.zip"
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}/gcm-win-x86-{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}.zip"
   exact: true
 {{ else }}
 "usr/local/share/gcm":
   type: archive
-  # https://github.com/GitCredentialManager/git-credential-manager/pull/551
-  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.877/gcm-linux_amd64.2.0.877.tar.gz"
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}/gcm-linux_amd64.{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}.tar.gz"
   exact: true
 
 {{   if .is_gnome }}
