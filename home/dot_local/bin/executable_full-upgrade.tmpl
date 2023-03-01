@@ -11,22 +11,26 @@ true || source ../../.chezmoitemplates/homebrew-library
 true || source ../../.chezmoitemplates/volta-library
 true || source ../../.chezmoitemplates/sdkman-library
 
-if brew --version &>/dev/null; then
-  log_task "Updating brew"
-  c brew update
+if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
+  if brew --version &>/dev/null; then
+    log_task "Updating brew"
+    c brew update
 
-  log_task "Updating brew packages"
-  c brew upgrade
-fi
+    log_task "Updating brew packages"
+    c brew upgrade
+  fi
 
-if chezmoi --version &>/dev/null; then
-  log_task "Updating dotfiles"
-  # Pull latest changes from dotfiles repo
-  c chezmoi update --apply=false
-  # Apply changes to chezmoi config
-  c chezmoi init --force
-  # Apply the rest
-  c chezmoi apply --force
+  if chezmoi --version &>/dev/null; then
+    log_task "Updating dotfiles"
+    # Pull latest changes from dotfiles repo
+    c chezmoi update --apply=false
+    # Apply changes to chezmoi config
+    c chezmoi init --force
+    # Apply the rest
+    c chezmoi apply --force
+  fi
+
+  CONTINUE_FROM_DOTFILES=true exec "$0" "$@"
 fi
 
 if apt --version &>/dev/null; then
