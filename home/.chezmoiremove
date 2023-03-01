@@ -1,4 +1,4 @@
-{{ if not .is_devcontainer -}}
+{{- if not .is_devcontainer -}}
 
 *.deb
 *.rpm
@@ -21,7 +21,10 @@
 .docker/cli-plugins/docker-compose
 .docker/cli-plugins/docker-buildx
 
-{{- end }}
-
 .antigen/
 .antigenrc
+
+# Remove font variants there used to be installed but no longer are
+.local/share/fonts/Fira Code * Nerd Font Complete*.ttf
+!.local/share/fonts/Fira Code Regular Nerd Font Complete Mono.ttf
+{{- end -}}
