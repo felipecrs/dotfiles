@@ -2,7 +2,7 @@
 
 # ARG_OPTIONAL_REPEATED([variant],[v],[The variant of the test to run. Possible values: devcontainer, wsl, and gnome. Default: devcontainer.],[])
 # ARG_OPTIONAL_REPEATED([os],[o],[The OS to run the tests against. The list of possible values can be found at https://mcr.microsoft.com/v2/devcontainers/base/tags/list. Examples: ubuntu-18.04, ubuntu-22.04, and alpine. Default: ubuntu-20.04.],[])
-# ARG_OPTIONAL_BOOLEAN([debug],[d],[Whether to enable debug logs or not],[on])
+# ARG_OPTIONAL_BOOLEAN([debug],[d],[Whether to enable debug logs or not],[off])
 # ARG_OPTIONAL_SINGLE([pre-script],[],[The custom script to run before the installation],[])
 # ARG_HELP([Tests the installation of the dotfiles in differents scenarios],[])
 # ARGBASH_SET_INDENT([  ])
@@ -28,7 +28,7 @@ begins_with_short_option() {
 # THE DEFAULTS INITIALIZATION - OPTIONALS
 _arg_variant=()
 _arg_os=()
-_arg_debug="on"
+_arg_debug="off"
 _arg_pre_script=
 
 print_help() {
@@ -36,7 +36,7 @@ print_help() {
   printf 'Usage: %s [-v|--variant <arg>] [-o|--os <arg>] [-d|--(no-)debug] [--pre-script <arg>] [-h|--help]\n' "$0"
   printf '\t%s\n' "-v, --variant: The variant of the test to run. Possible values: devcontainer, wsl, and gnome. Default: devcontainer. (empty by default)"
   printf '\t%s\n' "-o, --os: The OS to run the tests against. The list of possible values can be found at https://mcr.microsoft.com/v2/devcontainers/base/tags/list. Examples: ubuntu-18.04, ubuntu-22.04, and alpine. Default: ubuntu-20.04. (empty by default)"
-  printf '\t%s\n' "-d, --debug, --no-debug: Whether to enable debug logs or not (on by default)"
+  printf '\t%s\n' "-d, --debug, --no-debug: Whether to enable debug logs or not (off by default)"
   printf '\t%s\n' "--pre-script: The custom script to run before the installation (no default)"
   printf '\t%s\n' "-h, --help: Prints help"
 }
@@ -120,10 +120,13 @@ run_test() {
 
   cmd time docker run --rm --init --interactive --user vscode \
     --env TERM --env COLORTERM \
-    --volume "${dotfiles_root}:/home/vscode/.dotfiles:ro" \
+    --volume "${dotfiles_root}:/original-dotfiles:ro" \
     "mcr.microsoft.com/devcontainers/base:${os}" \
     bash <<EOF
 set -euxo pipefail
+
+mkdir -p ~/.dotfiles
+rsync --archive --no-owner --exclude ".git/" /original-dotfiles/ ~/.dotfiles/
 
 ${_arg_pre_script}
 
