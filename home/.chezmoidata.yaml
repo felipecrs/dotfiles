@@ -1,0 +1,5 @@
+fontsDir: .local/share/fonts
+
+terminalFont:
+  fileName: Fira Code Regular Nerd Font Complete Mono.ttf
+  name: FiraCode Nerd Font Mono

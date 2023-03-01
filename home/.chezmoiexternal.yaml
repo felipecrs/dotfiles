@@ -107,14 +107,15 @@
   include:
     - deno
 
-# Downloads all the variants of Fira Code Nerd Font
-{{-   range $_, $face := list "Regular" "Light" "Medium" "Bold" "Retina" "SemiBold" -}}
-{{-     range $_, $variant := list "" " Mono" }}
-".local/share/fonts/Fira Code {{ $face }} Nerd Font Complete{{ $variant }}.ttf":
+"{{ joinPath .fontsDir .terminalFont.fileName }}":
   type: file
-  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/{{ template "get-github-head-revision" list "ryanoasis/nerd-fonts" $cache }}/patched-fonts/FiraCode/{{ $face }}/complete/Fira%20Code%20{{ $face }}%20Nerd%20Font%20Complete{{ $variant | replace " " "%20" }}.ttf"
-{{      end -}}
-{{-   end -}}
+  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/{{ template "get-github-head-revision" list "ryanoasis/nerd-fonts" $cache }}/patched-fonts/FiraCode/Regular/complete/{{ .terminalFont.fileName | replace " " "%20" }}"
+
+{{    if .is_wsl -}}
+"{{ includeTemplate "get-external-scripts-dir" . }}/Install-Font.ps1":
+  type: file
+  url: "https://raw.githubusercontent.com/ralish/PSWinGlue/{{ template "get-github-head-revision" list "ralish/PSWinGlue" $cache }}/Scripts/Install-Font.ps1"
+{{-   end }}
 
 {{- template "save-versions-and-revisions-cache" $cache -}}
 

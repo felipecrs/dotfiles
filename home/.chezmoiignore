@@ -15,6 +15,7 @@
 
 {{ if not .is_wsl -}}
 .chezmoiscripts/*-sync-wsl-ssh-keys.sh
+.chezmoiscripts/*-install-terminal-font-on-windows.sh
 {{- else -}}
 .chezmoiscripts/*-install-gnome-extensions.sh
 {{- end }}

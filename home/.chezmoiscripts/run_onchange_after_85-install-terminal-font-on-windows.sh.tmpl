@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+# {{ $fontPath := joinPath .chezmoi.homeDir .fontsDir .terminalFont.fileName }}
+# hash: {{ include $fontPath | sha256sum }}
+
+# shellcheck disable=SC2016
+font_path_for_win="$(wslpath -w '{{ $fontPath }}')"
+
+install_font_ps1_path='{{ includeTemplate "get-external-scripts-dir" . }}/Install-Font.ps1'
+install_font_ps1_path_for_win="$(wslpath -w "${install_font_ps1_path}")"
+
+log_task "Installing terminal font '{{ .terminalFont.name }}' on Windows"
+
+c PowerShell.exe \
+  -File "${install_font_ps1_path_for_win}" \
+  -Path "${font_path_for_win}" \
+  -Scope User \
+  -Method Manual
