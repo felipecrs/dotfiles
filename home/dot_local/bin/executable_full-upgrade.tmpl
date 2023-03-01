@@ -46,7 +46,7 @@ if flatpak --version &>/dev/null; then
   c sudo flatpak update --assumeyes
 fi
 
-if command -v gnome-shell-extension-installer &>/dev/null; then
+if command -v gnome-shell-extension-installer >/dev/null; then
   log_task "Updating gnome extensions"
   c gnome-shell-extension-installer --update --yes
 fi
@@ -67,4 +67,9 @@ if sdk version &>/dev/null; then
 
   log_task "Updating sdk packages"
   c sdk update
+fi
+
+if command -v wsl.exe >/dev/null; then
+  log_task "Updating WSL"
+  c wsl.exe --update
 fi
