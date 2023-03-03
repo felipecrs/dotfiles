@@ -8,7 +8,7 @@ true || source ../.chezmoitemplates/scripts-library
 true || source ../.chezmoitemplates/vscode-library
 
 function code() {
-  not_during_test PowerShell.exe -Command "cd ~; code ${*}"
+  not_during_test PowerShell.exe -NoProfile -Command "cd ~; code ${*}"
 }
 
 FOR_WINDOWS=true install_vscode_extensions
