@@ -74,6 +74,15 @@ if sdk version &>/dev/null; then
 fi
 
 if command -v wsl.exe >/dev/null; then
+  log_task "Updating VS Code"
+  # WinGet returns non zero code if no upgrade is found, so for now we simply ignore it.
+  c winget.exe upgrade --exact --id Microsoft.VisualStudioCode --source winget \
+    --accept-source-agreements --disable-interactivity || true
+
+  log_task "Updating Windows Terminal"
+  c winget.exe upgrade --exact --id Microsoft.WindowsTerminal --source winget \
+    --accept-source-agreements --disable-interactivity || true
+
   log_task "Updating WSL"
   c wsl.exe --update
 fi
