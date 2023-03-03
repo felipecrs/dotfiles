@@ -25,7 +25,7 @@ if ! command -v winget.exe >/dev/null; then
   c curl -fsSL --output "${msix_path}" \
     https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
 
-  not_during_test c PowerShell.exe -Command "Add-AppxPackage -Path '${msix_path_for_win}' -ForceUpdateFromAnyVersion"
+  not_during_test c PowerShell.exe -NoProfile -Command "Add-AppxPackage -Path '${msix_path_for_win}' -ForceUpdateFromAnyVersion"
 
   rm -f "${msix_path}"
   unset msix_path msix_path_for_win
