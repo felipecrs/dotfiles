@@ -12,6 +12,11 @@ original_args=(
 )
 args=(apply)
 
+# Skip if NO_ROOTMOI is set
+if [[ -n "${NO_ROOTMOI:-}" ]]; then
+  exit 0
+fi
+
 # Filter out incompatible args
 skip_one_more=false
 for i in "${!original_args[@]}"; do
