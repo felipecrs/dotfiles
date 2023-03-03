@@ -8,7 +8,7 @@ true || source ../.chezmoitemplates/scripts-library
 true || source ../.chezmoitemplates/vscode-library
 
 function code() {
-  USE_NATIVE_CODE=1 command code "$@"
+  not_during_test PowerShell.exe -Command "cd ~; code ${*}"
 }
 
-install_vscode_extensions
+FOR_WINDOWS=true install_vscode_extensions
