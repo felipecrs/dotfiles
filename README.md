@@ -38,9 +38,9 @@ It will be enabled by default when running in a Dev Container or in distribution
 
 This dotfiles uses the ZSH theme [Powerlevel10k](https://github.com/romkatv/powerlevel10k), so it requires you to install a font on your host machine with support for the [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) glyphs. I recommend the [`FiraCode Nerd Font Mono`](https://github.com/ryanoasis/nerd-fonts/tree/HEAD/patched-fonts/FiraCode#readme).
 
-In **Ubuntu Desktop**, the dotfiles installation will take care of installing the font and set it up for you in **GNOME Terminal**.
+For **WSL** and **Ubuntu Desktop**, the dotfiles installation will automatically take care of installing the font and set it up for you in **VS Code**, **Windows Terminal** (for WSL), and **GNOME Terminal** (for Ubuntu Desktop).
 
-But on other systems or terminal emulators, **you will need to configure it manually**. Here are some tips:
+On other systems or terminal emulators, **you will need to configure it manually**. Here are some tips:
 
 ### Installing the font on **Windows**
 
