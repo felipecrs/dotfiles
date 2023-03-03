@@ -11,6 +11,7 @@
 .chezmoiscripts/*-install-gnome-extensions.sh
 .chezmoiscripts/*-configure-gnome.sh
 .chezmoiscripts/*-install-vscode-extensions.sh
+.config/Code/User/settings.json
 {{- end }}
 
 {{ if not .is_wsl -}}
