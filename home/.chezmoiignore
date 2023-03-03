@@ -18,6 +18,7 @@
 .chezmoiscripts/*-sync-wsl-ssh-keys.sh
 .chezmoiscripts/*-install-terminal-font-on-windows.sh
 .chezmoiscripts/*-configure-vscode-on-windows.sh
+.chezmoiscripts/*-configure-terminal-on-windows.sh
 {{- else -}}
 .chezmoiscripts/*-install-gnome-extensions.sh
 {{- end }}
