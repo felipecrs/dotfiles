@@ -84,5 +84,6 @@ if command -v wsl.exe >/dev/null; then
     --accept-source-agreements --disable-interactivity || true
 
   log_task "Updating WSL"
+  log_manual_action "If an update is found, WSL will exit and you will need to open another terminal window"
   c wsl.exe --update
 fi
