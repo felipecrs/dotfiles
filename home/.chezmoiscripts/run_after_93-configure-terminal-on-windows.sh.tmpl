@@ -9,8 +9,10 @@ win_home="$(wslvar USERPROFILE)"
 settings_dir="$(wslpath "${win_home}\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState")"
 settings_path="${settings_dir}/settings.json"
 if [[ -f "${settings_path}" ]]; then
+  settings_exists=true
   settings="$(cat "${settings_path}")"
 else
+  settings_exists=false
   settings=''
 fi
 
@@ -23,6 +25,13 @@ result="$("${chezmoi_path}" execute-template --with-stdin "${template}" <<<"${se
 
 if [[ "${result}" != "${settings}" ]]; then
   log_task "Configuring Terminal on Windows"
-  mkdir -p "${settings_dir}"
+  if [[ "${settings_exists}" == "true" ]]; then
+    backup_settings_path="${settings_path}.bak"
+    backup_settings_path_for_win="$(wslpath -w "${backup_settings_path}")"
+    log_info "Backing up existing Terminal settings to '${backup_settings_path_for_win}'"
+    mv -f "${settings_path}" "${backup_settings_path}"
+  else
+    mkdir -p "${settings_dir}"
+  fi
   tee "${settings_path}" >/dev/null <<<"${result}"
 fi
