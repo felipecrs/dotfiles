@@ -4,3 +4,9 @@ etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list*
 # GCM Core got renamed to GCM only
 usr/local/bin/git-credential-manager-core
 usr/local/share/gcm-core
+
+# These files are known to be installed by Docker Desktop and they
+# conflict with the ones installed by APT.
+usr/local/lib/docker/cli-plugins/docker-buildx
+usr/local/lib/docker/cli-plugins/docker-compose
+usr/local/lib/docker/cli-plugins/docker-scan
