@@ -16,6 +16,8 @@ install_font_ps1_path_for_win="$(wslpath -w "${install_font_ps1_path}")"
 
 log_task "Installing terminal font '{{ .terminalFont.name }}' on Windows"
 
+log_manual_action "If this is the first time installing the font, please restart Windows Terminal and VS Code to ensure they recognize the font"
+
 not_during_test c PowerShell.exe -NoProfile -ExecutionPolicy Bypass \
   -File "${install_font_ps1_path_for_win}" \
   -Path "${font_path_for_win}" \
