@@ -2,7 +2,7 @@
 
 {{- /* Load existing configuration */ -}}
 {{- $result := dict -}}
-{{- if not (empty .chezmoi.stdin) -}}
+{{- if not (.chezmoi.stdin | trim | empty) -}}
 {{-   $result = fromJsonc .chezmoi.stdin -}}
 {{- end -}}
 
