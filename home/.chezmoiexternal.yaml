@@ -39,6 +39,14 @@
   url: "https://github.com/direnv/direnv/releases/download/v{{ template "get-github-latest-version" list "direnv/direnv" $cache }}/direnv.linux-{{ .chezmoi.arch }}"
   executable: true
 
+".local/bin/kubecolor":
+  type: file
+  url: "https://github.com/hidetatz/kubecolor/releases/download/v{{ template "get-github-latest-version" list "hidetatz/kubecolor" $cache }}/kubecolor_{{ template "get-github-latest-version" list "hidetatz/kubecolor" $cache }}_Linux_{{ .uname_arch }}.tar.gz"
+  filter:
+    command: tar
+    args: ["-x", "-z", "-O", "kubecolor"]
+  executable: true
+
 ".local/bin/kubectx":
   type: file
   url: "https://github.com/ahmetb/kubectx/releases/download/v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}/kubectx_v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}_linux_{{ .uname_arch }}.tar.gz"
