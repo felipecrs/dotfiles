@@ -117,7 +117,7 @@
 
 "{{ joinPath .fontsDir .terminalFont.fileName }}":
   type: file
-  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/{{ template "get-github-head-revision" list "ryanoasis/nerd-fonts" $cache }}/patched-fonts/FiraCode/Regular/complete/{{ .terminalFont.fileName | replace " " "%20" }}"
+  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/{{ template "get-github-head-revision" list "ryanoasis/nerd-fonts" $cache }}/patched-fonts/FiraCode/Regular/FiraCodeNerdFontMono-Regular.ttf"
 
 {{    if .is_wsl -}}
 "{{ includeTemplate "get-external-scripts-dir" . }}/Install-Font.ps1":
