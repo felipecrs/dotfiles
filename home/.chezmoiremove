@@ -24,7 +24,6 @@
 .antigen/
 .antigenrc
 
-# Remove font variants there used to be installed but no longer are
+# Remove font variants that used to be installed by dotfiles
 .local/share/fonts/Fira Code * Nerd Font Complete*.ttf
-!.local/share/fonts/Fira Code Regular Nerd Font Complete Mono.ttf
 {{- end -}}

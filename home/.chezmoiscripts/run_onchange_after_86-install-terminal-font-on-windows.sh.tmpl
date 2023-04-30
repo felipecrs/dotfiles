@@ -11,15 +11,20 @@ true || source ../.chezmoitemplates/scripts-library
 # shellcheck disable=SC2016
 font_path_for_win="$(wslpath -w '{{ $fontPath }}')"
 
-install_font_ps1_path='{{ includeTemplate "get-external-scripts-dir" . }}/Install-Font.ps1'
-install_font_ps1_path_for_win="$(wslpath -w "${install_font_ps1_path}")"
+external_scripts_dir='{{ includeTemplate "get-external-scripts-dir" . }}'
+external_scripts_dir_for_win="$(wslpath -w "${external_scripts_dir}")"
 
 log_task "Installing terminal font '{{ .terminalFont.name }}' on Windows"
 
 log_manual_action "If this is the first time installing the font, please restart Windows Terminal and VS Code to ensure they recognize the font"
 
 not_during_test c PowerShell.exe -NoProfile -ExecutionPolicy Bypass \
-  -File "${install_font_ps1_path_for_win}" \
+  -File "${external_scripts_dir_for_win}\\Uninstall-Font.ps1" \
+  -Name '{{ .terminalFont.fileName }}' \
+  -Scope User
+
+not_during_test c PowerShell.exe -NoProfile -ExecutionPolicy Bypass \
+  -File "${external_scripts_dir_for_win}\\Install-Font.ps1" \
   -Path "${font_path_for_win}" \
   -Scope User \
   -Method Manual
