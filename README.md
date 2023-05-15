@@ -44,7 +44,7 @@ On other systems or terminal emulators, **you will need to configure it manually
 
 ### Installing the font on **Windows**
 
-1. [Download it by clicking here](https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/FiraCode/Regular/complete/Fira%20Code%20Regular%20Nerd%20Font%20Complete%20Mono.ttf).
+1. [Download it by clicking here](https://raw.githubusercontent.com/ryanoasis/nerd-fonts/HEAD/patched-fonts/FiraCode/Regular/FiraCodeNerdFontMono-Regular.ttf).
 2. Open it and click in **_Install_**.
 3. Restart any applications that you want to load the font into.
 
