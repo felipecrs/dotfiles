@@ -123,6 +123,9 @@
 "{{ includeTemplate "get-external-scripts-dir" . }}/Install-Font.ps1":
   type: file
   url: "https://raw.githubusercontent.com/ralish/PSWinGlue/{{ template "get-github-head-revision" list "ralish/PSWinGlue" $cache }}/Scripts/Install-Font.ps1"
+"{{ includeTemplate "get-external-scripts-dir" . }}/Uninstall-Font.ps1":
+  type: file
+  url: "https://raw.githubusercontent.com/ralish/PSWinGlue/{{ template "get-github-head-revision" list "ralish/PSWinGlue" $cache }}/Scripts/Uninstall-Font.ps1"
 {{-   end }}
 
 {{- template "save-versions-and-revisions-cache" $cache -}}
