@@ -109,6 +109,11 @@
 
 {{-  end }}
 
+".local/bin/skopeo":
+  type: file
+  url: "https://github.com/felipecrs/skopeo-bin/releases/download/v{{ template "get-github-latest-version" list "felipecrs/skopeo-bin" $cache }}/skopeo-v{{ template "get-github-latest-version" list "felipecrs/skopeo-bin" $cache }}.linux-{{ .chezmoi.arch }}"
+  executable: true
+
 ".deno/bin":
   type: archive
   url: "https://github.com/denoland/deno/releases/download/v{{ template "get-github-latest-version" list "denoland/deno" $cache }}/deno-x86_64-unknown-linux-gnu.zip"
