@@ -6,25 +6,26 @@
 true || source ../.chezmoitemplates/scripts-library
 
 # {{ $fontPath := joinPath .chezmoi.homeDir .fontsDir .terminalFont.fileName }}
-# hash: {{ include $fontPath | sha256sum }}
+# {{ $externalScriptsDir := joinPath .chezmoi.homeDir (includeTemplate "get-external-scripts-dir" .) }}
+# {{ $installFontPs1Path := joinPath $externalScriptsDir "Install-Font.ps1" }}
+# The Uninstall-Font.ps1 is used by Install-Font.ps1
+# {{ $uninstallFontPs1Path := joinPath $externalScriptsDir "Uninstall-Font.ps1" }}
+
+# hashes:
+# {{ include $fontPath | sha256sum }}
+# {{ include $installFontPs1Path | sha256sum }}
+# {{ include $uninstallFontPs1Path | sha256sum }}
 
 # shellcheck disable=SC2016
 font_path_for_win="$(wslpath -w '{{ $fontPath }}')"
 
-install_font_ps1_path='{{ includeTemplate "get-external-scripts-dir" . }}/Install-Font.ps1'
+# shellcheck disable=SC2016
+install_font_ps1_path='{{ $installFontPs1Path }}'
 install_font_ps1_path_for_win="$(wslpath -w "${install_font_ps1_path}")"
 
 log_task "Installing terminal font '{{ .terminalFont.name }}' on Windows"
 
 log_manual_action "If this is the first time installing the font, please restart Windows Terminal and VS Code to ensure they recognize the font"
-
-# Ensure the fonts directory is created
-# https://github.com/ralish/PSWinGlue/issues/8
-local_app_data="$(wslvar "LOCALAPPDATA")"
-local_app_data="$(wslpath "${local_app_data}")"
-fonts_dir="${local_app_data}/Microsoft/Windows/Fonts"
-mkdir -p "${fonts_dir}"
-unset app_data fonts_dir
 
 not_during_test c PowerShell.exe -NoProfile -ExecutionPolicy Bypass \
   -File "${install_font_ps1_path_for_win}" \
