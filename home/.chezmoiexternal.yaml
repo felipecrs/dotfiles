@@ -111,7 +111,7 @@
 
 ".local/bin/skopeo":
   type: file
-  url: "https://github.com/felipecrs/skopeo-bin/releases/download/v{{ template "get-github-latest-version" list "felipecrs/skopeo-bin" $cache }}/skopeo-v{{ template "get-github-latest-version" list "felipecrs/skopeo-bin" $cache }}.linux-{{ .chezmoi.arch }}"
+  url: "https://github.com/felipecrs/skopeo-bin/releases/download/v{{ template "get-github-latest-version" list "felipecrs/skopeo-bin" $cache }}/skopeo.linux-{{ .chezmoi.arch }}"
   executable: true
 
 ".deno/bin":
