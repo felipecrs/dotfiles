@@ -56,8 +56,14 @@ git_clean() {
 
   log_task "Cleaning '${path}' with '${remote}' at branch '${branch}'"
   git="git -C ${path}"
+  # Ensure that the remote is set to the correct URL
+  if ${git} remote | grep -q origin; then
+    ${git} remote set-url origin "${remote}"
+  else
+    ${git} remote add origin "${remote}"
+  fi
   ${git} checkout -B "${branch}"
-  ${git} fetch "${remote}" "${branch}"
+  ${git} fetch origin "${branch}"
   ${git} reset --hard FETCH_HEAD
   ${git} clean -fdx
   unset path remote branch git
