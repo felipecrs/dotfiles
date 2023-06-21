@@ -34,6 +34,12 @@ chezmoi-re-run-scripts() { (
   chezmoi init --apply
 ); }
 
+# Merge all ~/.kube/*.kubeconfig.yaml into ~/.kube/config
+merge-kubeconfigs() {
+  # shellcheck disable=SC2312
+  KUBECONFIG="$(printf '%s:' "${HOME}"/.kube/*.kubeconfig.yaml | sed 's/:$//')" kubectl config view --flatten | tee "${HOME}/.kube/config"
+}
+
 # {{ if .is_wsl }}
 gsudo() {
   local shell
