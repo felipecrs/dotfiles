@@ -28,7 +28,8 @@
   co = checkout
   cob = checkout -b
   cp = cherry-pick
-  fully-clean = "!f() { set -v; branch="$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)"; git checkout $branch; git fetch origin $branch; git clean -fd; }; f"
+  get-default-branch = "!set -ex; remote="${1:-"origin"}"; git ls-remote --symref "${remote}" HEAD | sed -n 's,^ref: refs/heads/\\(\\S*\\)\\tHEAD$,\\1,p'"
+  fully-clean = "!f() { set -ex; default_branch="$(git get-default-branch)"; git checkout "${default_branch}"; git fetch origin "${default_branch}"; git clean -fdx; }; f"
   get-current-branch = "!git branch --show-current | grep ."
   rr = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; git reset --hard "origin/$branch"; }; f"
   pfor = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; git push origin "HEAD:refs/for/$branch"; }; f"
