@@ -2,10 +2,13 @@
 	name = {{ .name }}
 	email = {{ .email }}
 [core]
-  autocrlf = input
-  safecrlf = false
-  eol = lf
   editor = {{ .editor }}
+[rebase]
+  autoStash = true
+[merge]
+  autoStash = true
+[push]
+  autoSetupRemote = true
 [diff]
   tool = vscode
 [difftool "vscode"]
@@ -14,10 +17,6 @@
   tool = vscode
 [mergetool "vscode"]
   cmd = code --wait $MERGED
-[rebase]
-  autostash = true
-[merge]
-  autostash = true
 [alias]
   s = status
   c = commit
