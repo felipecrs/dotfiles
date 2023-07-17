@@ -119,8 +119,8 @@
 
 "{{ joinPath .fontsDir .terminalFont.fileName }}":
   type: file
-  {{ $nerdFontsRevision := includeTemplate "get-github-head-revision" (list "ryanoasis/nerd-fonts" $cache) }}
-  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/{{ $nerdFontsRevision }}/patched-fonts/FiraCode/Regular/FiraCodeNerdFontMono-Regular.ttf"
+  {{ $nerdFontsVersion := includeTemplate "get-github-latest-version" (list "ryanoasis/nerd-fonts" $cache) }}
+  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/v{{ $nerdFontsVersion }}/patched-fonts/FiraCode/Regular/FiraCodeNerdFontMono-Regular.ttf"
 
 {{    if .is_wsl -}}
 {{    $externalScriptsDir := includeTemplate "get-external-scripts-dir" . }}
