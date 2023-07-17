@@ -39,12 +39,10 @@
   executable: true
 
 "usr/local/bin/git-lfs":
-  type: file
+  type: archive-file
   url: "https://github.com/git-lfs/git-lfs/releases/download/v{{ template "get-github-latest-version" list "git-lfs/git-lfs" $cache }}/git-lfs-linux-{{ .chezmoi.arch }}-v{{ template "get-github-latest-version" list "git-lfs/git-lfs" $cache }}.tar.gz"
-  filter:
-    command: tar
-    args: ["-x", "-z", "-O", "git-lfs-{{ template "get-github-latest-version" list "git-lfs/git-lfs" $cache }}/git-lfs"]
-  executable: true
+  stripComponents: 1
+  path: git-lfs
 
 {{ if .is_wsl }}
 "usr/bin/docker-credential-wincred.exe":

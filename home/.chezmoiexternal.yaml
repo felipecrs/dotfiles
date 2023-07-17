@@ -40,55 +40,38 @@
   executable: true
 
 ".local/bin/kubecolor":
-  type: file
+  type: archive-file
   url: "https://github.com/hidetatz/kubecolor/releases/download/v{{ template "get-github-latest-version" list "hidetatz/kubecolor" $cache }}/kubecolor_{{ template "get-github-latest-version" list "hidetatz/kubecolor" $cache }}_Linux_{{ .uname_arch }}.tar.gz"
-  filter:
-    command: tar
-    args: ["-x", "-z", "-O", "kubecolor"]
-  executable: true
+  path: kubecolor
 
 ".local/bin/kubectx":
-  type: file
+  type: archive-file
   url: "https://github.com/ahmetb/kubectx/releases/download/v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}/kubectx_v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}_linux_{{ .uname_arch }}.tar.gz"
-  filter:
-    command: tar
-    args: ["-x", "-z", "-O", "kubectx"]
-  executable: true
+  path: kubectx
 
 ".oh-my-zsh/custom/plugins/my-completions/_kubectx.zsh":
   type: file
-  # TODO: switch to get-github-latest-version once a newer version gets released
-  url: "https://github.com/ahmetb/kubectx/raw/{{ template "get-github-head-revision" list "ahmetb/kubectx" $cache }}/completion/_kubectx.zsh"
+  url: "https://github.com/ahmetb/kubectx/raw/v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}/completion/_kubectx.zsh"
 
 ".local/bin/kubens":
-  type: file
+  type: archive-file
   url: "https://github.com/ahmetb/kubectx/releases/download/v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}/kubens_v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}_linux_{{ .uname_arch }}.tar.gz"
-  filter:
-    command: tar
-    args: ["-x", "-z", "-O", "kubens"]
-  executable: true
+  path: kubens
 
 ".oh-my-zsh/custom/plugins/my-completions/_kubens.zsh":
   type: file
-  # TODO: switch to get-github-latest-version once a newer version gets released
-  url: "https://github.com/ahmetb/kubectx/raw/{{ template "get-github-head-revision" list "ahmetb/kubectx" $cache }}/completion/_kubens.zsh"
+  url: "https://github.com/ahmetb/kubectx/raw/v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}/completion/_kubens.zsh"
 
 # Required by kubectx and kubens
 ".local/bin/fzf":
-  type: file
+  type: archive-file
   url: "https://github.com/junegunn/fzf/releases/download/{{ template "get-github-latest-version" list "junegunn/fzf" $cache }}/fzf-{{ template "get-github-latest-version" list "junegunn/fzf" $cache }}-linux_{{ .chezmoi.arch }}.tar.gz"
-  filter:
-    command: tar
-    args: ["-x", "-z", "-O", "fzf"]
-  executable: true
+  path: fzf
 
 ".local/bin/stern":
-  type: file
+  type: archive-file
   url: "https://github.com/stern/stern/releases/download/v{{ template "get-github-latest-version" list "stern/stern" $cache }}/stern_{{ template "get-github-latest-version" list "stern/stern" $cache }}_linux_{{ .chezmoi.arch }}.tar.gz"
-  filter:
-    command: tar
-    args: ["-x", "-z", "-O", "stern"]
-  executable: true
+  path: stern
 
 ".volta/bin":
   type: archive
