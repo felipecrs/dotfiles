@@ -35,35 +35,39 @@
 
 "usr/local/bin/docker-compose":
   type: file
-  url: "https://github.com/docker/compose-switch/releases/download/v{{ template "get-github-latest-version" list "docker/compose-switch" $cache }}/docker-compose-linux-{{ .chezmoi.arch }}"
+  {{ $composeVersion := includeTemplate "get-github-latest-version" (list "docker/compose-switch" $cache) }}
+  url: "https://github.com/docker/compose-switch/releases/download/v{{ $composeVersion }}/docker-compose-linux-{{ .chezmoi.arch }}"
   executable: true
 
 "usr/local/bin/git-lfs":
   type: archive-file
-  url: "https://github.com/git-lfs/git-lfs/releases/download/v{{ template "get-github-latest-version" list "git-lfs/git-lfs" $cache }}/git-lfs-linux-{{ .chezmoi.arch }}-v{{ template "get-github-latest-version" list "git-lfs/git-lfs" $cache }}.tar.gz"
+  {{ $gitLfsVersion := includeTemplate "get-github-latest-version" (list "git-lfs/git-lfs" $cache) }}
+  url: "https://github.com/git-lfs/git-lfs/releases/download/v{{ $gitLfsVersion }}/git-lfs-linux-{{ .chezmoi.arch }}-v{{ $gitLfsVersion }}.tar.gz"
   stripComponents: 1
   path: git-lfs
 
+{{ $dockerCredVersion := includeTemplate "get-github-latest-version" (list "docker/docker-credential-helpers" $cache) }}
+{{ $gcmVersion := includeTemplate "get-github-latest-version" (list "GitCredentialManager/git-credential-manager" $cache) }}
 {{ if .is_wsl }}
 "usr/bin/docker-credential-wincred.exe":
   type: file
-  url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}/docker-credential-wincred-v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}.windows-{{ .chezmoi.arch }}.exe"
+  url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ $dockerCredVersion }}/docker-credential-wincred-v{{ $dockerCredVersion }}.windows-{{ .chezmoi.arch }}.exe"
   executable: true
 
 "usr/local/share/gcm":
   type: archive
-  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}/gcm-win-x86-{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}.zip"
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ $gcmVersion }}/gcm-win-x86-{{ $gcmVersion }}.zip"
   exact: true
 {{ else }}
 "usr/local/share/gcm":
   type: archive
-  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}/gcm-linux_amd64.{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}.tar.gz"
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ $gcmVersion }}/gcm-linux_{{ .chezmoi.arch }}.{{ $gcmVersion }}.tar.gz"
   exact: true
 
 {{   if .is_gnome }}
 "usr/bin/docker-credential-secretservice":
   type: file
-  url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}/docker-credential-secretservice-v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}.linux-{{ .chezmoi.arch }}"
+  url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ $dockerCredVersion }}/docker-credential-secretservice-v{{ $dockerCredVersion }}.linux-{{ .chezmoi.arch }}"
   executable: true
 {{   end }}
 {{ end }}

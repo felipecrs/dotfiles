@@ -5,88 +5,101 @@
 
 ".oh-my-zsh":
   type: archive
-  url: "https://github.com/ohmyzsh/ohmyzsh/archive/{{ template "get-github-head-revision" list "ohmyzsh/ohmyzsh" $cache }}.tar.gz"
+  {{ $omzRevision := includeTemplate "get-github-head-revision" (list "ohmyzsh/ohmyzsh" $cache) }}
+  url: "https://github.com/ohmyzsh/ohmyzsh/archive/{{ $omzRevision }}.tar.gz"
   stripComponents: 1
   # waiting for https://github.com/twpayne/chezmoi/issues/1614#issuecomment-966524408
   # exact: true
 
 ".oh-my-zsh/custom/themes/powerlevel10k":
   type: archive
-  url: "https://github.com/romkatv/powerlevel10k/archive/{{ template "get-github-head-revision" list "romkatv/powerlevel10k" $cache }}.tar.gz"
+  {{ $p10kRevision := includeTemplate "get-github-head-revision" (list "romkatv/powerlevel10k" $cache) }}
+  url: "https://github.com/romkatv/powerlevel10k/archive/{{ $p10kRevision }}.tar.gz"
   stripComponents: 1
   exact: true
 
 ".oh-my-zsh/custom/plugins/zsh-syntax-highlighting":
   type: archive
-  url: "https://github.com/zsh-users/zsh-syntax-highlighting/archive/{{ template "get-github-head-revision" list "zsh-users/zsh-syntax-highlighting" $cache }}.tar.gz"
+  {{ $zshSyntaxHighlightingRevision := includeTemplate "get-github-head-revision" (list "zsh-users/zsh-syntax-highlighting" $cache) }}
+  url: "https://github.com/zsh-users/zsh-syntax-highlighting/archive/{{ $zshSyntaxHighlightingRevision }}.tar.gz"
   stripComponents: 1
   exact: true
 
 ".oh-my-zsh/custom/plugins/zsh-autosuggestions":
   type: archive
-  url: "https://github.com/zsh-users/zsh-autosuggestions/archive/{{ template "get-github-head-revision" list "zsh-users/zsh-autosuggestions" $cache }}.tar.gz"
+  {{ $zshAutoSuggestionsRevision := includeTemplate "get-github-head-revision" (list "zsh-users/zsh-autosuggestions" $cache) }}
+  url: "https://github.com/zsh-users/zsh-autosuggestions/archive/{{ $zshAutoSuggestionsRevision }}.tar.gz"
   stripComponents: 1
   exact: true
 
 ".oh-my-zsh/custom/plugins/zsh-completions":
   type: archive
-  url: "https://github.com/zsh-users/zsh-completions/archive/{{ template "get-github-head-revision" list "zsh-users/zsh-completions" $cache }}.tar.gz"
+  {{ $zshCompletionsRevision := includeTemplate "get-github-head-revision" (list "zsh-users/zsh-completions" $cache) }}
+  url: "https://github.com/zsh-users/zsh-completions/archive/{{ $zshCompletionsRevision }}.tar.gz"
   stripComponents: 1
   exact: true
 
 ".local/bin/direnv":
   type: file
-  url: "https://github.com/direnv/direnv/releases/download/v{{ template "get-github-latest-version" list "direnv/direnv" $cache }}/direnv.linux-{{ .chezmoi.arch }}"
+  {{ $direnvVersion := includeTemplate "get-github-latest-version" (list "direnv/direnv" $cache) }}
+  url: "https://github.com/direnv/direnv/releases/download/v{{ $direnvVersion }}/direnv.linux-{{ .chezmoi.arch }}"
   executable: true
 
 ".local/bin/kubecolor":
   type: archive-file
-  url: "https://github.com/hidetatz/kubecolor/releases/download/v{{ template "get-github-latest-version" list "hidetatz/kubecolor" $cache }}/kubecolor_{{ template "get-github-latest-version" list "hidetatz/kubecolor" $cache }}_Linux_{{ .uname_arch }}.tar.gz"
+  {{ $kubecolorVersion := includeTemplate "get-github-latest-version" (list "hidetatz/kubecolor" $cache) }}
+  url: "https://github.com/hidetatz/kubecolor/releases/download/v{{ $kubecolorVersion }}/kubecolor_{{ $kubecolorVersion }}_Linux_{{ .uname_arch }}.tar.gz"
   path: kubecolor
 
 ".local/bin/kubectx":
   type: archive-file
-  url: "https://github.com/ahmetb/kubectx/releases/download/v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}/kubectx_v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}_linux_{{ .uname_arch }}.tar.gz"
+  {{ $kubectxVersion := includeTemplate "get-github-latest-version" (list "ahmetb/kubectx" $cache) }}
+  url: "https://github.com/ahmetb/kubectx/releases/download/v{{ $kubectxVersion }}/kubectx_v{{ $kubectxVersion }}_linux_{{ .uname_arch }}.tar.gz"
   path: kubectx
 
 ".oh-my-zsh/custom/plugins/my-completions/_kubectx.zsh":
   type: file
-  url: "https://github.com/ahmetb/kubectx/raw/v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}/completion/_kubectx.zsh"
+  url: "https://github.com/ahmetb/kubectx/raw/v{{ $kubectxVersion }}/completion/_kubectx.zsh"
 
 ".local/bin/kubens":
   type: archive-file
-  url: "https://github.com/ahmetb/kubectx/releases/download/v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}/kubens_v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}_linux_{{ .uname_arch }}.tar.gz"
+  url: "https://github.com/ahmetb/kubectx/releases/download/v{{ $kubectxVersion }}/kubens_v{{ $kubectxVersion }}_linux_{{ .uname_arch }}.tar.gz"
   path: kubens
 
 ".oh-my-zsh/custom/plugins/my-completions/_kubens.zsh":
   type: file
-  url: "https://github.com/ahmetb/kubectx/raw/v{{ template "get-github-latest-version" list "ahmetb/kubectx" $cache }}/completion/_kubens.zsh"
+  url: "https://github.com/ahmetb/kubectx/raw/v{{ $kubectxVersion }}/completion/_kubens.zsh"
 
 # Required by kubectx and kubens
 ".local/bin/fzf":
   type: archive-file
-  url: "https://github.com/junegunn/fzf/releases/download/{{ template "get-github-latest-version" list "junegunn/fzf" $cache }}/fzf-{{ template "get-github-latest-version" list "junegunn/fzf" $cache }}-linux_{{ .chezmoi.arch }}.tar.gz"
+  {{ $fzfVersion := includeTemplate "get-github-latest-version" (list "junegunn/fzf" $cache) }}
+  url: "https://github.com/junegunn/fzf/releases/download/{{ $fzfVersion }}/fzf-{{ $fzfVersion }}-linux_{{ .chezmoi.arch }}.tar.gz"
   path: fzf
 
 ".local/bin/stern":
   type: archive-file
-  url: "https://github.com/stern/stern/releases/download/v{{ template "get-github-latest-version" list "stern/stern" $cache }}/stern_{{ template "get-github-latest-version" list "stern/stern" $cache }}_linux_{{ .chezmoi.arch }}.tar.gz"
+  {{ $sternVersion := includeTemplate "get-github-latest-version" (list "stern/stern" $cache) }}
+  url: "https://github.com/stern/stern/releases/download/v{{ $sternVersion }}/stern_{{ $sternVersion }}_linux_{{ .chezmoi.arch }}.tar.gz"
   path: stern
 
 ".volta/bin":
   type: archive
-  url: "https://github.com/volta-cli/volta/releases/download/v{{ template "get-github-latest-version" list "volta-cli/volta" $cache }}/volta-{{ template "get-github-latest-version" list "volta-cli/volta" $cache }}-linux.tar.gz"
+  {{ $voltaVersion := includeTemplate "get-github-latest-version" (list "volta-cli/volta" $cache) }}
+  url: "https://github.com/volta-cli/volta/releases/download/v{{ $voltaVersion }}/volta-{{ $voltaVersion }}-linux.tar.gz"
 
 {{ if not .is_devcontainer -}}
 {{   if .is_gnome -}}
 ".local/share/nautilus-python/extensions/code-nautilus.py":
   type: file
-  url: "https://raw.githubusercontent.com/harry-cpp/code-nautilus/{{ template "get-github-head-revision" list "harry-cpp/code-nautilus" $cache }}/code-nautilus.py"
+  {{ $codeNautilusRevision := includeTemplate "get-github-head-revision" (list "harry-cpp/code-nautilus" $cache) }}
+  url: "https://raw.githubusercontent.com/harry-cpp/code-nautilus/{{ $codeNautilusRevision }}/code-nautilus.py"
 
 {{      if not .is_wsl -}}
 ".local/bin/gnome-shell-extension-installer":
   type: file
-  url: "https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/{{ template "get-github-head-revision" list "brunelli/gnome-shell-extension-installer" $cache }}/gnome-shell-extension-installer"
+  {{ $gnomeExtInstallerRevision := includeTemplate "get-github-head-revision" (list "brunelli/gnome-shell-extension-installer" $cache) }}
+  url: "https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/{{ $gnomeExtInstallerRevision }}/gnome-shell-extension-installer"
   executable: true
 {{-     end }}
 
@@ -94,26 +107,31 @@
 
 ".local/bin/skopeo":
   type: file
-  url: "https://github.com/felipecrs/skopeo-bin/releases/download/v{{ template "get-github-latest-version" list "felipecrs/skopeo-bin" $cache }}/skopeo.linux-{{ .chezmoi.arch }}"
+  {{ $skopeoVersion := includeTemplate "get-github-latest-version" (list "felipecrs/skopeo-bin" $cache) }}
+  url: "https://github.com/felipecrs/skopeo-bin/releases/download/v{{ $skopeoVersion }}/skopeo.linux-{{ .chezmoi.arch }}"
   executable: true
 
-".deno/bin":
-  type: archive
-  url: "https://github.com/denoland/deno/releases/download/v{{ template "get-github-latest-version" list "denoland/deno" $cache }}/deno-x86_64-unknown-linux-gnu.zip"
-  include:
-    - deno
+".deno/bin/deno":
+  type: archive-file
+  {{ $denoVersion := includeTemplate "get-github-latest-version" (list "denoland/deno" $cache) }}
+  url: "https://github.com/denoland/deno/releases/download/v{{ $denoVersion }}/deno-{{ .uname_arch }}-unknown-linux-gnu.zip"
+  path: deno
 
 "{{ joinPath .fontsDir .terminalFont.fileName }}":
   type: file
-  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/v{{ template "get-github-latest-version" list "ryanoasis/nerd-fonts" $cache }}/patched-fonts/FiraCode/Regular/FiraCodeNerdFontMono-Regular.ttf"
+  {{ $nerdFontsRevision := includeTemplate "get-github-head-revision" (list "ryanoasis/nerd-fonts" $cache) }}
+  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/{{ $nerdFontsRevision }}/patched-fonts/FiraCode/Regular/FiraCodeNerdFontMono-Regular.ttf"
 
 {{    if .is_wsl -}}
-"{{ includeTemplate "get-external-scripts-dir" . }}/Install-Font.ps1":
+{{    $externalScriptsDir := includeTemplate "get-external-scripts-dir" . }}
+"{{ $externalScriptsDir }}/Install-Font.ps1":
   type: file
-  url: "https://raw.githubusercontent.com/ralish/PSWinGlue/{{ template "get-github-head-revision" list "ralish/PSWinGlue" $cache }}/Scripts/Install-Font.ps1"
-"{{ includeTemplate "get-external-scripts-dir" . }}/Uninstall-Font.ps1":
+  {{ $psWinGlueRevision := includeTemplate "get-github-head-revision" (list "ralish/PSWinGlue" $cache) }}
+  url: "https://raw.githubusercontent.com/ralish/PSWinGlue/{{ $psWinGlueRevision }}/Scripts/Install-Font.ps1"
+
+"{{ $externalScriptsDir }}/Uninstall-Font.ps1":
   type: file
-  url: "https://raw.githubusercontent.com/ralish/PSWinGlue/{{ template "get-github-head-revision" list "ralish/PSWinGlue" $cache }}/Scripts/Uninstall-Font.ps1"
+  url: "https://raw.githubusercontent.com/ralish/PSWinGlue/{{ $psWinGlueRevision }}/Scripts/Uninstall-Font.ps1"
 {{-   end }}
 
 {{- template "save-versions-and-revisions-cache" $cache -}}
