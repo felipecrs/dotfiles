@@ -1,8 +1,8 @@
 # make sdkman non-interactive, preferred for CI environments
 sdkman_auto_answer=true
 
-# perform automatic selfupdates
-sdkman_auto_update=false
+# check for newer versions and prompt for update
+sdkman_selfupdate_feature=false
 
 # other default settings
 sdkman_auto_complete=true
