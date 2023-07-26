@@ -4,7 +4,9 @@
 # in order to keep the same aliases on both shells. So keep in mind that any
 # code here must be compatible with bash and zsh.
 
-alias kubectl="kubecolor"
+if command -v kubectl >/dev/null; then
+  alias kubectl="kubecolor"
+fi
 
 refreshenv() {
   local shell
