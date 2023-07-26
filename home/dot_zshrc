@@ -115,6 +115,7 @@ plugins=(
   common-aliases
   ubuntu
   sudo
+  per-directory-history
   zsh-syntax-highlighting
   zsh-autosuggestions
   my-completions
