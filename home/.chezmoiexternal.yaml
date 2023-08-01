@@ -117,6 +117,12 @@
   url: "https://github.com/denoland/deno/releases/download/v{{ $denoVersion }}/deno-{{ .uname_arch }}-unknown-linux-gnu.zip"
   path: deno
 
+".deno/bin/tea":
+  type: archive-file
+  {{ $teaVersion := includeTemplate "get-github-latest-version" (list "teaxyz/cli" $cache) }}
+  url: "https://github.com/teaxyz/cli/releases/download/v{{ $teaVersion }}/tea-{{ $teaVersion }}+linux+{{ .uname_arch | replace "_" "-" }}.tar.xz"
+  path: tea
+
 "{{ joinPath .fontsDir .terminalFont.fileName }}":
   type: file
   {{ $nerdFontsVersion := includeTemplate "get-github-latest-version" (list "ryanoasis/nerd-fonts" $cache) }}
