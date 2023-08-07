@@ -1,6 +1,0 @@
-{{- /* Check if WSL is capable of running systemd. */ -}}
-{{- /* To support systemd, WSL needs to be installed from Microsoft Store, */ -}}
-{{- /* and it is the only version that also supports the --version flag. */ -}}
-{{- if ne (output "bash" "-c" "wsl.exe --version &>/dev/null || echo false" | trim) "false" -}}
-true
-{{- end -}}
