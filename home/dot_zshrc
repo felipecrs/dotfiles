@@ -1,31 +1,35 @@
-if [ -x "${HOME}/.local/bin/direnv" ]; then
-  eval "$("${HOME}/.local/bin/direnv" export zsh)"
+# Load .profile
+if [[ -r "${HOME}/.profile" ]]; then
+  # Do not use emulate here, as SDKMAN! will produce errors otherwise
+  source "${HOME}/.profile"
+fi
+
+# https://github.com/romkatv/powerlevel10k#how-do-i-initialize-direnv-when-using-instant-prompt
+if (( ${+commands[direnv]} )); then
+  emulate zsh -c "$(direnv export zsh)"
 fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+if [[ -r "${XDG_CACHE_HOME:-${HOME}/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-${HOME}/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-if [ -x "${HOME}/.local/bin/direnv" ]; then
-  eval "$("${HOME}/.local/bin/direnv" hook zsh)"
-fi
-
-# Load .profile
-if [ -f "$HOME/.profile" ]; then
-  source "$HOME/.profile"
+# https://github.com/romkatv/powerlevel10k#how-do-i-initialize-direnv-when-using-instant-prompt
+if (( ${+commands[direnv]} )); then
+  emulate zsh -c "$(direnv hook zsh)"
 fi
 
 # Load bash aliases
-if [ -f "$HOME/.bash_aliases" ]; then
-  source "$HOME/.bash_aliases"
+if [[ -r "${HOME}/.bash_aliases" ]]; then
+  # ksh is closer than sh to bash
+  emulate ksh -c "source '${HOME}/.bash_aliases'"
 fi
 
 # Enable homebrew zsh completions
-if type brew &>/dev/null; then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:$FPATH"
+if (( ${+commands[brew]} )); then
+  fpath+="$(brew --prefix)/share/zsh/site-functions"
 fi
 
 # Oh-My-Zsh configuration
@@ -52,14 +56,13 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Case-sensitive completion must be off. _ and - will be interchangeable.
 # HYPHEN_INSENSITIVE="true"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to automatically update without prompting.
-# DISABLE_UPDATE_PROMPT="true"
+# Uncomment one of the following lines to change the auto-update behavior
+zstyle ':omz:update' mode disabled  # disable automatic updates
+# zstyle ':omz:update' mode auto      # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
+# zstyle ':omz:update' frequency 13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
 DISABLE_MAGIC_FUNCTIONS="true"
@@ -118,9 +121,21 @@ plugins=(
   )
 
 # https://github.com/zsh-users/zsh-completions/issues/603
-fpath+="${ZSH_CUSTOM:-"$ZSH/custom"}/plugins/zsh-completions/src"
+fpath+="${ZSH_CUSTOM:-"${ZSH}/custom"}/plugins/zsh-completions/src"
 
-source "$ZSH/oh-my-zsh.sh"
+source "${ZSH}/oh-my-zsh.sh"
+
+# https://github.com/microsoft/vscode/issues/153400#issue-1286534600
+if [[ "${TERM_PROGRAM}" == "vscode" ]]; then
+  ITERM_SHELL_INTEGRATION_INSTALLED="Yes"
+fi
+
+# Fix kubectl completion with kubecolor
+if command -v kubectl >/dev/null; then
+  compdef kubecolor=kubectl
+fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+if [[ -f "${HOME}/.p10k.zsh" ]]; then
+  source "${HOME}/.p10k.zsh"
+fi

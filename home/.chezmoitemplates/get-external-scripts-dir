@@ -1,0 +1,1 @@
+{{- joinPath (trimPrefix (print .chezmoi.homeDir "/") .chezmoi.workingTree) "external-scripts" -}}

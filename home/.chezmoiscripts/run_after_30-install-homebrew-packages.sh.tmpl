@@ -35,7 +35,7 @@ if ! brew --version &>/dev/null; then
     brew_install_script=$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)
     CI=1 bash -c "${brew_install_script}"
   else
-    readonly homebrew_prefix="${home_homebrew_prefix}"
+    homebrew_prefix="${home_homebrew_prefix}"
     log_info "Installing to '${homebrew_prefix}' due to lack of permissions on '/home/linuxbrew'"
     c git clone https://github.com/Homebrew/brew "${homebrew_prefix}/Homebrew"
     c mkdir -p "${homebrew_prefix}/bin"
@@ -55,6 +55,9 @@ readonly unwanted_packages=(
   skopeo
   podman
   buildah
+  asciinema
+  kind
+  stern
 )
 
 for package in "${unwanted_packages[@]}"; do
@@ -69,13 +72,10 @@ readonly wanted_packages=(
   yq
   kubectl
   helm
-  kind
+  k3d
   dive
-  # {{ if .is_work }}
-  jfrog-cli
-  # {{ else }}
   gh
-  # {{ end }}
+  hadolint
 )
 
 missing_packages=()
@@ -89,10 +89,4 @@ done
 if [[ ${#missing_packages[@]} -gt 0 ]]; then
   log_task "Installing missing packages with Homebrew: ${missing_packages[*]}"
   brew install --force "${missing_packages[@]}"
-fi
-
-chezmoi_executable="{{ .chezmoi.executable }}"
-if [[ "${chezmoi_executable}" != *"/.linuxbrew/"* ]]; then
-  log_task "Uninstalling chezmoi not installed by Homebrew: ${chezmoi_executable}"
-  rm -f "${chezmoi_executable}"
 fi

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# We need to install ca-certificates before we add the APT repos, because some of them
+# may use newer CAs.
+
+# {{ include (joinPath .chezmoi.sourceDir ".chezmoitemplates/scripts-library") }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+log_task "Upgrading ca-certificates"
+
+# Ignore apt update error if it is due to expired certificate (because chances are that
+# the next command will fix it.
+if output="$(c sudo apt update --yes)" || [[ "${output}" == *"The certificate chain uses expired certificate."* ]]; then
+  echo "${output}"
+  true
+else
+  echo "${output}"
+  exit 1
+fi
+c sudo apt install --yes --no-install-recommends ca-certificates

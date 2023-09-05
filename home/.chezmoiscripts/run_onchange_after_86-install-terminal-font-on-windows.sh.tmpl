@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+# {{ $fontPath := joinPath .chezmoi.homeDir .fontsDir .terminalFont.fileName }}
+# {{ $externalScriptsDir := joinPath .chezmoi.homeDir (includeTemplate "get-external-scripts-dir" .) }}
+# {{ $installFontPs1Path := joinPath $externalScriptsDir "Install-Font.ps1" }}
+# The Uninstall-Font.ps1 is used by Install-Font.ps1
+# {{ $uninstallFontPs1Path := joinPath $externalScriptsDir "Uninstall-Font.ps1" }}
+
+# hashes:
+# {{ include $fontPath | sha256sum }}
+# {{ include $installFontPs1Path | sha256sum }}
+# {{ include $uninstallFontPs1Path | sha256sum }}
+
+# shellcheck disable=SC2016
+font_path_for_win="$(wslpath -w '{{ $fontPath }}')"
+
+# shellcheck disable=SC2016
+install_font_ps1_path='{{ $installFontPs1Path }}'
+install_font_ps1_path_for_win="$(wslpath -w "${install_font_ps1_path}")"
+
+log_task "Installing terminal font '{{ .terminalFont.name }}' on Windows"
+
+log_manual_action "If this is the first time installing the font, please restart Windows Terminal and VS Code to ensure they recognize the font"
+
+not_during_test c PowerShell.exe -NoProfile -ExecutionPolicy Bypass \
+  -File "${install_font_ps1_path_for_win}" \
+  -Path "${font_path_for_win}" \
+  -Scope User \
+  -Method Manual \
+  -UninstallExisting

@@ -1,5 +1,0 @@
-{{- $versionID := .chezmoi.osRelease.versionID -}}
-{{- if eq $versionID "21.10" -}}
-{{-   $versionID = "21.04" -}}
-{{- end -}}
-deb [signed-by=/usr/share/keyrings/kubic-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ $versionID }}/ /

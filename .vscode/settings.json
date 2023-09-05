@@ -2,6 +2,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.shellcheck": true
   },
+  // Disable ShellCheck from Bash IDE as we use VS Code ShellCheck
+  "bashIde.shellcheckPath": "",
   "cSpell.words": [
     "C",
     "CODESPACES",
@@ -29,7 +31,6 @@
     "wslpath",
     "wslvar"
   ],
-  "shellcheck.customArgs": ["-x"],
   "[json]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -56,10 +57,8 @@
     "**/zshenv": true,
     "**/*.zsh-theme": true,
     // custom
-    "**/*_zshrc": true,
-    "**/*_antigenrc": true
+    "**/*_zshrc": true
   },
-
   "files.associations": {
     "**/home/install": "shellscript",
     "*_zshrc": "shellscript",
@@ -69,7 +68,7 @@
     "*_bash_aliases.tmpl": "shellscript",
     "**/home/**/run_*": "shellscript",
     "**/home/**/executable_*": "shellscript",
-    "**/home/**/modify_*": "shellscript",
+    "**/home/**/modify_*": "helm",
     "*.yaml.tmpl": "helm",
     ".chezmoi*.yaml": "helm",
     ".chezmoiignore": "helm",

@@ -1,39 +1,61 @@
-#!/bin/bash
+# shellcheck shell=bash
 
 # This file is automatically sourced by bash, and it's also sourced in .zshrc
 # in order to keep the same aliases on both shells. So keep in mind that any
 # code here must be compatible with bash and zsh.
 
-refreshenv() {
-  local -r shell=$(ps -p $$ -ocomm=)
+if command -v kubectl >/dev/null; then
+  alias kubectl="kubecolor"
+fi
 
-  exec "$shell"
+refreshenv() {
+  local shell
+
+  shell=$(ps -p $$ -ocomm=) &&
+    exec "${shell}"
 }
 
 mcd() {
-  # shellcheck disable=SC2164
-  mkdir -p "$1" && cd "$1"
+  local dir="$1"
+
+  mkdir -p "${dir}" &&
+    cd "${dir}"
 }
 
 cdr() {
-  # shellcheck disable=SC2164
-  cd "${REPOS_HOME?}"
+  local repo="${1:-}"
+
+  cd "${HOME}/repos/${repo}"
 }
 
 # See: https://github.com/twpayne/chezmoi/issues/854#issuecomment-675160348
-chezmoi-re-run-scripts() {
-  rm -f "$HOME/.config/chezmoi/chezmoistate.boltdb" &&
-    chezmoi init --apply
+chezmoi-re-run-scripts() { (
+  set -ex
+
+  rm -f "${HOME}/.config/chezmoi/chezmoistate.boltdb"
+  chezmoi init --apply
+); }
+
+# Merge all ~/.kube/*.kubeconfig.yaml into ~/.kube/config
+merge-kubeconfigs() {
+  # shellcheck disable=SC2312
+  KUBECONFIG="$(printf '%s:' "${HOME}"/.kube/*.kubeconfig.yaml | sed 's/:$//')" kubectl config view --flatten | tee "${HOME}/.kube/config"
 }
 
 # {{ if .is_wsl }}
 gsudo() {
-  local shell && shell=$(ps -p $$ -ocomm=) &&
-    gsudo.exe wsl -d "${WSL_DISTRO_NAME?}" -e "$shell" "-c" "$*"
+  local shell
+
+  shell=$(ps -p $$ -ocomm=) &&
+    gsudo.exe wsl -d "${WSL_DISTRO_NAME?}" -e "${shell}" "-c" "$*"
 }
 
 cdw() {
-  # shellcheck disable=SC2164
-  cd "${WIN_HOME?}"
+  local user_profile
+  local win_home
+
+  user_profile=$(wslvar USERPROFILE) &&
+    win_home=$(wslpath "${user_profile}") &&
+    cd "${win_home}"
 }
 # {{ end }}

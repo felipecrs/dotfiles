@@ -1,12 +1,12 @@
 {{ if not .is_gnome }}
 etc/apt/sources.list.d/vscode.list
 etc/apt/sources.list.d/google-chrome.list
-etc/apt/sources.list.d/communitheme-ppa.list
-{{ else if not (eq .chezmoi.osRelease.versionCodename "bionic") }}
-etc/apt/sources.list.d/communitheme-ppa.list
 {{ end }}
 
-{{ if not .is_wsl }}
+{{ if .is_wsl }}
+etc/ssh
+.chezmoiscripts/*-reload-sshd.sh
+{{ else }}
 etc/wsl.conf
 .chezmoiscripts/*-fix-permissions.sh
 .chezmoiscripts/*-restore-permissions.sh

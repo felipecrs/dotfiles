@@ -16,13 +16,17 @@ if [[ -f '{{ .chezmoi.executable }}' ]]; then
 else
   # chezmoi is installed with Homebrew
   ensure_path_entry "${HOME}/.linuxbrew/bin" "/home/linuxbrew/.linuxbrew/bin"
-  executable='chezmoi'
+  executable=$(command -v chezmoi)
 fi
 
-# exec bypasses the shell and executes the command directly, so we call it here first
-sudo true
+# Ensure the folders are created, because otherwise they will be created as
+# root, including the ~/.cache and ~/.config, which can cause other programs
+# to stop working.
+# shellcheck disable=SC2016
+mkdir -p '{{ $configDir }}' '{{ $cacheDir }}'
 
-exec sudo "${executable}" "$@" \
+sudo exec --preserve-env=PATH -- \
+  "${executable}" "$@" \
   --config='{{ $configFile }}' \
   --persistent-state='{{ $persistentStateFile }}' \
   --cache='{{ $cacheDir }}'

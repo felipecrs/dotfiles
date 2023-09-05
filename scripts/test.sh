@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# ARG_OPTIONAL_REPEATED([variant],[v],[The variant of the test to run (default is devcontainer,\npossible values are devcontainer, wsl and gnome)],[])
-# ARG_OPTIONAL_REPEATED([os],[o],[The OS to run the tests against (default is ubuntu-20.04,\nexamples are ubuntu-18.04, ubuntu-20.04, the full list can be found at:\nhttps://mcr.microsoft.com/v2/vscode/devcontainers/base/tags/list)],[])
+# ARG_OPTIONAL_REPEATED([variant],[v],[The variant of the test to run. Possible values: devcontainer, wsl, and gnome. Default: devcontainer.],[])
+# ARG_OPTIONAL_REPEATED([os],[o],[The OS to run the tests against. The list of possible values can be found at https://mcr.microsoft.com/v2/devcontainers/base/tags/list. Examples: ubuntu-18.04, ubuntu-22.04, and alpine. Default: ubuntu-20.04.],[])
+# ARG_OPTIONAL_BOOLEAN([debug],[d],[Whether to enable debug logs or not],[off])
 # ARG_OPTIONAL_SINGLE([pre-script],[],[The custom script to run before the installation],[])
 # ARG_HELP([Tests the installation of the dotfiles in differents scenarios],[])
 # ARGBASH_SET_INDENT([  ])
@@ -19,7 +20,7 @@ die() {
 }
 
 begins_with_short_option() {
-  local first_option all_short_options='voh'
+  local first_option all_short_options='vodh'
   first_option="${1:0:1}"
   test "${all_short_options}" = "${all_short_options/${first_option}/}" && return 1 || return 0
 }
@@ -27,16 +28,15 @@ begins_with_short_option() {
 # THE DEFAULTS INITIALIZATION - OPTIONALS
 _arg_variant=()
 _arg_os=()
+_arg_debug="off"
 _arg_pre_script=
 
 print_help() {
   printf '%s\n' "Tests the installation of the dotfiles in differents scenarios"
-  printf 'Usage: %s [-v|--variant <arg>] [-o|--os <arg>] [--pre-script <arg>] [-h|--help]\n' "$0"
-  printf '\t%s\n' "-v, --variant: The variant of the test to run (default is devcontainer,
-		possible values are devcontainer, wsl and gnome) (empty by default)"
-  printf '\t%s\n' "-o, --os: The OS to run the tests against (default is ubuntu-20.04,
-		examples are ubuntu-18.04, ubuntu-20.04, the full list can be found at:
-		https://mcr.microsoft.com/v2/vscode/devcontainers/base/tags/list) (empty by default)"
+  printf 'Usage: %s [-v|--variant <arg>] [-o|--os <arg>] [-d|--(no-)debug] [--pre-script <arg>] [-h|--help]\n' "$0"
+  printf '\t%s\n' "-v, --variant: The variant of the test to run. Possible values: devcontainer, wsl, and gnome. Default: devcontainer. (empty by default)"
+  printf '\t%s\n' "-o, --os: The OS to run the tests against. The list of possible values can be found at https://mcr.microsoft.com/v2/devcontainers/base/tags/list. Examples: ubuntu-18.04, ubuntu-22.04, and alpine. Default: ubuntu-20.04. (empty by default)"
+  printf '\t%s\n' "-d, --debug, --no-debug: Whether to enable debug logs or not (off by default)"
   printf '\t%s\n' "--pre-script: The custom script to run before the installation (no default)"
   printf '\t%s\n' "-h, --help: Prints help"
 }
@@ -66,6 +66,17 @@ parse_commandline() {
       ;;
     -o*)
       _arg_os+=("${_key##-o}")
+      ;;
+    -d | --no-debug | --debug)
+      _arg_debug="on"
+      test "${1:0:5}" = "--no-" && _arg_debug="off"
+      ;;
+    -d*)
+      _arg_debug="on"
+      _next="${_key##-d}"
+      if test -n "${_next}" -a "${_next}" != "${_key}"; then
+        { begins_with_short_option "${_next}" && shift && set -- "-d" "-${_next}" "$@"; } || die "The short option '${_key}' can't be decomposed to ${_key:0:2} and -${_key:2}, because ${_key:0:2} doesn't accept value and '-${_key:2:1}' doesn't correspond to a short option."
+      fi
       ;;
     --pre-script)
       test $# -lt 2 && die "Missing value for the optional argument '${_key}'." 1
@@ -108,14 +119,25 @@ run_test() {
   local -r setup_script="$2"
 
   cmd time docker run --rm --init --interactive --user vscode \
-    --volume "${dotfiles_root}:/home/vscode/.dotfiles:ro" \
-    "mcr.microsoft.com/vscode/devcontainers/base:${os}" \
+    --env TERM --env COLORTERM \
+    --volume "${dotfiles_root}:/original-dotfiles:ro" \
+    "mcr.microsoft.com/devcontainers/base:${os}" \
     bash <<EOF
 set -euxo pipefail
+
+mkdir -p ~/.dotfiles
+rsync --archive --no-owner --exclude ".git/" /original-dotfiles/ ~/.dotfiles/
 
 ${_arg_pre_script}
 
 ${setup_script}
+
+if [[ "${debug}" == "on" ]]; then
+  export DOTFILES_DEBUG=true
+fi
+
+export DOTFILES_TEST=true
+echo 'Defaults env_keep += "DOTFILES_TEST"' | sudo tee /etc/sudoers.d/env_keep
 
 ~/.dotfiles/install.sh
 
@@ -132,11 +154,11 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 dotfiles_root="$(realpath "${script_dir}/..")"
 
+debug="${_arg_debug}"
 variants=("${_arg_variant[@]}")
 if ((${#variants[@]} == 0)); then
   variants=("devcontainer")
 fi
-
 oses=("${_arg_os[@]}")
 if ((${#oses[@]} == 0)); then
   oses=("ubuntu-20.04")
@@ -146,10 +168,12 @@ for variant in "${variants[@]}"; do
   for os in "${oses[@]}"; do
     echo "Testing variant '${variant}' with OS '${os}'"
 
-    if [[ "${variant}" == "devcontainer" ]]; then
+    case "${variant}" in
+    devcontainer)
       run_test "${os}" "export REMOTE_CONTAINERS=true"
+      ;;
 
-    elif [[ "${variant}" == "wsl" ]]; then
+    wsl)
       run_test "${os}" "$(
         # shellcheck disable=SC2312
         cat <<'EOF'
@@ -173,16 +197,23 @@ sudo chmod +x /usr/local/bin/wslvar
 
 EOF
       )"
+      ;;
 
-    elif [[ "${variant}" == "gnome" ]]; then
+    gnome)
       run_test "${os}" "$(
         # shellcheck disable=SC2312
         cat <<'EOF'
-sudo apt update
+sudo apt update --yes
 sudo apt install -y --no-install-recommends gnome-shell
 EOF
       )"
-    fi
+      ;;
+
+    *)
+      echo "Variant '${variant}' not supported." >&2
+      exit 1
+      ;;
+    esac
   done
 done
 

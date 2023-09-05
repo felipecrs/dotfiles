@@ -1,133 +1,124 @@
-# Felipe Santos' dotfiles <!-- omit in toc -->
+# Felipe Santos' dotfiles
 
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/felipecrs/dotfiles#scripts)
+Bootstrap your Ubuntu in a single command!
 
-Bootstrap your Ubuntu in a few minutes!
+![Sample dotfiles image](https://user-images.githubusercontent.com/29582865/173688885-acd1e312-4741-4ec1-bc9d-b1f31e289749.png)
 
-![Hello dotfiles! image](https://user-images.githubusercontent.com/29582865/112045407-95518600-8b29-11eb-8218-128fd2e9805a.png)
+This dotfiles repository is currently aimed for [**Ubuntu on WSL**](https://ubuntu.com/wsl), [**Ubuntu Server**](https://ubuntu.com/server), and [**Ubuntu Desktop**](https://ubuntu.com/desktop), tested against versions **20.04** and **22.04**. See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10).
 
-This dotfiles repository is currently aimed for [**Ubuntu on WSL**](https://ubuntu.com/wsl), **Ubuntu Server**, and **Ubuntu Desktop**, tested with **Ubuntu 18.04** and **Ubuntu 20.04**. See how to get started with WSL [here](https://docs.microsoft.com/pt-br/windows/wsl/install-win10). It's also suitable for use in [**GitHub Codespaces**](https://github.com/features/codespaces) and [**VS Code Remote - Containers**](https://code.visualstudio.com/docs/remote/containers).
+It's also suitable for use in [**GitHub Codespaces**](https://docs.github.com/codespaces/customizing-your-codespace/personalizing-codespaces-for-your-account#dotfiles), [**Gitpod**](https://www.gitpod.io/docs/config-dotfiles), [**VS Code Remote - Containers**](https://code.visualstudio.com/docs/remote/containers#_personalizing-with-dotfile-repositories), or even Linux distributions that are not Ubuntu, through the [**minimum mode**](#minimum-mode).
 
-This repository is managed with [`chezmoi`](https://chezmoi.io).
+Managed with [`chezmoi`](https://chezmoi.io), a great dotfiles manager.
 
-## Table of contents <!-- omit in toc -->
+## Getting started
 
-- [Get started](#get-started)
-  - [1. Setup the font](#1-setup-the-font)
-  - [2. Install the dotfiles](#2-install-the-dotfiles)
-  - [Convenience script](#convenience-script)
-  - [Install the dotfiles manually](#install-the-dotfiles-manually)
-- [Forking guide](#forking-guide)
-- [`scripts/`](#scripts)
-  - [`create_alternative_chrome_shortcut.sh`](#create_alternative_chrome_shortcutsh)
-    - [Usage](#usage)
-    - [Examples](#examples)
-    - [Demo](#demo)
-
----
-
-## Get started
-
-The current state of this dotfiles uses the zsh theme [Powerlevel10k](https://github.com/romkatv/powerlevel10k), so it requires you to install a font on your host machine with support for [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts). Currently I use `FiraCode Nerd Font`. You have to:
-
-### 1. Setup the font
-
-In Ubuntu Desktop, the dotfiles installation will take care of installing the font and set it up in GNOME Terminal. On Windows, you can install it with the following steps:
-
-1. [Download it by clicking here](https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Regular/complete/Fira%20Code%20Regular%20Nerd%20Font%20Complete.ttf).
-2. Open it and click in _Install_.
-
-Once you have it installed, you have to configure your terminal applications to use it. **To configure VS Code**:
-
-> 💡 You need to restart both VS Code or Windows Terminal after installing the font before using it.
-
-1. On VS Code, press `Ctrl`+`,` to open the settings.
-2. Search for "Terminal Font Family", and write `FiraCode Nerd Font` in the entry named _Terminal › Integrated: Font Family_. Like below:
-
-   ![VS Code font configuration](https://user-images.githubusercontent.com/29582865/112052025-5cb5aa80-8b31-11eb-8e85-a4eb9e1a09a8.png)
-
-**To configure Windows Terminal**:
-
-1. On Windows Terminal, press `Ctrl`+`,` to open the settings.
-2. Click in _Open JSON file_ in the bottom left side. It will open the `settings.json` file in your text editor.
-3. Insert a new `fontFace` key under `profiles.defaults` with the value `FiraCode Nerd Font`, something like:
-
-   ```json
-   {
-     "profiles": {
-       "defaults": {
-         // Put settings here that you want to apply to all profiles.
-         "fontFace": "FiraCode Nerd Font"
-       }
-     }
-   }
-   ```
-
-**Now you are ready to install the dotfiles.**
-
-### 2. Install the dotfiles
-
-You can use the [convenience script](./clone_and_install.sh) to install the dotfiles pretty quickly, and it will install Git in case you don't have it already. Simply run the following command in your terminal:
+You can use the [convenience script](./scripts/install_dotfiles.sh) to install the dotfiles on any machine with a single command. Simply run the following command in your terminal:
 
 ```bash
 sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
 ```
 
-> 💡 We use `wget` here because it comes preinstalled with most of the Ubuntu versions. But you can also use `curl`:
+> 💡 We use `wget` here because it comes preinstalled with most Ubuntu versions. But you can also use `curl`:
 >
 > ```bash
 >  sh -c "$(curl -fsSL https://git.io/felipecrs-dotfiles)"
 > ```
 
-**If you followed these steps so far, that means you finished installing the dotfiles already. Have fun!**
+### Demo
+
+https://user-images.githubusercontent.com/29582865/173691636-63a016b2-3e9b-49a4-bb7c-5514c28a77a3.mp4
+
+### Minimum mode
+
+The installation will ask if you want a **minimum mode installation**. The minimum mode only installs the needed dotfiles for the command prompt and is compatible with more distributions other than Ubuntu.
+
+It will be enabled by default when running in a Dev Container or in distributions other than Ubuntu. For example, I use it in order to bring my environment to the [Home Assistant VS Code Add-on](https://github.com/hassio-addons/addon-vscode).
+
+## Configuring the terminal font
+
+This dotfiles uses the ZSH theme [Powerlevel10k](https://github.com/romkatv/powerlevel10k), so it requires you to install a font on your host machine with support for the [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) glyphs. I recommend the [`FiraCode Nerd Font Mono`](https://github.com/ryanoasis/nerd-fonts/tree/HEAD/patched-fonts/FiraCode#readme).
+
+For **WSL** and **Ubuntu Desktop**, the dotfiles installation will automatically take care of installing the font and set it up for you in **VS Code**, **Windows Terminal** (for WSL), and **GNOME Terminal** (for Ubuntu Desktop).
+
+On other systems or terminal emulators, **you will need to configure it manually**. Here are some tips:
+
+### Installing the font on **Windows**
+
+1. [Download it by clicking here](https://raw.githubusercontent.com/ryanoasis/nerd-fonts/HEAD/patched-fonts/FiraCode/Regular/FiraCodeNerdFontMono-Regular.ttf).
+2. Open it and click in **_Install_**.
+3. Restart any applications that you want to load the font into.
+
+### Configuring the font in **VS Code**
+
+1. On **VS Code**, press <kbd>Ctrl</kbd>+<kbd>,</kbd> to open the settings.
+2. Search for "**Terminal Font Family**", and write `FiraCode Nerd Font Mono` in the entry named **_Terminal › Integrated: Font Family_**. Like below:
+
+   ![VS Code font configuration example](https://user-images.githubusercontent.com/29582865/218275934-13c6579b-e470-47cf-982d-a192c9627c8e.png)
+
+### Configuring the font in **Windows Terminal**
+
+1. On **Windows Terminal**, press <kbd>Ctrl</kbd>+<kbd>,</kbd> to open the settings.
+2. Go to **_Profiles -> Defaults_** in the left panel. Then, go to **_Additional settings -> Appearance_**.
+3. At **_Text -> Font face_**, select **_FiraCode Nerd Font Mono_**. Like below:
+
+   ![Windows Terminal font configuration example](https://user-images.githubusercontent.com/29582865/218276062-1b8a299c-cef3-4e80-b557-66cb5ff8a78b.png)
 
 ---
 
+## Documentation
+
+**If you followed the steps above so far, you already finished installing the dotfiles. Have fun!**
+
+The below information is more for reference purposes.
+
 ### Convenience script
 
-The previous step used the [convenience script](./clone_and_install.sh) to install this dotfiles. There are some extra options that you can use to tweak the installation if you need.
+The [getting started](#getting-started) step used the [convenience script](./scripts/install_dotfiles.sh) to install this dotfiles. There are some extra options that you can use to tweak the installation if you need.
 
-The convenience script supports some environment variables:
+It supports some environment variables:
 
-- `DOTFILES_REPO_HOST`: Default to `https://github.com`.
-- `DOTFILES_USER`: Default to `felipecrs`.
-- `DOTFILES_BRANCH`: Default to `master`.
+- `DOTFILES_REPO_HOST`: Defaults to `https://github.com`.
+- `DOTFILES_USER`: Defaults to `felipecrs`.
+- `DOTFILES_BRANCH`: Defaults to `master`.
 
-For example, you can clone use it to clone the dotfiles repository on branch `beta` with:
+For example, you can use it to clone and install the dotfiles repository at the `beta` branch with:
 
-```bash
+```console
 DOTFILES_BRANCH=beta sh -c "$(wget -qO- https://git.io/felipecrs-dotfiles)"
 ```
 
-### Install the dotfiles manually
+### Installing without the convenience script
 
 If you prefer not to use the convenience script to install the dotfiles, you can also do it manually:
 
 ```bash
 git clone https://github.com/felipecrs/dotfiles "$HOME/.dotfiles"
-"$HOME/.dotfiles/install"
+
+"$HOME/.dotfiles/install.sh"
 ```
-
-## Forking guide
-
-If you are forking this repository, you'll have to edit the following areas:
-
-- [`README.md`](./README.md)
-  - Change `https://git.io/felipecrs-dotfiles` to `https://raw.githubusercontent.com/<your-username>/dotfiles/master/scripts/install_dotfiles.sh`
-- [`scripts/install_dotfiles.sh`](./scripts/install_dotfiles.sh)
-  - Change `felipecrs` to `<your-username>`
-- [`.chezmoi.toml.tmpl`](./.chezmoi.toml.tmpl)
-  - Change personal and work name and email to yours.
-
-Where `<your-username>` is your GitHub username or organization name.
 
 ---
 
-## [`scripts/`](scripts/)
+### Forking guide
 
-There are some scripts here to help you automate tricky activities when setting up your computer.
+If you are forking this repository, don't forget to change the following places:
 
-If you already have this dotfiles [installed](#get-started), you can use the scripts right away. Or, if you want to run it without installing the dotfiles, you can use something like:
+- [`README.md`](./README.md)
+  - Replace all occurrences of `https://git.io/felipecrs-dotfiles` with `https://raw.githubusercontent.com/<your-username>/dotfiles/HEAD/scripts/install_dotfiles.sh`
+- [`scripts/install_dotfiles.sh`](./scripts/install_dotfiles.sh)
+  - Replace all occurrences of `felipecrs` with `<your-username>`
+- [`home/.chezmoi.yaml.tmpl`](./home/.chezmoi.yaml.tmpl)
+  - Change the name and email to yours.
+
+Where `<your-username>` is your GitHub username.
+
+---
+
+### Extra scripts
+
+There are some scripts here to help you automate tricky activities when setting up your machine.
+
+If you already have this dotfiles [installed](#getting-started), you can use these scripts right away. Or, if you want to run it without installing the dotfiles, you can do something like:
 
 ```bash
 bash -c "$(curl -fsSL "https://raw.githubusercontent.com/felipecrs/dotfiles/master/scripts/<script-name>")" -- <arguments>
@@ -139,9 +130,9 @@ Just replace `<script-name>` and `<arguments>` with the desired values. Example:
 bash -c "$(curl -fsSL "https://raw.githubusercontent.com/felipecrs/dotfiles/master/scripts/create_alternative_chrome_shortcut.sh")" -- --force
 ```
 
-### [`create_alternative_chrome_shortcut.sh`](scripts/create_alternative_chrome_shortcut.sh)
+#### [`create_alternative_chrome_shortcut.sh`](scripts/create_alternative_chrome_shortcut.sh)
 
-#### Usage
+##### Usage
 
 ```sh-session
 $ scripts/create_alternative_chrome_shortcut.sh --help
@@ -158,12 +149,12 @@ Please check the following URL for more information:
   https://github.com/felipecrs/dotfiles#create_alternative_chrome_shortcutsh
 ```
 
-#### Examples
+##### Examples
 
 ```bash
 scripts/create_alternative_chrome_shortcut.sh Personal
 ```
 
-#### Demo
+##### Demo
 
 ![Opening two Chrome instances using different icons](./docs/images/create_alternative_chrome_shortcut.gif)

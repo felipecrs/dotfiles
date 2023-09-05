@@ -10,17 +10,6 @@
     command: gpg
     args: ["--dearmor"]
 
-{{ $versionID := .chezmoi.osRelease.versionID }}
-{{ if eq $versionID "21.10" }}
-{{   $versionID = "21.04" }}
-{{ end }}
-"usr/share/keyrings/kubic-archive-keyring.gpg":
-  type: file
-  url: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ $versionID }}/Release.key"
-  filter:
-    command: gpg
-    args: ["--dearmor"]
-
 "usr/share/keyrings/git-core-ppa-archive-keyring.gpg":
   type: file
   url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xE1DD270288B4E6030699E45FA1715D88E1DF1F24"
@@ -42,48 +31,44 @@
   filter:
     command: gpg
     args: ["--dearmor"]
-
-{{   if eq .chezmoi.osRelease.versionCodename "bionic" }}
-"usr/share/keyrings/communitheme-ppa-archive-keyring.gpg":
-  type: file
-  url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xDEE9D5E11727231736FD173F03D12CDECFB24D48"
-  filter:
-    command: gpg
-    args: ["--dearmor"]
-{{   end }}
 {{ end }}
 
 "usr/local/bin/docker-compose":
   type: file
-  url: "https://github.com/docker/compose-switch/releases/download/v{{ template "get-github-latest-version" list "docker/compose-switch" $cache }}/docker-compose-linux-{{ .chezmoi.arch }}"
+  {{ $composeVersion := includeTemplate "get-github-latest-version" (list "docker/compose-switch" $cache) }}
+  url: "https://github.com/docker/compose-switch/releases/download/v{{ $composeVersion }}/docker-compose-linux-{{ .chezmoi.arch }}"
   executable: true
 
+"usr/local/bin/git-lfs":
+  type: archive-file
+  {{ $gitLfsVersion := includeTemplate "get-github-latest-version" (list "git-lfs/git-lfs" $cache) }}
+  url: "https://github.com/git-lfs/git-lfs/releases/download/v{{ $gitLfsVersion }}/git-lfs-linux-{{ .chezmoi.arch }}-v{{ $gitLfsVersion }}.tar.gz"
+  stripComponents: 1
+  path: git-lfs
+
+{{ $dockerCredVersion := includeTemplate "get-github-latest-version" (list "docker/docker-credential-helpers" $cache) }}
+{{ $gcmVersion := includeTemplate "get-github-latest-version" (list "GitCredentialManager/git-credential-manager" $cache) }}
 {{ if .is_wsl }}
 "usr/bin/docker-credential-wincred.exe":
   type: file
-  url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}/docker-credential-wincred-v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}-{{ .chezmoi.arch }}.zip"
+  url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ $dockerCredVersion }}/docker-credential-wincred-v{{ $dockerCredVersion }}.windows-{{ .chezmoi.arch }}.exe"
   executable: true
-  filter:
-    command: zcat
 
-"usr/local/share/gcm-core":
+"usr/local/share/gcm":
   type: archive
-  url: "https://glare.vercel.app/GitCredentialManager/git-credential-manager@v{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}/gcmcore-win-x86.+.zip$"
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ $gcmVersion }}/gcm-win-x86-{{ $gcmVersion }}.zip"
   exact: true
-{{ else if not .is_dockerfile }}
-"usr/local/share/gcm-core":
+{{ else }}
+"usr/local/share/gcm":
   type: archive
-  url: "https://glare.vercel.app/GitCredentialManager/git-credential-manager@v{{ template "get-github-latest-version" list "GitCredentialManager/git-credential-manager" $cache }}/gcmcore-linux_amd64.+.tar.gz$"
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ $gcmVersion }}/gcm-linux_{{ .chezmoi.arch }}.{{ $gcmVersion }}.tar.gz"
   exact: true
 
 {{   if .is_gnome }}
 "usr/bin/docker-credential-secretservice":
   type: file
-  url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}/docker-credential-secretservice-v{{ template "get-github-latest-version" list "docker/docker-credential-helpers" $cache }}-{{ .chezmoi.arch }}.tar.gz"
+  url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ $dockerCredVersion }}/docker-credential-secretservice-v{{ $dockerCredVersion }}.linux-{{ .chezmoi.arch }}"
   executable: true
-  filter:
-    command: tar
-    args: ["-xzOf-"]
 {{   end }}
 {{ end }}
 

@@ -1,46 +1,49 @@
 [user]
-	name = {{ .name }}
-	email = {{ .email }}
+name = {{ .name }}
+email = {{ .email }}
+
 [core]
-  autocrlf = input
-  safecrlf = false
-  eol = lf
-  editor = {{ .editor }}
-[diff]
-  tool = vscode
+editor = {{ .editor }}
+
 [difftool "vscode"]
-  cmd = code --wait --diff $LOCAL $REMOTE
-[merge]
-  tool = vscode
+cmd = code --wait --diff $LOCAL $REMOTE
+
 [mergetool "vscode"]
-  cmd = code --wait $MERGED
-[pull]
-  {{- if .is_work }}
-  rebase = true
-  {{- end }}
+cmd = code --wait $MERGED
+
+[diff]
+tool = vscode
+
+[merge]
+autoStash = true
+tool = vscode
+
 [rebase]
-  autostash = true
+autoStash = true
+
+[push]
+autoSetupRemote = true
+
 [alias]
-  s = status
-  c = commit
-  ca = commit --amend
-  caa = ca -a
-  cane = ca --no-edit
-  caane = cane -a
-  co = checkout
-  cob = checkout -b
-  cz = !npx -p commitizen cz
-  cp = cherry-pick
-  set-profile = "!f() { if [ \"$1\" = \"personal\" ]; then git config user.name \"{{ .personal_name }}\" && git config user.email \"{{ .personal_email}}\"; elif [ \"$1\" = \"work\" ]; then git config user.name \"{{ .work_name }}\" && git config user.email \"{{ .work_email }}\"; else echo \"Accepted values: personal, work\" && return 1; fi; }; f"
-  fully-clean = "!f() { set -v; branch="$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)"; git checkout $branch; git fetch origin $branch; git clean -fd; }; f"
-  get-current-branch = "!git branch --show-current | grep ."
-  rr = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; git reset --hard "origin/$branch"; }; f"
-  pfor = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; git push origin "HEAD:refs/for/$branch"; }; f"
-  psfor = "!f() { set -ex; git caane; git pfor "$@"; }; f"
-  pdraft = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; git push origin "HEAD:refs/drafts/$branch"; }; f"
-  psdraft = "!f() { set -ex; git caane; git pdraft "$@"; }; f"
-  plr = pull --rebase
-  plro = pull --rebase origin
-  prune-refs = fetch --prune --prune-tags
-  hist = log --pretty=format:'%C(yellow)%h%Creset %ad | %s%d %Cgreen[%an]%Creset' --graph --date=short
-  apply-gitignore = "!set -ex; git rm -r --cached . >/dev/null; git add ."
+s = status
+c = commit
+ca = commit --amend
+caa = ca -a
+cane = ca --no-edit
+caane = cane -a
+co = checkout
+cob = checkout -b
+cp = cherry-pick
+get-default-branch = "!f() { set -ex; remote="${1:-"origin"}"; git ls-remote --symref "${remote}" HEAD | sed -n 's,^ref: refs/heads/\\(\\S*\\)\\tHEAD$,\\1,p'; }; f"
+fully-clean = "!f() {set -ex; default_branch="$(git get-default-branch)"; git checkout "${default_branch}"; git fetch origin "${default_branch}"; git clean -fdx; }; f"
+get-current-branch = "!git branch --show-current | grep ."
+get-remote-for-branch = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; git rev-parse --abbrev-ref --symbolic-full-name "${branch}@{upstream}" | sed -n 's,^\\(\\S*\\)/'"${branch}"'$,\\1,p'; }; f"
+rr = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; remote="$(git get-remote-for-branch "${branch}")"; git reset --hard "${remote}/$branch"; }; f"
+pfor = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; remote="$(git get-remote-for-branch "${branch}")"; git push "${remote}" "HEAD:refs/for/${branch}"; }; f"
+psfor = "!f() { set -ex; git caane; git pfor "$@"; }; f"
+pdraft = "!f() { set -ex; branch="${1:-"$(git get-current-branch)"}"; remote="$(git get-remote-for-branch "${branch}")"; git push "${remote}" "HEAD:refs/drafts/${branch}"; }; f"
+psdraft = "!f() { set -ex; git caane; git pdraft "$@"; }; f"
+plr = pull --rebase
+prune-refs = fetch --prune --prune-tags
+hist = log --pretty=format:'%C(yellow)%h%Creset %ad | %s%d %Cgreen[%an]%Creset' --graph --date=short
+apply-gitignore = "!f() { set -ex; git rm -r --cached . >/dev/null; git add .; }; f"

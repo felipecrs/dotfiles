@@ -10,17 +10,17 @@ zsh_path="/bin/zsh"
 if ! getent passwd '{{ .chezmoi.username }}' | cut -d : -f 7- | grep -q "^${zsh_path}$"; then
   log_task "Configuring ZSH as default shell"
 
-  c sudo chsh --shell "${zsh_path}" '{{ .chezmoi.username }}'
+  c sudo usermod --shell "${zsh_path}" '{{ .chezmoi.username }}'
 fi
 
-if [[ ! -f "${HOME}/.cache/gitstatus/gitstatusd-linux-x86_64" ]]; then
+# Alpine frequently does not come with script (from util-linux) installed
+if command -v script >/dev/null && [[ ! -d "${HOME}/.cache/gitstatus" ]]; then
   log_task "Initializing ZSH"
-  bash -e <<'EOF'
+  bash -e <<'EOF' >/dev/null
 # We need to be in a git repository, so gitstatusd initiliazes
 cd '{{ .chezmoi.workingTree }}'
 
 # We also need to emulate a TTY
 script -qec "zsh -is </dev/null" /dev/null
 EOF
-  log_green "✅ Done initializing ZSH"
 fi

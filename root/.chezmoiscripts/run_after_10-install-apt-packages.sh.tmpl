@@ -19,12 +19,14 @@ readonly wanted_packages=(
   file
   procps
   zip
-  gzip
-  xz-utils
   git
   jq
-  crudini
-  skopeo
+  docker-ce
+  docker-ce-cli
+  containerd.io
+  docker-compose-plugin
+  docker-buildx-plugin
+  docker-scan-plugin
   asciinema
   docker-ce-cli
   # {{ if not .is_dockerfile }}
@@ -39,21 +41,17 @@ readonly wanted_packages=(
   gnome-menus
   code
   google-chrome-stable
-  # {{   if eq .chezmoi.osRelease.versionCodename "bionic" }}
-  python-nautilus
-  # {{   else }}
   python3-nautilus
-  # {{   end }}
   # {{   if not .is_wsl }}
   yaru-theme-gnome-shell
   libsecret-1-0
   gnome-menus
   # {{   end }}
   # {{ end }}
-  # {{ if and (not .is_wsl) (not .is_dockerfile) }}
-  # {{   if eq .chezmoi.osRelease.versionCodename "bionic" }}
-  linux-generic-hwe-18.04
-  # {{   else if eq .chezmoi.osRelease.versionCodename "focal" }}
+  # {{ if .is_wsl }}
+  wslu
+  # {{ else }}
+  # {{   if eq .chezmoi.osRelease.versionCodename "focal" }}
   linux-generic-hwe-20.04
   # {{   end }}
   # {{ end }}
@@ -69,7 +67,7 @@ done
 if [[ ${#missing_packages[@]} -gt 0 ]]; then
   log_task "Installing missing packages with APT: ${missing_packages[*]}"
 
-  c apt update
+  c apt update --yes
   # {{ if .is_dockerfile }}
   extra_args=("--no-install-recommends")
   # {{ else }}

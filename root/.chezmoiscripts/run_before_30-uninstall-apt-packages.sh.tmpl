@@ -8,9 +8,10 @@ true || source ../.chezmoitemplates/scripts-library
 readonly unwanted_packages=(
   gcmcore
   direnv
-  # {{ if not (eq .chezmoi.osRelease.versionCodename "bionic") }}
-  python-nautilus
-  # {{ end }}
+  crudini
+  fzf
+  # It is now installed as a chezmoiexternal
+  skopeo
 )
 
 for package in "${unwanted_packages[@]}"; do
