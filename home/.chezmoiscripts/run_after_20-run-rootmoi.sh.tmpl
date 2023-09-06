@@ -50,6 +50,11 @@ for i in "${!original_args[@]}"; do
     continue
   fi
 
+  # --one-shot is not compatible with apply
+  if [[ "${original_args[i]}" == "--one-shot" ]]; then
+    continue
+  fi
+
   # Remove any positional args, as we will always use apply
   if [[ "${original_args[i]}" != "-"* ]]; then
     continue
