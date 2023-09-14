@@ -7,6 +7,12 @@
 true || source ../.chezmoitemplates/scripts-library
 true || source ../.chezmoitemplates/vscode-library
 
+vscode_bin_dir="$(wslvar LOCALAPPDATA)"
+vscode_bin_dir="$(wslpath "${vscode_bin_dir}")"
+vscode_bin_dir="${vscode_bin_dir}/Programs/Microsoft VS Code/bin"
+
+ensure_path_entry "${vscode_bin_dir}"
+
 function code() {
   not_during_test PowerShell.exe -NoProfile -Command "cd ~; code ${*}"
 }
