@@ -8,7 +8,21 @@ true || source ../.chezmoitemplates/scripts-library
 true || source ../.chezmoitemplates/vscode-library
 
 function code() {
-  not_during_test PowerShell.exe -NoProfile -Command "cd ~; code ${*}"
+  local script
+  script=$(
+    cat <<EOF
+# cmd cannot be executed from UNC paths like \\wsl
+cd ~
+
+# Ensure PATH is updated as we may have just installed VS Code
+# https://stackoverflow.com/a/31845512
+\$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+code ${*}
+EOF
+  )
+
+  not_during_test PowerShell.exe -NoProfile -Command "${script}"
 }
 
 FOR_WINDOWS=true install_vscode_extensions

@@ -5,8 +5,10 @@
 # The following line is for ShellCheck to correctly identify the above include
 true || source ../.chezmoitemplates/scripts-library
 
-win_home="$(wslvar USERPROFILE)"
-settings_dir="$(wslpath "${win_home}\AppData\Roaming\Code\User")"
+settings_dir="$(wslvar APPDATA)"
+settings_dir="$(wslpath "${settings_dir}")"
+settings_dir="${settings_dir}/Code/User"
+
 settings_path="${settings_dir}/settings.json"
 if [[ -f "${settings_path}" ]]; then
   settings="$(cat "${settings_path}")"
