@@ -85,6 +85,9 @@ sourceDir: "{{ .chezmoi.workingTree }}"
 
 verbose: true
 
+# https://github.com/twpayne/chezmoi/issues/3257
+pager: ""
+
 diff:
   exclude:
     - scripts
