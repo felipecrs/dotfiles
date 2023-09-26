@@ -10,6 +10,15 @@ readonly version="$2"
 
 homebrew_core_dir="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core"
 
+export HOMEBREW_NO_INSTALL_FROM_API=1
+export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_UPDATE_REPORT_NEW=1
+export HOMEBREW_NO_ENV_HINTS=1
+
+if [[ ! -d "${homebrew_core_dir}" ]]; then
+  c brew tap homebrew/core
+fi
+
 c brew update --force
 
 formula_file="$(brew info "${formula}" | grep --only-matching "Formula/.*.rb")"
@@ -21,8 +30,6 @@ if [[ -z "${revision}" ]]; then
 fi
 
 c git -C "${homebrew_core_dir}" reset --hard "${revision}"
-
-export HOMEBREW_NO_AUTO_UPDATE=1
 
 if brew list "${formula}" &>/dev/null; then
   c brew uninstall --force "${formula}"

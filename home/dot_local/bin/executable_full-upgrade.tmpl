@@ -13,6 +13,8 @@ true || source ../../.chezmoitemplates/sdkman-library
 
 if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
   if brew --version &>/dev/null; then
+    export HOMEBREW_NO_ENV_HINTS=1
+
     log_task "Updating brew"
     c brew update
 
