@@ -117,11 +117,11 @@
   url: "https://github.com/denoland/deno/releases/download/v{{ $denoVersion }}/deno-{{ .uname_arch }}-unknown-linux-gnu.zip"
   path: deno
 
-".local/bin/tea":
+".local/bin/pkgx":
   type: archive-file
-  {{ $teaVersion := includeTemplate "get-github-latest-version" (list "teaxyz/cli" $cache) }}
-  url: "https://github.com/teaxyz/cli/releases/download/v{{ $teaVersion }}/tea-{{ $teaVersion }}+linux+{{ .uname_arch | replace "_" "-" }}.tar.xz"
-  path: tea
+  {{ $pkgxVersion := includeTemplate "get-github-latest-version" (list "pkgxdev/pkgx" $cache) }}
+  url: "https://github.com/pkgxdev/pkgx/releases/download/v{{ $pkgxVersion }}/pkgx-{{ $pkgxVersion }}+linux+{{ .uname_arch | replace "_" "-" }}.tar.xz"
+  path: pkgx
 
 "{{ joinPath .fontsDir .terminalFont.fileName }}":
   type: file

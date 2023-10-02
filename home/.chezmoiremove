@@ -17,6 +17,10 @@
 .local/bin/docker-credential-wincred.exe
 .local/bin/docker-credential-secretservice
 
+# tea got renamed to pkgx
+.local/bin/tea
+.tea
+
 .local/share/gnome-shell/extensions/clipboard-indicator@tudmotu.com
 .docker/cli-plugins/docker-compose
 .docker/cli-plugins/docker-buildx
