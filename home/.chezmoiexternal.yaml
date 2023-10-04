@@ -39,6 +39,11 @@
   stripComponents: 1
   exact: true
 
+".config/gitalias/gitalias.txt":
+  type: file
+  {{ $gitaliasRevision := includeTemplate "get-github-head-revision" (list "GitAlias/gitalias" $cache) }}
+  url: "https://github.com/GitAlias/gitalias/raw/{{ $gitaliasRevision }}/gitalias.txt"
+
 ".local/bin/direnv":
   type: file
   {{ $direnvVersion := includeTemplate "get-github-latest-version" (list "direnv/direnv" $cache) }}
