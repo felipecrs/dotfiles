@@ -50,6 +50,13 @@
   url: "https://github.com/direnv/direnv/releases/download/v{{ $direnvVersion }}/direnv.linux-{{ .chezmoi.arch }}"
   executable: true
 
+".local/bin/pkgx":
+  type: archive-file
+  {{ $pkgxVersion := includeTemplate "get-github-latest-version" (list "pkgxdev/pkgx" $cache) }}
+  url: "https://github.com/pkgxdev/pkgx/releases/download/v{{ $pkgxVersion }}/pkgx-{{ $pkgxVersion }}+linux+{{ .uname_arch | replace "_" "-" }}.tar.xz"
+  path: pkgx
+
+{{ if not .is_devcontainer -}}
 ".local/bin/kubecolor":
   type: archive-file
   {{ $kubecolorVersion := includeTemplate "get-github-latest-version" (list "hidetatz/kubecolor" $cache) }}
@@ -93,7 +100,6 @@
   {{ $voltaVersion := includeTemplate "get-github-latest-version" (list "volta-cli/volta" $cache) }}
   url: "https://github.com/volta-cli/volta/releases/download/v{{ $voltaVersion }}/volta-{{ $voltaVersion }}-linux.tar.gz"
 
-{{ if not .is_devcontainer -}}
 {{   if .is_gnome -}}
 ".local/share/nautilus-python/extensions/code-nautilus.py":
   type: file
@@ -121,12 +127,6 @@
   {{ $denoVersion := includeTemplate "get-github-latest-version" (list "denoland/deno" $cache) }}
   url: "https://github.com/denoland/deno/releases/download/v{{ $denoVersion }}/deno-{{ .uname_arch }}-unknown-linux-gnu.zip"
   path: deno
-
-".local/bin/pkgx":
-  type: archive-file
-  {{ $pkgxVersion := includeTemplate "get-github-latest-version" (list "pkgxdev/pkgx" $cache) }}
-  url: "https://github.com/pkgxdev/pkgx/releases/download/v{{ $pkgxVersion }}/pkgx-{{ $pkgxVersion }}+linux+{{ .uname_arch | replace "_" "-" }}.tar.xz"
-  path: pkgx
 
 "{{ joinPath .fontsDir .terminalFont.fileName }}":
   type: file
