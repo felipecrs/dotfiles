@@ -51,7 +51,7 @@ fi
 # shellcheck disable=SC2312
 script_dir="$(cd -P -- "$(dirname -- "$(command -v -- "$0")")" && pwd -P)"
 
-set -- init --source="${script_dir}" --verbose=false
+set -- init --source="${script_dir}" --verbose=false "$@"
 
 if [ -n "${DOTFILES_ONE_SHOT-}" ]; then
   set -- "$@" --one-shot
