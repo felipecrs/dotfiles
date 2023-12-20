@@ -1,6 +1,6 @@
 {
   "editor.codeActionsOnSave": {
-    "source.fixAll.shellcheck": true
+    "source.fixAll.shellcheck": "explicit"
   },
   // Disable ShellCheck from Bash IDE as we use VS Code ShellCheck
   "bashIde.shellcheckPath": "",
