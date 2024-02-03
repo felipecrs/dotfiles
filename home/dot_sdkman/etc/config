@@ -2,7 +2,7 @@
 sdkman_auto_answer=true
 
 # check for newer versions and prompt for update
-sdkman_selfupdate_feature=false
+sdkman_selfupdate_feature=true
 sdkman_auto_update=false
 
 # other default settings
