@@ -21,13 +21,15 @@ readonly wanted_packages=(
   zip
   git
   jq
-  docker-ce
   docker-ce-cli
-  containerd.io
   docker-compose-plugin
   docker-buildx-plugin
   docker-scan-plugin
+  # {{ if not .is_dockerfile }}
+  docker-ce
+  containerd.io
   asciinema
+  # {{ end }}
   # {{ if .is_gnome }}
   yaru-theme-gtk
   yaru-theme-icon
@@ -63,5 +65,10 @@ if [[ ${#missing_packages[@]} -gt 0 ]]; then
   log_task "Installing missing packages with APT: ${missing_packages[*]}"
 
   c apt update --yes
-  c apt install --yes --install-recommends "${missing_packages[@]}"
+  # {{ if .is_dockerfile }}
+  extra_args=("--no-install-recommends")
+  # {{ else }}
+  extra_args=("--install-recommends")
+  # {{ end }}
+  c apt install --yes "${extra_args[@]}" "${missing_packages[@]}"
 fi
