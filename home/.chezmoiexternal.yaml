@@ -44,17 +44,21 @@
   {{ $gitaliasRevision := includeTemplate "get-github-head-revision" (list "GitAlias/gitalias" $cache) }}
   url: "https://github.com/GitAlias/gitalias/raw/{{ $gitaliasRevision }}/gitalias.txt"
 
+{{ if not .is_devcontainer | or (.is_devcontainer | and (not (lookPath "direnv"))) -}}
 ".local/bin/direnv":
   type: file
   {{ $direnvVersion := includeTemplate "get-github-latest-version" (list "direnv/direnv" $cache) }}
   url: "https://github.com/direnv/direnv/releases/download/v{{ $direnvVersion }}/direnv.linux-{{ .chezmoi.arch }}"
   executable: true
+{{- end }}
 
+{{ if not .is_devcontainer | or (.is_devcontainer | and (not (lookPath "pkgx"))) -}}
 ".local/bin/pkgx":
   type: archive-file
   {{ $pkgxVersion := includeTemplate "get-github-latest-version" (list "pkgxdev/pkgx" $cache) }}
   url: "https://github.com/pkgxdev/pkgx/releases/download/v{{ $pkgxVersion }}/pkgx-{{ $pkgxVersion }}+linux+{{ .uname_arch | replace "_" "-" }}.tar.xz"
   path: pkgx
+{{- end }}
 
 {{ if not .is_devcontainer -}}
 ".local/bin/kubecolor":
