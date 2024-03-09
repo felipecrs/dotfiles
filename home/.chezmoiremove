@@ -17,6 +17,9 @@
 .local/bin/docker-credential-wincred.exe
 .local/bin/docker-credential-secretservice
 
+# use werf helm upgrade --wait instead
+.local/bin/helm-upgrade-logs
+
 # tea got renamed to pkgx
 .local/bin/tea
 .tea
