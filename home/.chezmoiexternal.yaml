@@ -52,7 +52,7 @@
   executable: true
 {{- end }}
 
-{{ if not .is_devcontainer | or (.is_devcontainer | and (not (lookPath "pkgx"))) -}}
+{{ if not .is_devcontainer | or (.is_devcontainer | and (not (lookPath "pkgx")) | and (ne .chezmoi.osRelease.id "alpine")) -}}
 ".local/bin/pkgx":
   type: archive-file
   {{ $pkgxVersion := includeTemplate "get-github-latest-version" (list "pkgxdev/pkgx" $cache) }}
