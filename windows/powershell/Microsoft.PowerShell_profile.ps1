@@ -14,11 +14,8 @@ Import-WslCommand "cat", "cp", "echo", "find", "grep", "head", "ls", "mv", "rm",
 
 # Chocolatey (https://github.com/chocolatey/choco)
 # Installation: https://chocolatey.org/install#individual
-$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path($ChocolateyProfile)) {
-  Import-Module "$ChocolateyProfile"
-} else {
-  Remove-Variable ChocolateyProfile
+if (Get-Command choco -ErrorAction SilentlyContinue) {
+  Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 }
 
 # WinGet (https://github.com/microsoft/winget-cli)
@@ -32,27 +29,34 @@ Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
     }
 }
 
+#34de4b3d-13a8-4540-b76d-b9e8d3851756 PowerToys CommandNotFound module
+if (Test-Path "C:\Program Files\PowerToys\WinGetCommandNotFound.psd1") {
+  Import-Module "C:\Program Files\PowerToys\WinGetCommandNotFound.psd1"
+}
+#34de4b3d-13a8-4540-b76d-b9e8d3851756
+
 # gsudo (https://github.com/gerardog/gsudo)
 # Installation: winget install gerardog.gsudo
 # PSWindowsUpdate (https://github.com/mgajda83/PSWindowsUpdate)
 # Installation: Install-Module PSWindowsUpdate -Force
 function Full-Upgrade {
   gsudo {
-    Set-PSDebug -Trace 1
+    if (Get-Command choco -ErrorAction SilentlyContinue) {
+      Write-Host '-> Upgrading Chocolatey packages'
+      choco upgrade all --yes
+    }
 
-    # Upgrade Chocolatey packages
-    choco upgrade all --yes
-
-    # Upgrade WinGet packages
+    Write-Host '-> Upgrading WinGet packages'
     winget upgrade --all
 
-    # Trigger Microsoft Store updates
+    Write-Host '-> Triggering Microsoft Store updates'
     # Source: https://social.technet.microsoft.com/Forums/windows/en-US/5ac7daa9-54e6-43c0-9746-293dcb8ef2ec
     Get-CimInstance -Namespace "Root\cimv2\mdm\dmmap" -ClassName "MDM_EnterpriseModernAppManagement_AppManagement01" | Invoke-CimMethod -MethodName UpdateScanMethod > $null
 
-    # Install Windows updates
+    Write-Host '-> Installing Windows updates'
     Get-WindowsUpdate -Install -AcceptAll
+
+    Write-Host '-> Updating PowerShell modules'
+    Update-Module -Confirm:$false
   }
 }
-
-Clear-Host
