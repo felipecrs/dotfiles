@@ -14,30 +14,35 @@
       "keys": "ctrl+v"
     },
     {
-      "command": "find",
-      "keys": "ctrl+shift+f"
-    },
-    {
       "command": {
         "action": "splitPane",
         "split": "auto",
         "splitMode": "duplicate"
       },
       "keys": "alt+shift+d"
+    },
+    {
+      "command": "find",
+      "keys": "ctrl+shift+f"
     }
   ],
   "copyFormatting": "none",
   "copyOnSelect": false,
   "defaultProfile": "{2c4de342-38b7-51cf-b940-2309a097f518}",
   "launchMode": "maximized",
+  "newTabMenu": [
+    {
+      "type": "remainingProfiles"
+    }
+  ],
   "profiles": {
     "defaults": {
-      "backgroundImage": "%USERPROFILE%\\OneDrive\\Pictures\\Wallpapers\\daft_punk.jpg",
+      "backgroundImage": "desktopWallpaper",
       "backgroundImageOpacity": 0.1,
       "colorScheme": "Material Palenight High Contrast",
       "font": {
         "face": "FiraCode Nerd Font Mono",
-        "size": 16
+        "size": 16.0
       }
     },
     "list": [
@@ -54,11 +59,10 @@
         "source": "Windows.Terminal.PowershellCore"
       },
       {
-        "commandline": "%PROGRAMFILES%\\Git\\usr\\bin\\bash.exe -i -l",
-        "guid": "{00000000-0000-0000-ba54-000000000001}",
-        "icon": "%PROGRAMFILES%\\Git\\mingw64\\share\\git\\git-for-windows.ico",
+        "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
+        "hidden": false,
         "name": "Git Bash",
-        "startingDirectory": "%USERPROFILE%"
+        "source": "Git"
       },
       {
         "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
@@ -198,7 +202,7 @@
       "name": "One Half Light",
       "purple": "#A626A4",
       "red": "#E45649",
-      "selectionBackground": "#FFFFFF",
+      "selectionBackground": "#4F525D",
       "white": "#FAFAFA",
       "yellow": "#C18301"
     },
@@ -244,7 +248,7 @@
       "name": "Solarized Light",
       "purple": "#D33682",
       "red": "#DC322F",
-      "selectionBackground": "#FFFFFF",
+      "selectionBackground": "#073642",
       "white": "#EEE8D5",
       "yellow": "#B58900"
     },
@@ -290,7 +294,7 @@
       "name": "Tango Light",
       "purple": "#75507B",
       "red": "#CC0000",
-      "selectionBackground": "#FFFFFF",
+      "selectionBackground": "#555753",
       "white": "#D3D7CF",
       "yellow": "#C4A000"
     },
@@ -341,6 +345,7 @@
       "yellow": "#808000"
     }
   ],
+  "theme": "system",
   "themes": [],
   "windowingBehavior": "useExisting"
 }
