@@ -44,6 +44,14 @@
   {{ $gitaliasRevision := includeTemplate "get-github-head-revision" (list "GitAlias/gitalias" $cache) }}
   url: "https://github.com/GitAlias/gitalias/raw/{{ $gitaliasRevision }}/gitalias.txt"
 
+{{ if not .is_devcontainer | or (.is_devcontainer | and (not (lookPath "retry"))) -}}
+".local/bin/retry":
+  type: file
+  {{ $retryVersion := includeTemplate "get-github-latest-version" (list "kadwanev/retry" $cache) }}
+  url: "https://github.com/kadwanev/retry/raw/{{ $retryVersion }}/retry"
+  executable: true
+{{- end }}
+
 {{ if not .is_devcontainer | or (.is_devcontainer | and (not (lookPath "direnv"))) -}}
 ".local/bin/direnv":
   type: file
