@@ -108,7 +108,7 @@ If you are forking this repository, don't forget to change the following places:
 - [`scripts/install_dotfiles.sh`](./scripts/install_dotfiles.sh)
   - Replace all occurrences of `felipecrs` with `<your-username>`
 - [`home/.chezmoi.yaml.tmpl`](./home/.chezmoi.yaml.tmpl)
-  - Change the name and email to yours.
+  - Optional: add your name and email.
 
 Where `<your-username>` is your GitHub username.
 
