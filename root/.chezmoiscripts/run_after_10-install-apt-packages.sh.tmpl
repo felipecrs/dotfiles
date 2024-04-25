@@ -26,7 +26,6 @@ readonly wanted_packages=(
   # pipx doesn't work otherwise
   python3-venv
   # {{ end }}
-  pipx
   docker-ce
   docker-ce-cli
   containerd.io
@@ -42,6 +41,7 @@ readonly wanted_packages=(
   code
   google-chrome-stable
   python3-nautilus
+  pipx
   # {{   if not .is_wsl }}
   yaru-theme-gnome-shell
   libsecret-1-0

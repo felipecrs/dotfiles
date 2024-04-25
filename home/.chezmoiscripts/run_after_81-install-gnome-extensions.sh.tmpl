@@ -10,50 +10,71 @@ ensure_path_entry "${HOME}/.local/bin"
 function is_gnome_extension_installed() {
   local extension="$1"
 
-  if [[ -d "${HOME}/.local/share/gnome-shell/extensions/${extension}" ]]; then
-    return 0
-  else
-    return 1
-  fi
+  gext list --all | grep --quiet "(${extension})"
 }
 
-function enable_extension() {
+function is_gnome_extension_enabled() {
   local extension="$1"
 
-  local current_enabled_extensions
-  current_enabled_extensions="$(gsettings get org.gnome.shell enabled-extensions)"
-
-  if [[ "${current_enabled_extensions}" != *"'${extension}'"* ]]; then
-    log_task "Enabling GNOME extension: ${extension}"
-    if [[ "${current_enabled_extensions}" == *"[]"* ]]; then
-      new_enabled_extensions="['${extension}']"
-    else
-      new_enabled_extensions="${current_enabled_extensions%]*}, '${extension}']"
-    fi
-    gsettings set org.gnome.shell enabled-extensions "${new_enabled_extensions}"
-  fi
+  gext list | grep --quiet "(${extension})"
 }
 
-declare -A extension_codes
+wanted_extensions=(
+  dash-to-panel@jderose9.github.com
+  arcmenu@arcmenu.com
+  # {{ if semverCompare "<22.04" .chezmoi.osRelease.versionID }}
+  # Ubuntu 22.04+ comes with a nice (already dark) default shell theme
+  user-theme@gnome-shell-extensions.gcampax.github.com
+  # {{ end }}
+)
 
-extension_codes["user-theme@gnome-shell-extensions.gcampax.github.com"]=19
-extension_codes["dash-to-panel@jderose9.github.com"]=1160
-extension_codes["arcmenu@arcmenu.com"]=3628
+unwanted_extensions=(
+  clipboard-indicator@tudmotu.com
+  # {{ if semverCompare "<22.04" .chezmoi.osRelease.versionID }}
+  user-theme@gnome-shell-extensions.gcampax.github.com
+  # {{ end }}
+)
+
+disabled_extensions=(
+  ubuntu-dock@ubuntu.com
+)
 
 missing_extensions=()
 
-for extension in "${!extension_codes[@]}"; do
-  enable_extension "${extension}"
+if ! command -v gext >/dev/null; then
+  log_task "Installing gnome-extensions-cli"
+  c pipx install gnome-extensions-cli
+fi
+
+for extension in "${wanted_extensions[@]}"; do
+  # shellcheck disable=SC2310
   if ! is_gnome_extension_installed "${extension}"; then
-    missing_extensions+=("${extension_codes["${extension}"]}")
+    missing_extensions+=("${extension}")
   fi
 done
 
 if [[ ${#missing_extensions[@]} -gt 0 ]]; then
   log_task "Installing GNOME extensions"
-  extra_args=()
-  if [[ -n "${DISPLAY:-}" ]]; then
-    extra_args=("--restart-shell")
-  fi
-  gnome-shell-extension-installer --yes "${extra_args[@]}" "${missing_extensions[@]}"
+  gext install "${missing_extensions[@]}"
 fi
+
+for extension in "${disabled_extensions[@]}"; do
+  if is_gnome_extension_enabled "${extension}"; then
+    log_task "Disabling GNOME extension: ${extension}"
+    gext disable "${extension}"
+  fi
+done
+
+for extension in "${wanted_extensions[@]}"; do
+  if ! is_gnome_extension_enabled "${extension}"; then
+    log_task "Enabling GNOME extension: ${extension}"
+    gext enable "${extension}"
+  fi
+done
+
+for extension in "${unwanted_extensions[@]}"; do
+  if is_gnome_extension_installed "${extension}"; then
+    log_task "Uninstalling GNOME extension: ${extension}"
+    gext uninstall "${extension}"
+  fi
+done

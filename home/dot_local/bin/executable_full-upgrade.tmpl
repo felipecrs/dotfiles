@@ -56,9 +56,9 @@ if flatpak --version &>/dev/null; then
   c sudo flatpak update --assumeyes
 fi
 
-if command -v gnome-shell-extension-installer >/dev/null; then
+if gext --version >/dev/null; then
   log_task "Updating gnome extensions"
-  c gnome-shell-extension-installer --update --yes
+  c gext update --yes --user
 fi
 
 if pipx --version >/dev/null; then
