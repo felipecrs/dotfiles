@@ -36,8 +36,12 @@ gsettings_ensure org.gnome.desktop.interface gtk-theme "Yaru-dark"
 gsettings_ensure org.gnome.desktop.interface icon-theme "Yaru"
 gsettings_ensure org.gnome.desktop.interface cursor-theme "Yaru"
 gsettings_ensure org.gnome.desktop.sound theme-name "Yaru"
-# {{ if not .is_wsl }}
+# {{ if semverCompare ">=22.04" .chezmoi.osRelease.versionID }}
+gsettings_ensure org.gnome.desktop.interface color-scheme "prefer-dark"
+# {{ else }}
+# {{   if not .is_wsl }}
 gsettings_ensure org.gnome.shell.extensions.user-theme name "Yaru-dark" user-theme@gnome-shell-extensions.gcampax.github.com
+# {{   end }}
 # {{ end }}
 
 # Configuring miscellaneous settings

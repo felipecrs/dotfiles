@@ -117,15 +117,6 @@
   type: file
   {{ $codeNautilusRevision := includeTemplate "get-github-head-revision" (list "harry-cpp/code-nautilus" $cache) }}
   url: "https://raw.githubusercontent.com/harry-cpp/code-nautilus/{{ $codeNautilusRevision }}/code-nautilus.py"
-
-{{      if not .is_wsl -}}
-".local/bin/gnome-shell-extension-installer":
-  type: file
-  {{ $gnomeExtInstallerRevision := includeTemplate "get-github-head-revision" (list "brunelli/gnome-shell-extension-installer" $cache) }}
-  url: "https://raw.githubusercontent.com/brunelli/gnome-shell-extension-installer/{{ $gnomeExtInstallerRevision }}/gnome-shell-extension-installer"
-  executable: true
-{{-     end }}
-
 {{-  end }}
 
 ".local/bin/skopeo":
