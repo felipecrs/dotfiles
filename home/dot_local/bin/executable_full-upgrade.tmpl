@@ -31,7 +31,11 @@ if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
   if chezmoi --version &>/dev/null; then
     log_task "Updating dotfiles"
     # Pull latest changes from dotfiles repo
-    c chezmoi update --apply=false
+    if chezmoi git -- status --porcelain | grep -q .; then
+      log_manual_action "Not running chezmoi update as uncommitted dotfiles changes were found"
+    else
+      c chezmoi update --apply=false
+    fi
     # Apply changes to chezmoi config
     c chezmoi init --force
     # Apply the rest
@@ -41,7 +45,7 @@ if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
   CONTINUE_FROM_DOTFILES=true exec "$0" "$@"
 fi
 
-if pkgx --version >/dev/null; then
+if pkgx --version &>/dev/null; then
   log_task "Updating pkgx stubs"
 
   pkgx_packages="$(
@@ -70,7 +74,16 @@ if pkgx --version >/dev/null; then
     pkgx --sync >/dev/null
 
     # And finally this adds all the stubs back, updated
-    pkgx install "${pkgx_packages[@]}"
+
+    # This avoids outputting a bunch of "installed" messages which can be
+    # confusing as we are just updating the stubs that were already installed
+    if output=$(pkgx install "${pkgx_packages[@]}" 2>&1); then
+      unset output
+    else
+      # But in case of failure, we output everything to help debugging
+      echo "${output}" >&2
+      exit 1
+    fi
 
     log_task "Updating pkgx packages"
 
@@ -109,12 +122,12 @@ if flatpak --version &>/dev/null; then
   c sudo flatpak update --assumeyes
 fi
 
-if gext --version >/dev/null; then
+if gext --version &>/dev/null; then
   log_task "Updating gnome extensions"
   c gext update --yes --user
 fi
 
-if pipx --version >/dev/null; then
+if pipx --version &>/dev/null; then
   log_task "Updating pipx packages"
   c pipx upgrade-all
 fi
@@ -129,6 +142,7 @@ if npm --version &>/dev/null; then
   c npm update --global
 fi
 
+# shellcheck disable=SC2310
 if sdk version &>/dev/null; then
   log_task "Updating sdk"
   c sdk selfupdate
@@ -137,9 +151,10 @@ if sdk version &>/dev/null; then
   c sdk update
 fi
 
-if command -v wsl.exe >/dev/null; then
+if timeout 2 wsl.exe --version &>/dev/null; then
   log_task "Updating VS Code"
   # WinGet returns non zero code if no upgrade is found, so for now we simply ignore it.
+  # Refs: https://github.com/microsoft/winget-cli/issues/3538
   c winget.exe upgrade --exact --id Microsoft.VisualStudioCode --source winget \
     --accept-source-agreements --disable-interactivity || true
 
