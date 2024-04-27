@@ -11,6 +11,8 @@ true || source ../../.chezmoitemplates/homebrew-library
 true || source ../../.chezmoitemplates/volta-library
 true || source ../../.chezmoitemplates/sdkman-library
 
+ensure_path_entry "${HOME}/.local/bin"
+
 if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
   if brew --version &>/dev/null; then
     (
@@ -37,6 +39,57 @@ if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
   fi
 
   CONTINUE_FROM_DOTFILES=true exec "$0" "$@"
+fi
+
+if pkgx --version >/dev/null; then
+  log_task "Updating pkgx stubs"
+
+  pkgx_packages="$(
+    {
+      grep --recursive --binary-files=without-match --no-filename \
+        --only-matching --perl-regexp --word-regexp \
+        'exec pkgx \+\K[^ ]+' "${HOME}/.local/bin" || true
+    } | sort --unique
+  )"
+
+  if [[ -z "${pkgx_packages}" ]]; then
+    log_info "No pkgx packages found"
+  else
+    readarray -t pkgx_packages <<<"${pkgx_packages}"
+
+    # This removes all the stubs directly as depending on the version of pkgx
+    # used to create the stub, pkgx uninstall can't uninstall it
+    {
+      grep --recursive --binary-files=without-match --files-with-matches \
+        --extended-regexp --word-regexp \
+        'exec pkgx \+[^ ]+' "${HOME}/.local/bin" || true
+    } | xargs --no-run-if-empty rm -f
+
+    # This updates the pantry, which would be updated automatically otherwise,
+    # but better safe than sorry
+    pkgx --sync >/dev/null
+
+    # And finally this adds all the stubs back, updated
+    pkgx install "${pkgx_packages[@]}"
+
+    log_task "Updating pkgx packages"
+
+    pkgx_packages_to_update=()
+    for package in "${pkgx_packages[@]}"; do
+      # This ensures we don't try to update packages that have not been cached
+      # yet, like the ones installed but never used
+      if [[ -d "${PKGX_DIR:-"${HOME}/.pkgx"}/${package}" ]]; then
+        pkgx_packages_to_update+=("+${package}")
+      fi
+    done
+
+    if [[ "${#pkgx_packages_to_update[@]}" -gt 0 ]]; then
+      c pkgx --update "${pkgx_packages_to_update[@]}" >/dev/null
+    fi
+
+    unset pkgx_packages_to_update
+  fi
+  unset pkgx_packages
 fi
 
 if apt --version &>/dev/null; then
