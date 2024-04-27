@@ -61,6 +61,11 @@ if command -v gnome-shell-extension-installer >/dev/null; then
   c gnome-shell-extension-installer --update --yes
 fi
 
+if pipx --version >/dev/null; then
+  log_task "Updating pipx packages"
+  c pipx upgrade-all
+fi
+
 if volta --version &>/dev/null; then
   log_task "Updating node, npm and yarn with volta"
   c volta install node npm yarn
