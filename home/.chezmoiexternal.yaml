@@ -69,6 +69,12 @@
 {{- end }}
 
 {{ if not .is_devcontainer -}}
+".local/bin/pipx":
+  type: file
+  {{ $pipxVersion := includeTemplate "get-github-latest-version" (list "pypa/pipx" $cache) }}
+  url: "https://github.com/pypa/pipx/releases/download/{{ $pipxVersion }}/pipx.pyz"
+  executable: true
+
 ".local/bin/kubecolor":
   type: archive-file
   {{ $kubecolorVersion := includeTemplate "get-github-latest-version" (list "kubecolor/kubecolor" $cache) }}

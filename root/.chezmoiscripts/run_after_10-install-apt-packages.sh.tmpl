@@ -22,11 +22,8 @@ readonly wanted_packages=(
   git
   jq
   python3
-  # {{ if eq .chezmoi.osRelease.versionCodename "focal" }}
-  # pipx doesn't work otherwise
+  # needed by pipx
   python3-venv
-  # {{ end }}
-  pipx
   docker-ce
   docker-ce-cli
   containerd.io
