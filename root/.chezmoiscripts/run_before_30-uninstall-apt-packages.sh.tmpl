@@ -14,11 +14,14 @@ readonly unwanted_packages=(
   skopeo
   # It is deprecated
   docker-scan-plugin
+  # It is now installed as a chezmoiexternal
+  pipx
 )
 
 for package in "${unwanted_packages[@]}"; do
+  # shellcheck disable=SC2310
   if is_apt_package_installed "${package}"; then
     log_task "Removing unwanted package '${package}' installed with APT"
-    c apt remove --yes "${package}"
+    c apt remove --yes --auto-remove "${package}"
   fi
 done
