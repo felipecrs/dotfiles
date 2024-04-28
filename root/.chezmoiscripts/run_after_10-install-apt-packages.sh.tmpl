@@ -66,5 +66,13 @@ if [[ ${#missing_packages[@]} -gt 0 ]]; then
   log_task "Installing missing packages with APT: ${missing_packages[*]}"
 
   c apt update --yes
-  c apt install --yes --install-recommends "${missing_packages[@]}"
+
+  if [[ "${DOTFILES_TEST:-}" == true ]]; then
+    log_manual_action "Not installing recommended packages to speed up test mode"
+    recommends_arg="--no-install-recommends"
+  else
+    recommends_arg="--install-recommends"
+  fi
+
+  c apt install --yes "${recommends_arg}" "${missing_packages[@]}"
 fi

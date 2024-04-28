@@ -95,6 +95,11 @@ status:
   exclude:
     - always
 
+hooks:
+  read-source-state:
+    pre:
+      command: {{ .chezmoi.workingTree }}/home/.chezmoihooks/ensure-pre-requisites.sh
+
 {{/* Here we "export" the variables, so we can access them outside this file */ -}}
 data:
   is_wsl: {{ $wsl }}

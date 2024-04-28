@@ -25,7 +25,14 @@ fi
 # shellcheck disable=SC2016
 mkdir -p '{{ $configDir }}' '{{ $cacheDir }}'
 
-sudo exec --preserve-env=PATH -- \
+# We should not use sudo's --preserve-env option because the sudo function will
+# automatically bypass sudo if the user is root already.
+env_args=(env "PATH=${PATH}")
+if [[ "${DOTFILES_TEST:-}" == true ]]; then
+  env_args+=("DOTFILES_TEST=true")
+fi
+
+sudo exec "${env_args[@]}" \
   "${executable}" "$@" \
   --config='{{ $configFile }}' \
   --persistent-state='{{ $persistentStateFile }}' \
