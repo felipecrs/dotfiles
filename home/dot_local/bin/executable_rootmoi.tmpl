@@ -25,7 +25,12 @@ fi
 # shellcheck disable=SC2016
 mkdir -p '{{ $configDir }}' '{{ $cacheDir }}'
 
-sudo exec --preserve-env=PATH -- \
+env_args=(env "PATH=${PATH}" "ROOTMOI=1")
+if [[ "${DOTFILES_TEST:-}" == true ]]; then
+  env_args+=("DOTFILES_TEST=true")
+fi
+
+sudo exec "${env_args[@]}" \
   "${executable}" "$@" \
   --config='{{ $configFile }}' \
   --persistent-state='{{ $persistentStateFile }}' \

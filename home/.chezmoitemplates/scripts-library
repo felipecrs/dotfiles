@@ -83,7 +83,7 @@ function sudo() {
 
   # shellcheck disable=SC2312
   if [[ "$(id -u)" -eq 0 ]]; then
-    if [[ "${exec}" == "true" ]]; then
+    if [[ "${exec}" == true ]]; then
       exec "$@"
     else
       "$@"
@@ -93,7 +93,7 @@ function sudo() {
       log_manual_action "Root privileges are required, please enter your password below"
       command sudo --validate
     fi
-    if [[ "${exec}" == "true" ]]; then
+    if [[ "${exec}" == true ]]; then
       exec sudo "$@"
     else
       command sudo "$@"
@@ -108,7 +108,7 @@ function is_apt_package_installed() {
 }
 
 function not_during_test() {
-  if [[ "${DOTFILES_TEST:-}" == "true" ]]; then
+  if [[ "${DOTFILES_TEST:-}" == true ]]; then
     log_info "Skipping '${*}' because we are in test mode"
   else
     "${@}"
