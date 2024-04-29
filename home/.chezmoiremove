@@ -20,6 +20,10 @@
 # use werf helm upgrade --wait instead
 .local/bin/helm-upgrade-logs
 
+# use pkgx argbash instead, easy enough
+.local/bin/argbash
+.local/bin/argbash-init
+
 # now we use gext instead
 .local/bin/gnome-shell-extension-installer
 

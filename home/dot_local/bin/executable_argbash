@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if [ "$(command -v localpath)" ]; then
-  volume="--volume=$(localpath "$PWD"):/work"
-else
-  volume="--volume=$PWD:/work"
-fi
-
-exec docker run --rm "$volume" --user="$(id -u):$(id -g)" matejak/argbash "$@"
