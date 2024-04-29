@@ -3,13 +3,11 @@
 # {{ template "scripts-library" }}
 # {{ template "homebrew-library" }}
 # {{ template "volta-library" }}
-# {{ template "sdkman-library" }}
 
 # The following line is for ShellCheck to correctly identify the above include
 true || source ../../.chezmoitemplates/scripts-library
 true || source ../../.chezmoitemplates/homebrew-library
 true || source ../../.chezmoitemplates/volta-library
-true || source ../../.chezmoitemplates/sdkman-library
 
 ensure_path_entry "${HOME}/.local/bin"
 
@@ -149,15 +147,6 @@ fi
 if npm --version &>/dev/null; then
   log_task "Updating npm packages"
   c npm update --global
-fi
-
-# shellcheck disable=SC2310
-if sdk version &>/dev/null; then
-  log_task "Updating sdk"
-  c sdk selfupdate
-
-  log_task "Updating sdk packages"
-  c sdk update
 fi
 
 if timeout 2 wsl.exe --version &>/dev/null; then
