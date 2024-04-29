@@ -2,9 +2,11 @@
 .local/bin/code
 
 .chezmoiscripts/*
-!.chezmoiscripts/*-install-prerequisites.sh
 !.chezmoiscripts/*-initialize-zsh.sh
 !.chezmoiscripts/*-final-message.sh
+{{   if ne .chezmoi.osRelease.id "alpine" -}}
+!.chezmoiscripts/*-install-pkgx-packages.sh
+{{-  end }}
 {{- end }}
 
 {{ if not .is_gnome -}}
