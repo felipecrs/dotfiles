@@ -35,7 +35,7 @@ if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
       log_manual_action "Skipping chezmoi update as uncommitted changes were found"
     elif
       # shellcheck disable=SC2312
-      [[ "origin/$(chezmoi git -- rev-parse --abbrev-ref HEAD)" != "$(git rev-parse --abbrev-ref origin/HEAD)" ]]
+      [[ "origin/$(chezmoi git -- rev-parse --abbrev-ref HEAD)" != "$(chezmoi git -- rev-parse --abbrev-ref origin/HEAD)" ]]
     then
       log_manual_action "Skipping chezmoi update as the current branch is not the default branch"
     elif chezmoi git -- log '@{u}..' | grep -q .; then
