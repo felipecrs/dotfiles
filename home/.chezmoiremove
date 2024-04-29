@@ -37,6 +37,9 @@
 .antigen/
 .antigenrc
 
+# pkgx can be used instead
+.sdkman/
+
 # Remove font variants there used to be installed but no longer are
 .local/share/fonts/Fira Code * Nerd Font Complete*.ttf
 !.local/share/fonts/Fira Code Regular Nerd Font Complete Mono.ttf

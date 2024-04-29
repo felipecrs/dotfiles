@@ -1,6 +1,6 @@
 # Load .profile
 if [[ -r "${HOME}/.profile" ]]; then
-  # Do not use emulate here, as SDKMAN! will produce errors otherwise
+  # Do not use emulate here, as pkgx errors with unsupported shell
   source "${HOME}/.profile"
 fi
 
