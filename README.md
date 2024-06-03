@@ -144,9 +144,6 @@ Usage: scripts/create_alternative_chrome_shortcut.sh [-f|--(no-)force] [-h|--hel
 This script creates a new shortcut for Google Chrome which opens using a
 different user data directory. This lets you have different icons for different
 instances of Google Chrome.
-
-Please check the following URL for more information:
-  https://github.com/felipecrs/dotfiles#create_alternative_chrome_shortcutsh
 ```
 
 ##### Examples
