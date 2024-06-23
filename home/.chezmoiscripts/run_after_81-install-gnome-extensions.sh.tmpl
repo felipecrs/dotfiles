@@ -10,13 +10,15 @@ ensure_path_entry "${HOME}/.local/bin"
 function is_gnome_extension_installed() {
   local extension="$1"
 
-  gext list --all | grep --quiet "(${extension})"
+  # https://github.com/essembeh/gnome-extensions-cli/issues/29
+  gext list --all | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' | grep --quiet "(${extension})"
 }
 
 function is_gnome_extension_enabled() {
   local extension="$1"
 
-  gext list | grep --quiet "(${extension})"
+  # https://github.com/essembeh/gnome-extensions-cli/issues/29
+  gext list | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' | grep --quiet "(${extension})"
 }
 
 wanted_extensions=(
