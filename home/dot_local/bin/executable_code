@@ -89,6 +89,7 @@ if [ -z "${USE_NATIVE_CODE:-}" ] && who -m | grep -q .; then
   # This allows opening VS Code windows from a SSH remote
   # session even out of the VS Code integrated terminal.
   printf "searching for remote ssh session (set USE_NATIVE_CODE=1 to use code from Linux)..." >&2
+  no_sockets_message=" no sockets found."
   if [ -d "${HOME}/.vscode-server/bin" ]; then
 
     # Find most recent folder inside of ~/.vscode-server/bin
@@ -108,19 +109,21 @@ if [ -z "${USE_NATIVE_CODE:-}" ] && who -m | grep -q .; then
 
           sockets_count=$(echo "${sock_paths}" | wc -l)
           echo " ${sockets_count} sockets found." >&2
+          no_sockets_message=" no more sockets found."
           echo "trying to connect..." >&2
           for sock_path in ${sock_paths}; do
             if VSCODE_IPC_HOOK_CLI="${sock_path}" "${bin_path}" "$@"; then
               exit 0
             else
-              echo "trying next socket..." >&2
+              echo "removing socket and trying next..." >&2
+              rm -f "${sock_path}"
             fi
           done
         fi
       fi
     fi
   fi
-  echo " not found." >&2
+  echo "${no_sockets_message}" >&2
 else
   # shellcheck disable=SC2310
   if code="$(get_in_path_except_current code)"; then
