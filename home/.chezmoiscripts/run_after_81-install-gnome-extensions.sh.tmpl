@@ -32,7 +32,7 @@ wanted_extensions=(
 
 unwanted_extensions=(
   clipboard-indicator@tudmotu.com
-  # {{ if semverCompare "<22.04" .chezmoi.osRelease.versionID }}
+  # {{ if semverCompare ">=22.04" .chezmoi.osRelease.versionID }}
   user-theme@gnome-shell-extensions.gcampax.github.com
   # {{ end }}
 )
