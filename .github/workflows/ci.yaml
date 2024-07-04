@@ -23,3 +23,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           scripts/test.sh --variant "${{ matrix.variant }}" --os "${{ matrix.os }}"
+  verdict:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "All tests passed!"
