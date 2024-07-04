@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ARG_OPTIONAL_REPEATED([variant],[v],[The variant of the test to run. Possible values: devcontainer, wsl, and gnome. Default: devcontainer.],[])
-# ARG_OPTIONAL_REPEATED([os],[o],[The OS to run the tests against. The list of possible values can be found at https://mcr.microsoft.com/v2/devcontainers/base/tags/list. Examples: ubuntu-18.04, ubuntu-22.04, and alpine. Default: ubuntu-20.04.],[])
+# ARG_OPTIONAL_REPEATED([os],[o],[The OS to run the tests against. The list of possible values can be found at https://mcr.microsoft.com/v2/devcontainers/base/tags/list. Examples: ubuntu-24.04, alpine. Default: ubuntu-24.04.],[])
 # ARG_OPTIONAL_BOOLEAN([debug],[d],[Whether to enable debug logs or not],[off])
 # ARG_OPTIONAL_SINGLE([pre-script],[],[The custom script to run before the installation],[])
 # ARG_HELP([Tests the installation of the dotfiles in differents scenarios],[])
@@ -35,7 +35,7 @@ print_help() {
   printf '%s\n' "Tests the installation of the dotfiles in differents scenarios"
   printf 'Usage: %s [-v|--variant <arg>] [-o|--os <arg>] [-d|--(no-)debug] [--pre-script <arg>] [-h|--help]\n' "$0"
   printf '\t%s\n' "-v, --variant: The variant of the test to run. Possible values: devcontainer, wsl, and gnome. Default: devcontainer. (empty by default)"
-  printf '\t%s\n' "-o, --os: The OS to run the tests against. The list of possible values can be found at https://mcr.microsoft.com/v2/devcontainers/base/tags/list. Examples: ubuntu-18.04, ubuntu-22.04, and alpine. Default: ubuntu-20.04. (empty by default)"
+  printf '\t%s\n' "-o, --os: The OS to run the tests against. The list of possible values can be found at https://mcr.microsoft.com/v2/devcontainers/base/tags/list. Examples: ubuntu-24.04, alpine. Default: ubuntu-24.04. (empty by default)"
   printf '\t%s\n' "-d, --debug, --no-debug: Whether to enable debug logs or not (off by default)"
   printf '\t%s\n' "--pre-script: The custom script to run before the installation (no default)"
   printf '\t%s\n' "-h, --help: Prints help"
@@ -160,7 +160,7 @@ if ((${#variants[@]} == 0)); then
 fi
 oses=("${_arg_os[@]}")
 if ((${#oses[@]} == 0)); then
-  oses=("ubuntu-20.04")
+  oses=("ubuntu-24.04")
 fi
 
 for variant in "${variants[@]}"; do
