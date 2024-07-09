@@ -104,7 +104,7 @@
 ".local/bin/fzf":
   type: archive-file
   {{ $fzfVersion := includeTemplate "get-github-latest-version" (list "junegunn/fzf" $cache) }}
-  url: "https://github.com/junegunn/fzf/releases/download/{{ $fzfVersion }}/fzf-{{ $fzfVersion }}-linux_{{ .chezmoi.arch }}.tar.gz"
+  url: "https://github.com/junegunn/fzf/releases/download/v{{ $fzfVersion }}/fzf-{{ $fzfVersion }}-linux_{{ .chezmoi.arch }}.tar.gz"
   path: fzf
 
 ".local/bin/stern":
