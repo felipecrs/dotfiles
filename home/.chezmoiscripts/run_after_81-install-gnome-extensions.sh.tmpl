@@ -45,7 +45,7 @@ missing_extensions=()
 
 if ! command -v gext >/dev/null; then
   log_task "Installing gnome-extensions-cli"
-  c pipx install gnome-extensions-cli
+  c pipx install --force gnome-extensions-cli
 fi
 
 for extension in "${wanted_extensions[@]}"; do
