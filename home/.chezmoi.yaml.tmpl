@@ -19,6 +19,7 @@
 {{-     $fqdnHostname = output "sh" "-c" "hostname -A 2>/dev/null | cut -d' ' -f1" | trim -}}
 {{-     if not (contains "." $fqdnHostname) -}}
 {{-       $fqdnHostname = .chezmoi.fqdnHostname -}}
+{{-       writeToStdout (printf "⚠️ WARNING: could not determine the fqdn hostname, falling back to '%s'\n" $fqdnHostname) -}}
 {{-     end -}}
 {{-   end -}}
 {{- end -}}
