@@ -12,6 +12,17 @@
 
 {{- $minimum := or $devcontainer (not $ubuntu) -}}
 
+{{- $fqdnHostname := .chezmoi.fqdnHostname -}}
+{{- if and (not (contains "." $fqdnHostname)) (lookPath "hostname") -}}
+{{-   $fqdnHostname = output "hostname" "-f" | trim -}}
+{{-   if not (contains "." $fqdnHostname) -}}
+{{-     $fqdnHostname = output "sh" "-c" "hostname -A 2>/dev/null | cut -d' ' -f1" | trim -}}
+{{-     if not (contains "." $fqdnHostname) -}}
+{{-       $fqdnHostname = .chezmoi.fqdnHostname -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+
 {{- if hasKey . "name" -}}
 {{-   $name = .name -}}
 {{- end -}}
@@ -113,3 +124,4 @@ data:
   editor: "code --wait"
 
   uname_arch: "{{ output "uname" "-m" | trim }}"
+  fqdn_hostname: "{{ $fqdnHostname }}"
