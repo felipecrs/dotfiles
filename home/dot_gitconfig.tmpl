@@ -67,3 +67,23 @@ psfor = "!f() { \
   git caane; \
   git pfor "$@"; \
 };f"
+cptob = "!f() { \
+  set -ex; \
+  commit="${1}"; \
+  shift; \
+  \
+  if echo "${1}" | grep -q ^%; then \
+    push_opts="${1}"; \
+    shift; \
+  else \
+    push_opts=""; \
+  fi; \
+  \
+  for branch in "${@}"; do \
+    echo git co "${branch}"; \
+    echo git rr "${branch}"; \
+    echo git pr; \
+    echo git cp "${commit}"; \
+    echo git pfor "${branch}${push_opts}"; \
+  done; \
+};f"
