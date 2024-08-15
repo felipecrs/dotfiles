@@ -18,6 +18,7 @@ readonly unwanted_packages=(
 )
 
 for package in "${unwanted_packages[@]}"; do
+  # shellcheck disable=SC2310
   if is_volta_package_installed "${package}"; then
     log_task "Removing unwanted packages with Volta: ${missing_packages[*]}"
     volta uninstall "${package}"
@@ -34,6 +35,7 @@ readonly wanted_packages=(
 missing_packages=()
 
 for package in "${wanted_packages[@]}"; do
+  # shellcheck disable=SC2310
   if ! is_volta_package_installed "${package}"; then
     missing_packages+=("${package}")
   fi
@@ -41,5 +43,8 @@ done
 
 if [[ ${#missing_packages[@]} -gt 0 ]]; then
   log_task "Installing missing packages with Volta: ${missing_packages[*]}"
-  volta install "${missing_packages[@]}"
+  # https://github.com/volta-cli/volta/issues/1523#issuecomment-1701844815
+  ensure_path_entry "${HOME}/.local/bin"
+  retry --tries 9 --sleep 15s -- \
+    volta install "${missing_packages[@]}"
 fi
