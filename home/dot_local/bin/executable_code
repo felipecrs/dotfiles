@@ -6,6 +6,12 @@ if [ -n "${DEBUG:-}" ]; then
   set -x
 fi
 
+# This ensures there's a line between git's "hint: Waiting for your editor to close the file..."
+# and the next output
+if [ -n "${GIT_INDEX_FILE:-}" ]; then
+  echo >&2
+fi
+
 # Find whether we are trying to open a directory
 target_dir=""
 for arg in "$@"; do
