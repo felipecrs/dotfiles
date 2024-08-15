@@ -179,7 +179,7 @@ for variant in "${variants[@]}"; do
 export IS_WSL=true
 
 # Exercises install-pre-requisites.sh
-sudo apt remove --yes zsh curl git gpg
+sudo DEBIAN_FRONTEND=noninteractive apt remove --yes --auto-remove zsh curl git gpg
 
 cat <<'EOM' | sudo tee /usr/local/bin/wslpath
 #!/bin/bash
@@ -205,8 +205,8 @@ EOF
       run_test "${os}" "$(
         # shellcheck disable=SC2312
         cat <<'EOF'
-sudo apt update --yes
-sudo apt install --yes --no-install-recommends gnome-shell
+sudo apt update
+sudo DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends gnome-shell
 EOF
       )"
       ;;

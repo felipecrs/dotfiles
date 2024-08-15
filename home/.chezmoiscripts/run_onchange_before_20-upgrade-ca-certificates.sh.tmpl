@@ -10,13 +10,15 @@ true || source ../.chezmoitemplates/scripts-library
 
 log_task "Upgrading ca-certificates"
 
-# Ignore apt update error if it is due to expired certificate (because chances are that
-# the next command will fix it.
-if output="$(c sudo apt update --yes)" || [[ "${output}" == *"The certificate chain uses expired certificate."* ]]; then
+# Ignore apt update error if it is due to expired certificate (because chances
+# are that the next command will fix it).
+# shellcheck disable=SC2310
+if output="$(c sudo apt update)" || [[ "${output}" == *"The certificate chain uses expired certificate."* ]]; then
   echo "${output}"
   true
 else
   echo "${output}"
   exit 1
 fi
-c sudo apt install --yes --no-install-recommends ca-certificates
+
+c sudo DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends ca-certificates
