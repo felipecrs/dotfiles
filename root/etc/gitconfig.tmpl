@@ -8,6 +8,9 @@ credentialStore = secretservice
 credentialStore = plaintext
 {{- end }}
 
+[credential "https://review.gerrithub.io"]
+provider = generic
+
 [filter "lfs"]
 clean = git-lfs clean -- %f
 smudge = git-lfs smudge -- %f
