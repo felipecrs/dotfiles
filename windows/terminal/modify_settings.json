@@ -1,0 +1,12 @@
+{{- /* chezmoi:modify-template */ -}}
+
+{{- /* Load existing configuration */ -}}
+{{- $result := dict -}}
+{{- if not (.chezmoi.stdin | trim | empty) -}}
+{{-   $result = fromJsonc .chezmoi.stdin -}}
+{{- end -}}
+
+{{- /* Set font */ -}}
+{{- $result = setValueAtPath "profiles.defaults.font.face" "FiraCode Nerd Font Mono" $result -}}
+
+{{- toPrettyJson "    " $result | trimSuffix "\n" -}}

@@ -1,0 +1,63 @@
+#!/bin/bash
+# chezmoi:template:left-delimiter="# {{" right-delimiter=}}
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+rootmoi_path='# {{ joinPath .chezmoi.homeDir ".local/bin/rootmoi" }}'
+original_args=(
+  # {{ rest .chezmoi.args | quoteList | join " " }}
+)
+args=(apply)
+
+# Skip if NO_ROOTMOI is set
+if [[ -n "${NO_ROOTMOI:-}" ]]; then
+  exit 0
+fi
+
+# Filter out incompatible args
+skip_one_more=false
+for i in "${!original_args[@]}"; do
+  if [[ "${skip_one_more}" == true ]]; then
+    skip_one_more=false
+    continue
+  fi
+
+  if [[ "${original_args[i]}" == "-S" ||
+    "${original_args[i]}" == "--source" ]]; then
+    skip_one_more=true
+    continue
+  fi
+
+  if [[ "${original_args[i]}" == "-S="* ||
+    "${original_args[i]}" == "--source="* ]]; then
+    continue
+  fi
+
+  # We will always apply, so we don't need any --apply flags
+  if [[ "${original_args[i]}" == "-a" ||
+    "${original_args[i]}" == "-a="* ||
+    "${original_args[i]}" == "--apply" ||
+    "${original_args[i]}" == "--apply="* ]]; then
+    continue
+  fi
+
+  # --init never makes sense, because rootmoi's configuration is handled by
+  # chezmoi earlier
+  if [[ "${original_args[i]}" == "--init" ]]; then
+    continue
+  fi
+
+  # Remove any positional args, as we will always use apply
+  if [[ "${original_args[i]}" != "-"* ]]; then
+    continue
+  fi
+
+  args+=("${original_args[i]}")
+done
+
+log_task "Applying root dotfiles"
+log_c "rootmoi" "${args[@]}"
+exec "${rootmoi_path}" "${args[@]}"

@@ -1,0 +1,3 @@
+{{- /* chezmoi:modify-template */ -}}
+
+{{- .chezmoi.stdin -}}

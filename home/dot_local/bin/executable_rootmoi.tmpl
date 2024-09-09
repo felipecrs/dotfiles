@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# {{ include (joinPath .chezmoi.sourceDir ".chezmoitemplates/scripts-library") }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../../.chezmoitemplates/scripts-library
+
+# {{ $configDir := joinPath .chezmoi.homeDir ".config/rootmoi" }}
+# {{ $configFile := joinPath $configDir "chezmoi.yaml" }}
+# {{ $persistentStateFile := joinPath $configDir "chezmoistate.boltdb" }}
+# {{ $cacheDir := joinPath .chezmoi.homeDir ".cache/rootmoi" }}
+
+# We remove chezmoi as part of the installation, so this handles it
+if [[ -f '{{ .chezmoi.executable }}' ]]; then
+  executable='{{ .chezmoi.executable }}'
+else
+  # chezmoi is installed with Homebrew
+  ensure_path_entry "${HOME}/.linuxbrew/bin" "/home/linuxbrew/.linuxbrew/bin"
+  executable=$(command -v chezmoi)
+fi
+
+# Ensure the folders are created, because otherwise they will be created as
+# root, including the ~/.cache and ~/.config, which can cause other programs
+# to stop working.
+# shellcheck disable=SC2016
+mkdir -p '{{ $configDir }}' '{{ $cacheDir }}'
+
+# We should not use sudo's --preserve-env option because the sudo function will
+# automatically bypass sudo if the user is root already.
+env_args=(env "PATH=${PATH}")
+if [[ "${DOTFILES_TEST:-}" == true ]]; then
+  env_args+=("DOTFILES_TEST=true")
+fi
+
+sudo exec "${env_args[@]}" \
+  "${executable}" "$@" \
+  --config='{{ $configFile }}' \
+  --persistent-state='{{ $persistentStateFile }}' \
+  --cache='{{ $cacheDir }}'

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+# {{ template "vscode-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+true || source ../.chezmoitemplates/vscode-library
+
+function code() {
+  NO_REMOTE=1 command code "$@"
+}
+
+install_vscode_extensions

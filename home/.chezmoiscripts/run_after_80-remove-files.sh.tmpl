@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+# {{ template "remove-files-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+true || source ../.chezmoitemplates/remove-files-library
+
+# This is a workaround for the following issue:
+# https://github.com/twpayne/chezmoi/discussions/1789#discussioncomment-1920082
+
+readonly unwanted_files=(
+  # {{ if not .is_gnome }}
+  "{{ .chezmoi.homeDir }}/.local/bin/gnome-shell-extension-installer"
+  # {{ end }}
+)
+
+remove_files "${unwanted_files[@]}"

@@ -1,0 +1,15 @@
+{{- /* chezmoi:modify-template */ -}}
+
+{{- /* Load existing configuration */ -}}
+{{- $result := dict -}}
+{{- if not (.chezmoi.stdin | trim | empty) -}}
+{{-   $result = fromJsonc .chezmoi.stdin -}}
+{{- end -}}
+
+{{- /* Set terminal font */ -}}
+{{- $result = setValueAtPath (list "terminal.integrated.fontFamily") "FiraCode Nerd Font Mono" $result -}}
+
+{{- /* Fix Linux title bars */ -}}
+{{- $result = setValueAtPath (list "window.titleBarStyle") "custom" $result -}}
+
+{{- toPrettyJson "    " $result | trimSuffix "\n" -}}

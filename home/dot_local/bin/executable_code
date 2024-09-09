@@ -1,0 +1,249 @@
+#!/bin/sh
+
+set -eu
+
+if [ -n "${DEBUG:-}" ]; then
+  set -x
+fi
+
+# This ensures there's a line between git's "hint: Waiting for your editor to close the file..."
+# and the next output
+if [ -n "${GIT_INDEX_FILE:-}" ]; then
+  echo >&2
+fi
+
+# Find whether we are trying to open a directory
+target_dir=""
+for arg in "$@"; do
+  # Skip options like --wait
+  if [ "${arg#-}" = "${arg}" ]; then
+    if [ -d "${arg}" ]; then
+      target_dir="${arg}"
+    fi
+    break
+  fi
+done
+unset arg
+
+# If we are trying to open a folder, drop the --wait flag to work around:
+# https://github.com/twpayne/chezmoi/issues/1068
+for arg in "$@"; do
+  shift
+
+  if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+    if [ -n "${target_dir}" ]; then
+      echo "INFO(dotfiles-code): dropping --wait since a directory is trying to be opened" >&2
+      continue
+    fi
+  fi
+
+  set -- "$@" "${arg}"
+done
+unset arg
+
+# Decide whether we want to try opening remote sessions or not
+remote=true
+if [ -n "${NO_REMOTE:-}" ]; then
+  remote=false
+fi
+
+is_wsl=false
+if [ -n "${WSL_DISTRO_NAME:-}" ] || [ -n "${IS_WSL:-}" ]; then
+  is_wsl=true
+fi
+
+# Handle --devcontainer flag
+devcontainer=false
+for arg in "$@"; do
+  shift
+
+  if [ "${arg}" = "--devcontainer" ]; then
+    devcontainer=true
+
+    if [ -n "${target_dir}" ]; then
+      target_dir=$(realpath "${target_dir}")
+
+      if ! devcontainer_workspace_folder=$(
+        # https://github.com/microsoft/vscode-remote-release/issues/2133#issuecomment-1430651840
+        devcontainer read-configuration --workspace-folder "${target_dir}" 2>/dev/null |
+          jq --exit-status --raw-output .workspace.workspaceFolder
+      ); then
+        echo "ERROR(dotfiles-code): failed to read the devcontainer workspace folder" >&2
+        exit 1
+      fi
+
+      if [ "${remote}" = true ] && [ "${is_wsl}" = true ]; then
+        target_dir=$(wslpath -w "${target_dir}")
+      fi
+
+      devcontainer_path_id=$(printf "%s" "${target_dir}" | xxd -ps -c 256)
+      break
+    else
+      echo "ERROR(dotfiles-code): when using --devcontainer, the first argument must be a directory"
+      exit 1
+    fi
+  fi
+
+  set -- "$@" "${arg}"
+done
+unset arg
+
+exec_code() {
+  code="$1"
+  shift
+
+  if [ "${devcontainer}" = false ]; then
+    exec "${code}" "$@"
+  fi
+
+  devcontainer_remote_id=""
+  if [ -n "${ssh_host:-}" ]; then
+    devcontainer_remote_id="@ssh-remote%2B${ssh_host}"
+  elif [ "${is_wsl}" = false ] && [ -n "${VSCODE_IPC_HOOK_CLI:-}" ]; then
+    # Try to find remote tunnel host
+    if tunnel_host=$(
+      "${code}" --status 2>/dev/null | grep -oP "^Remote:[ ]+\K.+" | grep -v '[ :]' | head -1 | grep .
+    ); then
+      devcontainer_remote_id="@tunnel%2B${tunnel_host}"
+    else
+      echo "ERROR(dotfiles-code): failed to get the remote id" >&2
+      exit 1
+    fi
+  fi
+  exec "${code}" --folder-uri "vscode-remote://dev-container%2B${devcontainer_path_id}${devcontainer_remote_id}${devcontainer_workspace_folder}"
+}
+
+vscode_server_dir="${HOME}/.vscode-server"
+
+# Handle vscode ssh, unless NO_REMOTE is set
+if [ "${remote}" = true ] && [ -z "${VSCODE_IPC_HOOK_CLI:-}" ] && who -m | grep -q .; then
+  # We will try to find an existing connection and reuse it. This allows
+  # opening VS Code windows from a SSH remote session even out of the VS Code
+  # integrated terminal.
+  # PS: this only works if there is at least one VS Code window already
+  # connected to this machine.
+  echo "INFO(dotfiles-code): ssh session detected, searching for vscode remote sessions (set NO_REMOTE=1 to disable this)" >&2
+  no_sockets_message="no vscode remote sessions found"
+
+  code_search_dir="${vscode_server_dir}/cli/servers"
+  if [ -d "${code_search_dir}" ]; then
+    # Find the most recent directory inside of code_search_dir
+    if code_search_dir=$(
+      find "${code_search_dir}" \
+        -mindepth 1 -maxdepth 1 -type d -printf "%T@ %p\n" |
+        sort -nr | cut -d' ' -f 2- | head -1 | grep .
+    ); then
+      # Ensure the bin is valid
+      code="${code_search_dir}/server/bin/remote-cli/code"
+      if [ -x "${code}" ]; then
+        # Find all vscode-ipc-*.sock files, trying to connect to the newest first
+        uid=$(id -u)
+        if sockets=$(
+          find "/run/user/${uid}/" \
+            -mindepth 1 -maxdepth 1 -type s -name "vscode-ipc-*.sock" -printf "%T@ %p\n" |
+            sort -nr | cut -d' ' -f 2- | grep .
+        ); then
+          sockets_count=$(echo "${sockets}" | wc -l)
+          echo "INFO(dotfiles-code): ${sockets_count} vscode remote sessions found" >&2
+          unset sockets_count
+
+          for socket in ${sockets}; do
+            echo "INFO(dotfiles-code): trying to connect to ${socket}" >&2
+            export VSCODE_IPC_HOOK_CLI="${socket}"
+            if ssh_host=$(
+              timeout 5s "${code}" --status 2>/dev/null | grep -m1 -oP "^Remote:[ ]+SSH:[ ]+\K.+"
+            ); then
+              echo "INFO(dotfiles-code): worked, using it" >&2
+              exec_code "${code}" "$@"
+            else
+              echo "INFO(dotfiles-code): did not work" >&2
+            fi
+          done
+
+          no_sockets_message="no more vscode remote sessions found"
+          unset socket VSCODE_IPC_HOOK_CLI output
+        fi
+        unset uid sockets
+      fi
+      unset code
+    fi
+  fi
+  echo "WARNING(dotfiles-code): ${no_sockets_message}" >&2
+  unset code_search_dir
+fi
+
+# Only consider next "code"s in PATH
+this_script=$(realpath "$0")
+executables=$(
+  # shellcheck disable=SC2230
+  which -a code | grep -A99 "${this_script}" | grep -v "${this_script}" || true
+)
+
+if [ "${remote}" = false ]; then
+  echo "INFO(dotfiles-code): using code from linux" >&2
+  # Avoids reopening the remote session if called from within the remote session
+  unset VSCODE_IPC_HOOK_CLI
+  if [ "${is_wsl}" = true ]; then
+    export DONT_PROMPT_WSL_INSTALL=1
+    executables=$(echo "${executables}" | grep -v '^/mnt/.*$' || true)
+  fi
+  executables=$(echo "${executables}" | grep -v "${vscode_server_dir}" || true)
+elif [ "${is_wsl}" = true ]; then
+  echo "INFO(dotfiles-code): using code from windows (set NO_REMOTE=1 to disable this)" >&2
+  executables=$(echo "${executables}" | grep '^/mnt/.*$' || true)
+fi
+
+if code=$(echo "${executables}" | head -1 | grep .); then
+  exec_code "${code}" "$@"
+fi
+
+# When NO_REMOTE is set, we should not try to fallback because the user has
+# explicitly requested an intention to use code.
+if [ "${remote}" = false ]; then
+  echo "ERROR(dotfiles-code): code is not available" >&2
+  exit 127
+fi
+
+echo "WARNING(dotfiles-code): code is not available" >&2
+if command -v code-insiders >/dev/null; then
+  echo "INFO(dotfiles-code): using code-insiders instead" >&2
+  exec_code code-insiders "$@"
+fi
+
+if [ -n "${target_dir}" ]; then
+  echo "ERROR(dotfiles-code): not falling back to nano, vim, or vi since a directory is trying to be opened" >&2
+  exit 127
+fi
+
+if command -v nano >/dev/null; then
+  editor="nano"
+elif command -v vim >/dev/null; then
+  editor="vim"
+elif command -v vi >/dev/null; then
+  editor="vi"
+else
+  echo "ERROR(dotfiles-code): neither code-insiders, nano, vim, or vi is available" >&2
+  exit 127
+fi
+
+echo "INFO(dotfiles-code): using ${editor} instead" >&2
+
+for arg in "$@"; do
+  shift
+
+  # Remove the --wait flag as it's not supported by nano, vim, or vi
+  if [ "${arg}" = "--wait" ] || [ "${arg}" = "-w" ]; then
+    echo "INFO(dotfiles-code): dropping --wait as it's not supported by ${editor}" >&2
+    continue
+  fi
+
+  # If any other option is passed, we fail
+  if [ "${arg#-}" != "${arg}" ]; then
+    echo "ERROR(dotfiles-code): not falling back to ${editor} since ${arg} was passed" >&2
+    exit 127
+  fi
+
+  set -- "$@" "${arg}"
+done
+
+exec "${editor}" "$@"

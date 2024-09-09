@@ -1,0 +1,25 @@
+# shellcheck shell=bash
+
+wanted_extensions=(
+  ms-vscode-remote.vscode-remote-extensionpack
+)
+
+function is_vscode_extension_installed() {
+  local extension="$1"
+
+  # shellcheck disable=SC2312
+  code --list-extensions 2>/dev/null | grep "${extension}" >/dev/null
+}
+
+function install_vscode_extensions() {
+  for extension in "${wanted_extensions[@]}"; do
+    if ! is_vscode_extension_installed "${extension}"; then
+      if [[ -n "${FOR_WINDOWS:-}" ]]; then
+        log_task "Installing VS Code extension on Windows: ${extension}"
+      else
+        log_task "Installing VS Code extension: ${extension}"
+      fi
+      c code --install-extension "${extension}"
+    fi
+  done
+}

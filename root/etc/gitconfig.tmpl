@@ -1,0 +1,18 @@
+[credential]
+helper = /usr/local/bin/git-credential-manager
+{{- if .is_wsl }}
+credentialStore = wincredman
+{{- else if and .is_gnome (not .is_headless) }}
+credentialStore = secretservice
+{{- else }}
+credentialStore = plaintext
+{{- end }}
+
+[credential "https://review.gerrithub.io"]
+provider = generic
+
+[filter "lfs"]
+clean = git-lfs clean -- %f
+smudge = git-lfs smudge -- %f
+process = git-lfs filter-process
+required = true

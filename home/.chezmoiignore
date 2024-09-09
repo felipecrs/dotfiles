@@ -1,0 +1,33 @@
+{{ if .is_devcontainer -}}
+.local/bin/code
+
+.chezmoiscripts/*
+!.chezmoiscripts/*-initialize-zsh.sh
+!.chezmoiscripts/*-final-message.sh
+{{   if ne .chezmoi.osRelease.id "alpine" -}}
+!.chezmoiscripts/*-install-pkgx-packages.sh
+{{-  end }}
+{{- end }}
+
+{{ if not .is_gnome -}}
+.chezmoiscripts/*-install-gnome-extensions.sh
+.chezmoiscripts/*-configure-gnome.sh
+.chezmoiscripts/*-install-vscode-extensions.sh
+.config/Code/User/settings.json
+{{- end }}
+
+{{ if not .is_wsl -}}
+.chezmoiscripts/*-sync-wsl-ssh-keys.sh
+.chezmoiscripts/*-install-winget-packages-on-windows.sh
+.chezmoiscripts/*-install-terminal-font-on-windows.sh
+.chezmoiscripts/*-configure-vscode-on-windows.sh
+.chezmoiscripts/*-configure-terminal-on-windows.sh
+.chezmoiscripts/*-install-vscode-extensions-on-windows.sh
+{{- else -}}
+.chezmoiscripts/*-install-gnome-extensions.sh
+{{- end }}
+
+# waiting for chezmoi to leverage .gitignore from archives:
+# https://github.com/twpayne/chezmoi/issues/1421#issuecomment-964473844
+.oh-my-zsh/cache/*
+**/*.zwc

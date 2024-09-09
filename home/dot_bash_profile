@@ -1,0 +1,17 @@
+# shellcheck shell=bash
+
+# Bash does not source .profile when .bash_profile is found so we do it here
+# https://stackoverflow.com/a/9954208/12156188
+if [[ -r "${HOME}/.profile" ]]; then
+  # shellcheck source=./dot_profile.tmpl
+  source "${HOME}/.profile"
+fi
+
+# if not coming from .bashrc and .bashrc exists
+# https://stackoverflow.com/a/9954208/12156188
+if [[ -z "${COMING_FROM_BASHRC}" && -r "${HOME}/.bashrc" ]]; then
+  export COMING_FROM_BASH_PROFILE=true
+  # shellcheck source=./dot_bashrc
+  source "${HOME}/.bashrc"
+  unset COMING_FROM_BASH_PROFILE
+fi

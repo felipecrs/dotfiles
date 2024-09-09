@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# This script is executed every time chezmoi apply is run, before
+# anything else. It is meant for handling the migration of data
+# which cannot be managed by chezmoi itself.
+
+# {{ include (joinPath .chezmoi.sourceDir ".chezmoitemplates/scripts-library") }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+migrated=false
+
+# Migrate from .chezmoi.toml.tmpl to chezmoi.yaml.tmpl
+# {{ if and (stat .chezmoi.configFile) (not (hasSuffix ".yaml" .chezmoi.configFile)) }}
+log_red "⚠️ Detected old configuration file at '{{ .chezmoi.configFile }}'. Deleting it..."
+rm -f "{{ .chezmoi.configFile }}"
+migrated=true
+# {{ end }}
+
+if [[ "${migrated}" == true ]]; then
+  error "
+❌ Manual action needed. To continue, please run:
+
+👉 chezmoi init --source '{{ .chezmoi.workingTree }}' && chezmoi apply --force
+"
+fi

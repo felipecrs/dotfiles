@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../../.chezmoitemplates/scripts-library
+
+trap 'jobs -pr | xargs -r kill' EXIT
+
+# https://stackoverflow.com/a/49035906/12156188
+# shellcheck disable=SC2312
+function slugify() {
+  echo "$@" | iconv -t ascii//TRANSLIT | sed -r "s/[~\^]+//g" | sed -r "s/[^a-zA-Z0-9]+/-/g" | sed -r "s/^-+\|-+$//g" | tr "[:upper:]" "[:lower:]"
+}
+
+container_name="kpfd-$(slugify "$@")"
+
+kubeconfig="${KUBECONFIG:-"${HOME}/.kube/config"}"
+if [[ ! -f "${kubeconfig}" ]]; then
+  error "Kubernetes configuration file not found: ${kubeconfig}"
+fi
+
+# Avoiding volume mount so that it works on docker on docker
+kubeconfig_base64="$(base64 "${kubeconfig}")"
+
+log_task "Removing any existing container named ${container_name}..."
+docker rm --force "${container_name}"
+
+log_task "Creating container named ${container_name}..."
+# shellcheck disable=SC2016
+docker run --name "${container_name}" \
+  --detach \
+  --restart=unless-stopped \
+  --pull=always \
+  --network=host \
+  --env=KUBECONFIG_BASE64="${kubeconfig_base64}" \
+  --entrypoint="" \
+  "bitnami/kubectl:${K8S_VERSION:-"latest"}" \
+  sh -c 'echo "${KUBECONFIG_BASE64}" | base64 -d > /.kube/config && kubectl port-forward "${@}"' -- "$@"
+
+log_task "Capturing logs from container ${container_name}..."
+docker logs --follow "${container_name}" &
+
+sleep 3
+
+log_green "Port-forward is now running in background."
+
+log_info "Check the logs above for possible issues."
+
+log_manual_action "You can manually stop the port-forward by running:"
+
+echo
+
+log_c docker rm --force "${container_name}"

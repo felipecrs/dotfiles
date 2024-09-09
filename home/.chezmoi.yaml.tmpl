@@ -1,0 +1,115 @@
+{{- $name := "Stefan Karlsson" -}}
+{{- $email := "iam@stefan-karlsson.se" -}}
+
+{{- $chezmoiForce := or (has "--force" .chezmoi.args) (has "--force=true" .chezmoi.args) -}}
+{{- $interactive := and stdinIsATTY (not $chezmoiForce) -}}
+
+{{- $ubuntu := hasKey .chezmoi.osRelease "ubuntuCodename" -}}
+{{- $wsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
+{{- $devcontainer := or (env "REMOTE_CONTAINERS") (env "CODESPACES") (env "VSCODE_REMOTE_CONTAINERS_SESSION") (env "GITPOD_HOST") | not | not -}}
+{{- $gnome := lookPath "gnome-shell" | not | not -}}
+{{- $headless := or (env "SSH_CLIENT" | not | not) (not (or (env "DISPLAY") (env "WAYLAND_DISPLAY"))) -}}
+
+{{- $minimum := or $devcontainer (not $ubuntu) -}}
+
+{{- if hasKey . "name" -}}
+{{-   $name = .name -}}
+{{- end -}}
+{{- if $interactive -}}
+{{-   range $i := until 99 -}}
+{{-     $question := "❔ What is your full name" -}}
+{{-     $answer := "" -}}
+{{-     if $name -}}
+{{-       $answer = promptString $question $name -}}
+{{-     else -}}
+{{-       $answer = promptString $question -}}
+{{-     end -}}
+{{-     if regexMatch "^[A-Z][-' a-zA-Z]+$" $answer -}}
+{{-       $name = $answer -}}
+{{-       writeToStdout (printf "✅ Name set as '%s'\n" $name) -}}
+{{-       break -}}
+{{-     end -}}
+{{-     writeToStdout (printf "❌ '%s' is an invalid name\n" $answer) -}}
+{{-     if eq $i 98 -}}
+{{-       writeToStdout "❌ ERROR: maximum tries exceeded\n" -}}
+{{-       exit 1 -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+
+{{- if hasKey . "email" -}}
+{{-   $email = .email -}}
+{{- end -}}
+{{- if $interactive -}}
+{{-   range $i := until 99 -}}
+{{-     $question := "❔ What is your email" -}}
+{{-     $answer := "" -}}
+{{-     if $email -}}
+{{-       $answer = promptString $question $email -}}
+{{-     else -}}
+{{-       $answer = promptString $question -}}
+{{-     end -}}
+{{-     $answer = lower $answer -}}
+{{-     if regexMatch "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$" $answer -}}
+{{-       $email = $answer -}}
+{{-       writeToStdout (printf "✅ Email set as '%s'\n" $email) -}}
+{{-       break -}}
+{{-     end -}}
+{{-     writeToStdout (printf "❌ '%s' is an invalid email\n" $answer) -}}
+{{-     if eq $i 98 -}}
+{{-       writeToStdout "❌ ERROR: maximum tries exceeded\n" -}}
+{{-       exit 1 -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
+
+{{- if hasKey . "is_devcontainer" -}}
+{{-   $minimum = .is_devcontainer -}}
+{{- end -}}
+{{- if $interactive -}}
+{{-   $question := "❔ Should install in minimum mode (see README)" -}}
+{{-   $minimum = promptBool $question $minimum -}}
+{{-   if $minimum -}}
+{{-     writeToStdout "✅ Minimum mode enabled\n" -}}
+{{-   else -}}
+{{-     writeToStdout "✅ Minimum mode disabled\n" -}}
+{{-   end -}}
+{{- end -}}
+
+{{- if $interactive -}}
+{{-   writeToStdout "\n💡 Tip: you can always make chezmoi ask this again by running `chezmoi init` without `--force`.\n" -}}
+{{- end -}}
+
+{{- /* This retains the value passed with --source on chezmoi init, which is used in the ../install.sh script */ -}}
+sourceDir: "{{ .chezmoi.workingTree }}"
+
+verbose: true
+
+# https://github.com/twpayne/chezmoi/issues/3257
+pager: ""
+
+diff:
+  exclude:
+    - scripts
+status:
+  exclude:
+    - always
+
+hooks:
+  read-source-state:
+    pre:
+      command: {{ .chezmoi.workingTree }}/home/.chezmoihooks/ensure-pre-requisites.sh
+
+{{/* Here we "export" the variables, so we can access them outside this file */ -}}
+data:
+  is_wsl: {{ $wsl }}
+  is_devcontainer: {{ $minimum }}
+  is_gnome: {{ $gnome }}
+  is_headless: {{ $headless }}
+
+  name: "{{ $name }}"
+  email: "{{ $email }}"
+
+  editor: "code --wait"
+
+  uname_arch: "{{ output "uname" "-m" | trim }}"

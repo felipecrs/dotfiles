@@ -1,0 +1,4 @@
+{{- /* Check if system is running with systemd. */ -}}
+{{- if eq (output "ps" "--no-headers" "-o" "comm" "1" | trim) "systemd" -}}
+true
+{{- end -}}

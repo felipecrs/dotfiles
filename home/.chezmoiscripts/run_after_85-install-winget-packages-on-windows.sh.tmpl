@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+win_home="$(wslvar USERPROFILE)"
+winget_dir="$(wslpath "${win_home}\AppData\Local\Microsoft\WindowsApps")"
+
+ensure_path_entry "${winget_dir}"
+
+function is_winget_package_installed() {
+  local package="$1"
+
+  winget.exe list --exact --id "${package}" --source winget --accept-source-agreements --disable-interactivity &>/dev/null
+}
+
+if ! command -v winget.exe >/dev/null; then
+  log_task "Installing WinGet"
+
+  msix_path="/tmp/winget.msixbundle"
+  msix_path_for_win="$(wslpath -w "${msix_path}")"
+
+  c curl -fsSL --output "${msix_path}" \
+    https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+
+  not_during_test c PowerShell.exe -NoProfile -Command "Add-AppxPackage -Path '${msix_path_for_win}' -ForceUpdateFromAnyVersion"
+
+  rm -f "${msix_path}"
+  unset msix_path msix_path_for_win
+fi
+
+readonly wanted_packages=(
+  Microsoft.VisualStudioCode
+  Microsoft.WindowsTerminal
+)
+
+missing_packages=()
+
+for package in "${wanted_packages[@]}"; do
+  if ! is_winget_package_installed "${package}"; then
+    missing_packages+=("${package}")
+  fi
+done
+
+if [[ ${#missing_packages[@]} -gt 0 ]]; then
+  log_task "Installing missing packages with WinGet: ${missing_packages[*]}"
+  for package in "${missing_packages[@]}"; do
+    not_during_test winget.exe install --exact --id "${package}" \
+      --source winget \
+      --scope user \
+      --accept-source-agreements \
+      --disable-interactivity
+  done
+fi

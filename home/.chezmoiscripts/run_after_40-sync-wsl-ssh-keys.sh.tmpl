@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+win_home="$(wslvar USERPROFILE)"
+win_home="$(wslpath "${win_home}")"
+
+# The .nomedia file is created automatically by WSA with weird permissions that rsync can't handle
+rsync_cmd=(rsync --chmod=F600 --archive --delete --itemize-changes --checksum --exclude .nomedia "${win_home}/.ssh/" "${HOME}/.ssh/")
+
+if [[ -f "${win_home}/.ssh/id_rsa" ]] && "${rsync_cmd[@]}" --dry-run | grep --quiet .; then
+  log_task "Syncing .ssh folder from Windows to WSL"
+  "${rsync_cmd[@]}"
+fi

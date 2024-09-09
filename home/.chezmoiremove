@@ -1,0 +1,46 @@
+{{- if not .is_devcontainer -}}
+
+*.deb
+*.rpm
+*.tar
+*.tar.gz
+*.tar.xz
+*.tgz
+*.zip
+
+.local/bin/localpath
+
+.local/bin/docker
+
+# These files are now installed to system-wide
+.local/bin/docker-compose
+.local/bin/docker-credential-wincred.exe
+.local/bin/docker-credential-secretservice
+
+# use werf helm upgrade --wait instead
+.local/bin/helm-upgrade-logs
+
+# use pkgx argbash instead, easy enough
+.local/bin/argbash
+.local/bin/argbash-init
+
+# now we use gext instead
+.local/bin/gnome-shell-extension-installer
+
+# tea got renamed to pkgx
+.local/bin/tea
+.tea
+
+.docker/cli-plugins/docker-compose
+.docker/cli-plugins/docker-buildx
+
+.antigen/
+.antigenrc
+
+# pkgx can be used instead
+.sdkman/
+
+# Remove font variants there used to be installed but no longer are
+.local/share/fonts/Fira Code * Nerd Font Complete*.ttf
+!.local/share/fonts/Fira Code Regular Nerd Font Complete Mono.ttf
+{{- end -}}

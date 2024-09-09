@@ -1,0 +1,79 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.shellcheck": "explicit"
+  },
+  // Disable ShellCheck from Bash IDE as we use VS Code ShellCheck
+  "bashIde.shellcheckPath": "",
+  "cSpell.words": [
+    "C",
+    "CODESPACES",
+    "Cássio",
+    "DISTRO",
+    "Fira",
+    "NOPASSWD",
+    "Powerlevel",
+    "USERPROFILE",
+    "asciinema",
+    "chezmoi",
+    "chmod",
+    "choco",
+    "chsh",
+    "devcontainer",
+    "dotfiles",
+    "felipecrs",
+    "jfrog",
+    "kubectl",
+    "onedrive",
+    "shellcheck",
+    "ssio",
+    "submodule",
+    "sudoers",
+    "wslpath",
+    "wslvar"
+  ],
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[shellscript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "shellcheck.ignorePatterns": {
+    "**/*.zsh": true,
+    "**/*.zshrc": true,
+    "**/zshrc": true,
+    "**/*.zprofile": true,
+    "**/zprofile": true,
+    "**/*.zlogin": true,
+    "**/zlogin": true,
+    "**/*.zlogout": true,
+    "**/zlogout": true,
+    "**/*.zshenv": true,
+    "**/zshenv": true,
+    "**/*.zsh-theme": true,
+    // custom
+    "**/*_zshrc": true
+  },
+  "files.associations": {
+    "**/home/install": "shellscript",
+    "*_zshrc": "shellscript",
+    "*_antigenrc": "shellscript",
+    "*_profile.tmpl": "shellscript",
+    "*_bashrc": "shellscript",
+    "*_bash_aliases.tmpl": "shellscript",
+    "**/home/**/run_*": "shellscript",
+    "**/home/**/executable_*": "shellscript",
+    "**/home/**/modify_*": "helm",
+    "*.yaml.tmpl": "helm",
+    ".chezmoi*.yaml": "helm",
+    ".chezmoiignore": "helm",
+    ".chezmoiremove": "helm",
+    "**/.chezmoitemplates/*": "helm",
+    "**/.chezmoitemplates/*-library": "shellscript"
+  }
+}

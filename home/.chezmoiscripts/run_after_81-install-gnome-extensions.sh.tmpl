@@ -1,0 +1,82 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+ensure_path_entry "${HOME}/.local/bin"
+
+function is_gnome_extension_installed() {
+  local extension="$1"
+
+  # https://github.com/essembeh/gnome-extensions-cli/issues/29
+  gext list --all | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' | grep --quiet "(${extension})"
+}
+
+function is_gnome_extension_enabled() {
+  local extension="$1"
+
+  # https://github.com/essembeh/gnome-extensions-cli/issues/29
+  gext list | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' | grep --quiet "(${extension})"
+}
+
+wanted_extensions=(
+  dash-to-panel@jderose9.github.com
+  arcmenu@arcmenu.com
+  # {{ if semverCompare "<22.04" .chezmoi.osRelease.versionID }}
+  # Ubuntu 22.04+ comes with a nice (already dark) default shell theme
+  user-theme@gnome-shell-extensions.gcampax.github.com
+  # {{ end }}
+)
+
+unwanted_extensions=(Q
+  clipboard-indicator@tudmotu.com
+  # {{ if semverCompare ">=22.04" .chezmoi.osRelease.versionID }}
+  user-theme@gnome-shell-extensions.gcampax.github.com
+  # {{ end }}
+)
+
+disabled_extensions=(
+  ubuntu-dock@ubuntu.com
+)
+
+missing_extensions=()
+
+if ! command -v gext >/dev/null; then
+  log_task "Installing gnome-extensions-cli"
+  c pipx install --force gnome-extensions-cli
+fi
+
+for extension in "${wanted_extensions[@]}"; do
+  # shellcheck disable=SC2310
+  if ! is_gnome_extension_installed "${extension}"; then
+    missing_extensions+=("${extension}")
+  fi
+done
+
+if [[ ${#missing_extensions[@]} -gt 0 ]]; then
+  log_task "Installing GNOME extensions"
+  # gext install "${missing_extensions[@]}"
+fi
+
+for extension in "${disabled_extensions[@]}"; do
+  if is_gnome_extension_enabled "${extension}"; then
+    log_task "Disabling GNOME extension: ${extension}"
+    gext disable "${extension}"
+  fi
+done
+
+for extension in "${wanted_extensions[@]}"; do
+  if ! is_gnome_extension_enabled "${extension}"; then
+    log_task "Enabling GNOME extension: ${extension}"
+    gext enable "${extension}"
+  fi
+done
+
+for extension in "${unwanted_extensions[@]}"; do
+  if is_gnome_extension_installed "${extension}"; then
+    log_task "Uninstalling GNOME extension: ${extension}"
+    gext uninstall "${extension}"
+  fi
+done

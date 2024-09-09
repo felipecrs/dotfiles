@@ -1,0 +1,29 @@
+{{- /* chezmoi:modify-template */ -}}
+
+{{- /* Load existing configuration */ -}}
+{{- $result := dict -}}
+{{- if not (.chezmoi.stdin | trim | empty) -}}
+{{-   $result = fromJson .chezmoi.stdin -}}
+{{- end -}}
+
+{{- /* Delete features.buildkit as it is now the default */ -}}
+{{- $result = deleteValueAtPath "features.buildkit" $result -}}
+
+{{- /* Delete aliases.builder=buildx as it is now the default */ -}}
+{{- $result = deleteValueAtPath "aliases.builder" $result -}}
+
+{{- /* Set credentials helper */ -}}
+{{- $keyName := "credsStore" -}}
+{{- if .is_wsl -}}
+{{-   $result = setValueAtPath $keyName "wincred.exe" $result -}}
+{{- else if and .is_gnome (not .is_headless) -}}
+{{-   $result = setValueAtPath $keyName "secretservice" $result -}}
+{{- else -}}
+{{-   $result = deleteValueAtPath $keyName $result -}}
+{{- end -}}
+
+{{- /* If there is no output, chezmoi deletes the file */ -}}
+{{- $result = pruneEmptyDicts $result -}}
+{{- if not (empty $result) -}}
+{{-   toPrettyJson "\t" $result | trimSuffix "\n" -}}
+{{- end -}}

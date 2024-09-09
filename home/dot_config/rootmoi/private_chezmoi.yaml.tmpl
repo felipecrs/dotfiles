@@ -1,0 +1,28 @@
+{{- $chezmoiData := deepCopy . -}}
+{{- $chezmoiData = unset $chezmoiData "chezmoi" -}}
+
+{{- $sourceDir := joinPath .chezmoi.workingTree "root" -}}
+sourceDir: "{{ $sourceDir }}"
+
+destDir: "/"
+
+verbose: true
+
+# https://github.com/twpayne/chezmoi/issues/3257
+pager: ""
+
+diff:
+  exclude:
+    - scripts
+status:
+  exclude:
+    - always
+
+hooks:
+  read-source-state:
+    pre:
+      command: {{ $sourceDir }}/.chezmoihooks/ensure-pre-requisites.sh
+
+data:
+  non_root_user: "{{ .chezmoi.username }}"
+  {{- $chezmoiData | toYaml | nindent 2 }}

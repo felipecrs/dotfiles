@@ -1,0 +1,143 @@
+#!/bin/bash
+
+red() {
+  printf '\e[31;1m%s\e[m\n' "$*"
+}
+
+green() {
+  printf '\e[32;1m%s\e[m\n' "$*"
+}
+
+yellow() {
+  printf '\e[33;1m%s\e[m\n' "$*"
+}
+
+c() {
+  yellow "➡ $*"
+  "$@"
+}
+
+usage_error() {
+  red "Error: $*" >&2
+  echo >&2
+  echo "$usage" >&2
+  exit 2
+}
+
+set -euo pipefail
+
+command_name=$(basename "$0")
+readonly command_name
+
+readonly config_file=~/.${command_name}rc.json
+readonly base_url_key='defaultBaseUrl'
+
+help_text=$(
+  cat <<EOM
+Clones a repository using 'git clone', and also sets up the Gerrit commit-msg
+hook for the repository.
+
+If a configuration file is present at '$config_file' with a default base url to
+clone, the Gerrit server can be omitted when cloning, and only the project name
+can be supplied.
+
+Example of a '$config_file':
+
+  {
+    "defaultBaseUrl": "https://review.gerrithub.io/a/"
+  }
+
+EOM
+)
+
+readonly help_text
+
+usage=$(
+  cat <<EOM
+Usage:
+
+  $command_name [--help] <repository> [<directory>] [<additional-git-clone-args>]
+
+Example:
+
+  $command_name https://review.gerrithub.io/a/felipecrs/dotfiles
+
+  $command_name https://review.gerrithub.io/a/felipecrs/dotfiles ~/.dotfiles
+
+  $command_name https://review.gerrithub.io/a/felipecrs/dotfiles --depth=1
+
+  $command_name https://review.gerrithub.io/a/felipecrs/dotfiles ~/.dotfiles --depth=1
+
+  # uses the base url defined at $config_file
+  $command_name felipecrs/dotfiles
+
+EOM
+)
+
+readonly usage
+
+if [[ -z "${1:-}" || "$1" == "--help" ]]; then
+  echo "$help_text"
+  echo
+  echo "$usage"
+  exit 0
+fi
+
+readonly project_regex="[-a-zA-Z0-9_./]*"
+# 1: protocol, 2: credentials (optional), 3: hostname, 4: auth endpoint, the "a/" (optional), 5: project name
+readonly url_regex="(https?)://([-a-zA-Z0-9_.:]*@)?([-a-zA-Z0-9_.:]*)/(a/)?($project_regex)"
+
+if [[ "$1" =~ ^$url_regex$ ]]; then
+  readonly git_repository="${BASH_REMATCH[0]}"
+  readonly protocol="${BASH_REMATCH[1]}"
+  readonly hostname="${BASH_REMATCH[3]}"
+elif [[ "$1" =~ ^$project_regex$ ]]; then
+  if [[ -f "$config_file" ]]; then
+    if ! [[ $(command -v jq) ]]; then
+      usage_error "jq must be installed in order to read the configuration file."
+    fi
+    if base_url=$(jq -er --arg b "$base_url_key" '.[$b]' "$config_file") >&2; then
+      readonly base_url
+      readonly git_repository="${base_url%%/}/$1"
+      if [[ "$git_repository" =~ ^$url_regex$ ]]; then
+        readonly protocol="${BASH_REMATCH[1]}"
+        readonly hostname="${BASH_REMATCH[3]}"
+
+        shift
+
+        set -- "$git_repository" "$@"
+      else
+        red "Error: failed to parse url for '$git_repository'." >&2
+        exit 1
+      fi
+    else
+      usage_error "only project name is supplied but no key named '$base_url_key' is present in the configuration file."
+    fi
+  else
+    usage_error "only project name is supplied but no configuration file is present at '$config_file'."
+  fi
+else
+  usage_error "the repository does not seem to be a valid http or https url, or a project name."
+fi
+
+# check if it's not an option
+if [[ -n "${2:-}" && "${2#-}" == "$2" ]]; then
+  git_directory="$2"
+else
+  git_directory="$(basename "$git_repository")"
+fi
+readonly git_directory
+
+c git clone "$@"
+
+dot_git_directory="$git_directory/$(git -C "$git_directory" rev-parse --git-dir)"
+readonly dot_git_directory
+
+hook="$dot_git_directory/hooks/commit-msg"
+readonly hook
+
+c curl -fL --create-dirs "$protocol://$hostname/tools/hooks/commit-msg" -o "$hook"
+
+c chmod +x "$hook"
+
+green "✔ Done!"

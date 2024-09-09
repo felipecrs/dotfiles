@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+settings_dir="$(wslvar APPDATA)"
+settings_dir="$(wslpath "${settings_dir}")"
+settings_dir="${settings_dir}/Code/User"
+
+settings_path="${settings_dir}/settings.json"
+if [[ -f "${settings_path}" ]]; then
+  settings="$(cat "${settings_path}")"
+else
+  settings=''
+fi
+
+template_path='{{ joinPath .chezmoi.sourceDir "dot_config/Code/User/modify_settings.json" }}'
+template="$(cat "${template_path}")"
+
+chezmoi_path='{{ .chezmoi.executable }}'
+
+result="$("${chezmoi_path}" execute-template --with-stdin "${template}" <<<"${settings}")"
+
+if [[ "${result}" != "${settings}" ]]; then
+  log_task "Configuring VS Code on Windows"
+  mkdir -p "${settings_dir}"
+  tee "${settings_path}" >/dev/null <<<"${result}"
+fi

@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+ensure_path_entry "${HOME}/.local/bin"
+
+function is_pkgx_package_installed() {
+  local package="$1"
+
+  grep --quiet --recursive --binary-files=without-match --word-regexp \
+    "exec pkgx +${package}" "${HOME}/.local/bin"
+}
+
+readonly unwanted_packages=()
+
+for package in "${unwanted_packages[@]}"; do
+  # shellcheck disable=SC2310
+  if is_pkgx_package_installed "${package}"; then
+    log_task "Removing unwanted package '${package}' installed with pkgx"
+    {
+      grep --recursive --binary-files=without-match --files-with-matches \
+        --word-regexp "exec pkgx +${package}" "${HOME}/.local/bin" || true
+    } | xargs --no-run-if-empty rm -f
+  fi
+done
+
+readonly wanted_packages=(
+  opendev.org/git-review
+  # {{ if not .is_devcontainer }}
+  openjdk.org
+  maven.apache.org
+  # {{ end }}
+)
+
+missing_packages=()
+
+for package in "${wanted_packages[@]}"; do
+  # shellcheck disable=SC2310
+  if ! is_pkgx_package_installed "${package}"; then
+    missing_packages+=("${package}")
+  fi
+done
+
+if [[ ${#missing_packages[@]} -gt 0 ]]; then
+  log_task "Installing missing packages with pkgx: ${missing_packages[*]}"
+  pkgx install "${missing_packages[@]}"
+fi

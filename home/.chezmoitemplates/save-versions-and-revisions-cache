@@ -1,0 +1,5 @@
+{{- $cache := . -}}
+{{- if $cache.save -}}
+{{-   $cacheToSave := dict "time" $cache.time "revisions" $cache.revisions "versions" $cache.versions -}}
+{{-   $_ := output "sh" "-c" (printf "mkdir -p '%s' && echo '%s' > '%s'" (dir $cache.file) (toYaml $cacheToSave) $cache.file) -}}
+{{- end -}}

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+
+chezmoi_executable="{{ .chezmoi.executable }}"
+if [[ "${chezmoi_executable}" != *"/.linuxbrew/"* ]]; then
+  log_task "Uninstalling chezmoi not installed by Homebrew: ${chezmoi_executable}"
+  rm -f "${chezmoi_executable}"
+fi

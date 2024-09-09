@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+function gsettings_ensure() {
+  local schema="$1"
+  local key="$2"
+  local value="$3"
+  local extension="${4:-}"
+
+  local first_args=()
+  if [[ -n "${extension}" ]]; then
+    first_args+=(--schemadir "${HOME}/.local/share/gnome-shell/extensions/${extension}/schemas")
+  fi
+
+  local current_value
+  current_value="$(gsettings "${first_args[@]}" get "${schema}" "${key}")"
+
+  if [[ "${current_value}" != "${value}" && "${current_value}" != "'${value}'" ]]; then
+    log_task "Setting ${schema}.${key} to ${value}"
+    gsettings "${first_args[@]}" set "${schema}" "${key}" "${value}"
+  fi
+}
+
+# Setup VS Code as default text editor on GNOME
+xdg-mime default code.desktop text/plain
+
+# Configuring terminal font
+gsettings_ensure org.gnome.desktop.interface monospace-font-name 'FiraCode Nerd Font Mono 13'
+
+# Configuring up Yaru-dark theme
+gsettings_ensure org.gnome.desktop.interface gtk-theme "Yaru-dark"
+gsettings_ensure org.gnome.desktop.interface icon-theme "Yaru"
+gsettings_ensure org.gnome.desktop.interface cursor-theme "Yaru"
+gsettings_ensure org.gnome.desktop.sound theme-name "Yaru"
+# {{ if semverCompare ">=22.04" .chezmoi.osRelease.versionID }}
+gsettings_ensure org.gnome.desktop.interface color-scheme "prefer-dark"
+# {{ else }}
+# {{   if not .is_wsl }}
+gsettings_ensure org.gnome.shell.extensions.user-theme name "Yaru-dark" user-theme@gnome-shell-extensions.gcampax.github.com
+# {{   end }}
+# {{ end }}
+
+# Configuring miscellaneous settings
+gsettings_ensure org.gtk.Settings.FileChooser show-hidden true

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# {{ include (joinPath .chezmoi.sourceDir ".chezmoitemplates/scripts-library") }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+readonly unwanted_packages=(
+  gcmcore
+  direnv
+  crudini
+  fzf
+  # It is now installed as a chezmoiexternal
+  skopeo
+  # It is deprecated
+  docker-scan-plugin
+  # It is now installed as a chezmoiexternal
+  pipx
+)
+
+for package in "${unwanted_packages[@]}"; do
+  # shellcheck disable=SC2310
+  if is_apt_package_installed "${package}"; then
+    log_task "Removing unwanted package '${package}' installed with APT"
+    c env DEBIAN_FRONTEND=noninteractive apt remove --yes --auto-remove "${package}"
+  fi
+done

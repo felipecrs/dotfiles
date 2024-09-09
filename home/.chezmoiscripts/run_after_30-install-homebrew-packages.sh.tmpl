@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+# {{ template "homebrew-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+true || source ../.chezmoitemplates/homebrew-library
+
+function is_root_homebrew_prefix_writable() {
+  if [[ -d "${root_homebrew_prefix}" ]]; then
+    return 0
+  elif sudo mkdir -p "${root_homebrew_prefix}" &>/dev/null; then
+    sudo rm -rf "${root_homebrew_prefix}"
+    return 0
+  else
+    return 1
+  fi
+}
+
+function is_brew_package_installed() {
+  local package="$1"
+
+  brew list "${package}" &>/dev/null
+}
+
+if is_root_homebrew_prefix_writable && [[ -d "${home_homebrew_prefix}" ]]; then
+  log_task "Removing old Homebrew installation"
+  rm -rf "${home_homebrew_prefix}"
+fi
+
+if ! brew --version &>/dev/null; then
+  log_task "Installing Homebrew"
+  if is_root_homebrew_prefix_writable; then
+    brew_install_script=$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)
+    CI=1 bash -c "${brew_install_script}"
+  else
+    homebrew_prefix="${home_homebrew_prefix}"
+    log_info "Installing to '${homebrew_prefix}' due to lack of permissions on '/home/linuxbrew'"
+    c git clone https://github.com/Homebrew/brew "${homebrew_prefix}/Homebrew"
+    c mkdir -p "${homebrew_prefix}/bin"
+    c ln -sfn "../Homebrew/bin/brew" "${homebrew_prefix}/bin"
+    c brew update --force --quiet
+    c chmod -R go-w "${homebrew_prefix}/share/zsh"
+    unset homebrew_prefix
+  fi
+fi
+
+readonly unwanted_packages=(
+  jq
+  volta
+  deno
+  docker-compose
+  onedrive
+  skopeo
+  podman
+  buildah
+  asciinema
+  kind
+  stern
+)
+
+for package in "${unwanted_packages[@]}"; do
+  if is_brew_package_installed "${package}"; then
+    log_task "Removing unwanted package '${package}' installed with Homebrew"
+    brew uninstall --force "${package}"
+  fi
+done
+
+readonly wanted_packages=(
+  chezmoi
+  yq
+  kubectl
+  helm
+  k3d
+  dive
+  gh
+  hadolint
+)
+
+missing_packages=()
+
+for package in "${wanted_packages[@]}"; do
+  if ! is_brew_package_installed "${package}"; then
+    missing_packages+=("${package}")
+  fi
+done
+
+if [[ ${#missing_packages[@]} -gt 0 ]]; then
+  log_task "Installing missing packages with Homebrew: ${missing_packages[*]}"
+  brew install --force "${missing_packages[@]}"
+fi

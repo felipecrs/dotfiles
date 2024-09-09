@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+# {{ if stat "/etc/docker/daemon.json" }}
+# daemon.json hash: {{ include "/etc/docker/daemon.json" | sha256sum }}
+# {{ end }}
+
+log_task "Restarting Docker daemon"
+# {{ if and .is_wsl (not (includeTemplate "is-running-with-systemd" .)) }}
+# service restart fails if the service was never started
+c service docker restart || not_during_test c service docker start
+# {{ else }}
+c systemctl restart docker
+# {{ end }}

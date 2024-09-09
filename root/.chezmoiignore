@@ -1,0 +1,13 @@
+{{ if not .is_gnome }}
+etc/apt/sources.list.d/vscode.list
+etc/apt/sources.list.d/google-chrome.list
+{{ end }}
+
+{{ if .is_wsl }}
+etc/ssh
+.chezmoiscripts/*-reload-sshd.sh
+{{ else }}
+etc/wsl.conf
+.chezmoiscripts/*-fix-permissions.sh
+.chezmoiscripts/*-restore-permissions.sh
+{{ end }}

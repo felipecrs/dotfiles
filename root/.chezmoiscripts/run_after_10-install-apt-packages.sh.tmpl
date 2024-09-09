@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+
+# The following line is for ShellCheck to correctly identify the above included library
+true || source ../.chezmoitemplates/scripts-library
+
+readonly wanted_packages=(
+  apt-transport-https
+  ca-certificates
+  gnupg
+  lsb-release
+  dialog
+  build-essential
+  curl
+  zsh
+  wget
+  time
+  tree
+  parallel
+  file
+  procps
+  zip
+  git
+  jq
+  python3
+  # needed by pipx
+  python3-venv
+  #docker-ce
+  #docker-ce-cli
+  #containerd.io
+  #docker-compose-plugin
+  #docker-buildx-plugin
+  asciinema
+  # provides nslookup
+  dnsutils
+  # {{ if .is_gnome }}
+  yaru-theme-gtk
+  yaru-theme-icon
+  yaru-theme-sound
+  gnome-tweaks
+  gnome-menus
+  code
+  google-chrome-stable
+  python3-nautilus
+  # {{   if not .is_wsl }}
+  yaru-theme-gnome-shell
+  libsecret-1-0
+  gnome-menus
+  # {{   end }}
+  # {{ end }}
+  # {{ if .is_wsl }}
+  wslu
+  # {{ else }}
+  # {{   if eq .chezmoi.osRelease.versionCodename "focal" }}
+  linux-generic-hwe-20.04
+  # {{   end }}
+  # {{ end }}
+)
+missing_packages=()
+
+for package in "${wanted_packages[@]}"; do
+  # shellcheck disable=SC2310
+  if ! is_apt_package_installed "${package}"; then
+    missing_packages+=("${package}")
+  fi
+done
+
+if [[ ${#missing_packages[@]} -gt 0 ]]; then
+  log_task "Installing missing packages with APT: ${missing_packages[*]}"
+
+  c apt update
+
+  extra_args=()
+  if [[ "${DOTFILES_TEST:-}" == true ]]; then
+    log_manual_action "Not installing recommended packages to speed up test mode"
+    extra_args+=("--no-install-recommends")
+  else
+    extra_args+=("--install-recommends")
+  fi
+
+  c env DEBIAN_FRONTEND=noninteractive apt install --yes "${extra_args[@]}" "${missing_packages[@]}"
+fi

@@ -1,0 +1,17 @@
+# shellcheck shell=bash
+
+function remove_files() {
+  local files_to_remove=()
+
+  for file in "$@"; do
+    if [[ -f "${file}" ]]; then
+      files_to_remove+=("${file}")
+    fi
+  done
+
+  if [[ ${#files_to_remove[@]} -gt 0 ]]; then
+    log_task "Removing files"
+
+    c rm -f "${files_to_remove[@]}"
+  fi
+}

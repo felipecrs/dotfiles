@@ -1,0 +1,166 @@
+#!/bin/bash
+
+# {{ template "scripts-library" }}
+# {{ template "homebrew-library" }}
+# {{ template "volta-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../../.chezmoitemplates/scripts-library
+true || source ../../.chezmoitemplates/homebrew-library
+true || source ../../.chezmoitemplates/volta-library
+
+ensure_path_entry "${HOME}/.local/bin"
+
+if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
+  if brew --version &>/dev/null; then
+    (
+      export HOMEBREW_NO_AUTO_UPDATE=1
+      export HOMEBREW_NO_UPDATE_REPORT_NEW=1
+      export HOMEBREW_NO_ENV_HINTS=1
+
+      log_task "Updating brew"
+      c brew update
+
+      log_task "Updating brew packages"
+      c brew upgrade
+    )
+  fi
+
+  if chezmoi --version &>/dev/null; then
+    log_task "Updating dotfiles"
+
+    if chezmoi git -- status --porcelain | grep -q .; then
+      log_manual_action "Skipping chezmoi update as uncommitted changes were found"
+    elif
+      # shellcheck disable=SC2312
+      [[ "origin/$(chezmoi git -- rev-parse --abbrev-ref HEAD)" != "$(chezmoi git -- rev-parse --abbrev-ref origin/HEAD)" ]]
+    then
+      log_manual_action "Skipping chezmoi update as the current branch is not the default branch"
+    elif chezmoi git -- log '@{u}..' | grep -q .; then
+      log_manual_action "Skipping chezmoi update as unpushed changes were found"
+    else
+      # Pull latest changes from dotfiles repo
+      c chezmoi update --apply=false
+    fi
+
+    # Apply changes to chezmoi config
+    c chezmoi init --force
+    # Apply the rest
+    c chezmoi apply --force
+  fi
+
+  CONTINUE_FROM_DOTFILES=true exec "$0" "$@"
+fi
+
+if pkgx --version &>/dev/null; then
+  log_task "Updating pkgx stubs"
+
+  pkgx_packages="$(
+    {
+      grep --recursive --binary-files=without-match --no-filename \
+        --only-matching --perl-regexp --word-regexp \
+        'exec pkgx \+\K[^ ]+' "${HOME}/.local/bin" || true
+    } | sort --unique
+  )"
+
+  if [[ -z "${pkgx_packages}" ]]; then
+    log_info "No pkgx packages found"
+  else
+    readarray -t pkgx_packages <<<"${pkgx_packages}"
+
+    # This removes all the stubs directly as depending on the version of pkgx
+    # used to create the stub, pkgx uninstall can't uninstall it
+    {
+      grep --recursive --binary-files=without-match --files-with-matches \
+        --extended-regexp --word-regexp \
+        'exec pkgx \+[^ ]+' "${HOME}/.local/bin" || true
+    } | xargs --no-run-if-empty rm -f
+
+    # This updates the pantry, which would be updated automatically otherwise,
+    # but better safe than sorry
+    pkgx --sync >/dev/null
+
+    # And finally this adds all the stubs back, updated
+
+    # This avoids outputting a bunch of "installed" messages which can be
+    # confusing as we are just updating the stubs that were already installed
+    if output=$(pkgx install "${pkgx_packages[@]}" 2>&1); then
+      unset output
+    else
+      # But in case of failure, we output everything to help debugging
+      echo "${output}" >&2
+      exit 1
+    fi
+
+    log_task "Updating pkgx packages"
+
+    pkgx_packages_to_update=()
+    for package in "${pkgx_packages[@]}"; do
+      # This ensures we don't try to update packages that have not been cached
+      # yet, like the ones installed but never used
+      if [[ -d "${PKGX_DIR:-"${HOME}/.pkgx"}/${package}" ]]; then
+        pkgx_packages_to_update+=("+${package}")
+      fi
+    done
+
+    if [[ "${#pkgx_packages_to_update[@]}" -gt 0 ]]; then
+      c pkgx --update "${pkgx_packages_to_update[@]}" >/dev/null
+    fi
+
+    unset pkgx_packages_to_update
+  fi
+  unset pkgx_packages
+fi
+
+if apt --version &>/dev/null; then
+  log_task "Updating apt packages"
+  c sudo apt update
+  c sudo DEBIAN_FRONTEND=noninteractive apt full-upgrade --yes
+  c sudo DEBIAN_FRONTEND=noninteractive apt autoremove --yes
+fi
+
+if timeout 2 snap warnings &>/dev/null; then
+  log_task "Updating snap packages"
+  c sudo snap refresh
+fi
+
+if flatpak --version &>/dev/null; then
+  log_task "Updating flatpak packages"
+  c sudo flatpak update --assumeyes
+fi
+
+if gext --version &>/dev/null; then
+  log_task "Updating gnome extensions"
+  c gext update --yes --user
+fi
+
+if pipx --version &>/dev/null; then
+  log_task "Updating pipx packages"
+  c pipx upgrade-all
+fi
+
+if volta --version &>/dev/null; then
+  log_task "Updating node, npm and yarn with volta"
+  c volta install node npm yarn
+fi
+
+if npm --version &>/dev/null; then
+  log_task "Updating npm packages"
+  c npm update --global
+fi
+
+if timeout 2 wsl.exe --version &>/dev/null; then
+  log_task "Updating VS Code"
+  # WinGet returns non zero code if no upgrade is found, so for now we simply ignore it.
+  # Refs: https://github.com/microsoft/winget-cli/issues/3538
+  c winget.exe upgrade --exact --id Microsoft.VisualStudioCode --source winget \
+    --accept-source-agreements --disable-interactivity || true
+
+  log_task "Updating Windows Terminal"
+  c winget.exe upgrade --exact --id Microsoft.WindowsTerminal --source winget \
+    --accept-source-agreements --disable-interactivity || true
+
+  log_task "Updating WSL"
+  log_manual_action "If an update is found, WSL will exit and you will need to open another terminal window"
+  c wsl.exe --update
+fi

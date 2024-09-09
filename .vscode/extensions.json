@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "mads-hartmann.bash-ide-vscode",
+    "timonwong.shellcheck",
+    "foxundermoon.shell-format",
+    "editorconfig.editorconfig",
+    "ms-kubernetes-tools.vscode-kubernetes-tools",
+    "tim-koehler.helm-intellisense"
+  ]
+}
