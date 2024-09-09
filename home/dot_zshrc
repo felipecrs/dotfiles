@@ -142,6 +142,3 @@ fi
 if [[ -f "${HOME}/.p10k.zsh" ]]; then
   source "${HOME}/.p10k.zsh"
 fi
-
-# Increase JavaScript heap
-NODE_OPTIONS=--max-old-space-size=8192

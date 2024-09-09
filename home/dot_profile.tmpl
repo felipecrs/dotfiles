@@ -12,12 +12,15 @@ fi
 if [ -d "${HOME}/.volta/bin" ]; then
   export VOLTA_HOME="${HOME}/.volta"
   export PATH="${VOLTA_HOME}/bin:${PATH}"
+
+  export NODE_OPTIONS="--max-old-space-size=8192"
 fi
 
 if [ -d "${HOME}/.deno/bin" ]; then
   export DENO_INSTALL="${HOME}/.deno"
   export PATH="${DENO_INSTALL}/bin:${PATH}"
 fi
+
 
 if [ -r "${HOME}/.sdkman/bin/sdkman-init.sh" ]; then
   export SDKMAN_DIR="${HOME}/.sdkman"

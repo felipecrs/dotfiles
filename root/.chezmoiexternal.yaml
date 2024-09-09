@@ -3,12 +3,12 @@
 
 {{- template "read-versions-and-revisions-cache" $cache -}}
 
-#"usr/share/keyrings/docker-archive-keyring.gpg":
-#  type: file
-#  url: "https://download.docker.com/linux/{{ .chezmoi.osRelease.id }}/gpg"
-#  filter:
-#    command: gpg
-#    args: ["--dearmor"]
+"usr/share/keyrings/docker-archive-keyring.gpg":
+ type: file
+ url: "https://download.docker.com/linux/{{ .chezmoi.osRelease.id }}/gpg"
+ filter:
+   command: gpg
+   args: ["--dearmor"]
 
 "usr/share/keyrings/git-core-ppa-archive-keyring.gpg":
   type: file
@@ -33,11 +33,11 @@
     args: ["--dearmor"]
 {{ end }}
 
-#"usr/local/bin/docker-compose":
-#  type: file
-#  {{ $composeVersion := includeTemplate "get-github-latest-version" (list "docker/compose-switch" $cache) }}
-#  url: "https://github.com/docker/compose-switch/releases/download/v{{ $composeVersion }}/docker-compose-linux-{{ .chezmoi.arch }}"
-#  executable: true
+"usr/local/bin/docker-compose":
+ type: file
+ {{ $composeVersion := includeTemplate "get-github-latest-version" (list "docker/compose-switch" $cache) }}
+ url: "https://github.com/docker/compose-switch/releases/download/v{{ $composeVersion }}/docker-compose-linux-{{ .chezmoi.arch }}"
+ executable: true
 
 "usr/local/bin/git-lfs":
   type: archive-file
@@ -49,10 +49,10 @@
 {{ $dockerCredVersion := includeTemplate "get-github-latest-version" (list "docker/docker-credential-helpers" $cache) }}
 {{ $gcmVersion := includeTemplate "get-github-latest-version" (list "GitCredentialManager/git-credential-manager" $cache) }}
 {{ if .is_wsl }}
-#"usr/bin/docker-credential-wincred.exe":
-#  type: file
-#  url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ $dockerCredVersion }}/docker-credential-wincred-v{{ $dockerCredVersion }}.windows-{{ .chezmoi.arch }}.exe"
-#  executable: true
+"usr/bin/docker-credential-wincred.exe":
+ type: file
+ url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ $dockerCredVersion }}/docker-credential-wincred-v{{ $dockerCredVersion }}.windows-{{ .chezmoi.arch }}.exe"
+ executable: true
 
 "usr/local/share/gcm":
   type: archive
@@ -65,10 +65,10 @@
   exact: true
 
 {{   if .is_gnome }}
-#"usr/bin/docker-credential-secretservice":
-#  type: file
-#  url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ $dockerCredVersion }}/docker-credential-secretservice-v{{ $dockerCredVersion }}.linux-{{ .chezmoi.arch }}"
-#  executable: true
+"usr/bin/docker-credential-secretservice":
+ type: file
+ url: "https://github.com/docker/docker-credential-helpers/releases/download/v{{ $dockerCredVersion }}/docker-credential-secretservice-v{{ $dockerCredVersion }}.linux-{{ .chezmoi.arch }}"
+ executable: true
 {{   end }}
 {{ end }}
 

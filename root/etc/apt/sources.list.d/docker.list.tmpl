@@ -1,1 +1,1 @@
-deb [arch={{ .chezmoi.arch }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://ppa.launchpadcontent.net/docker/experimental/{{ .chezmoi.osRelease.id }} {{ .chezmoi.osRelease.versionCodename }} main
+deb [arch={{ .chezmoi.arch }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/{{ .chezmoi.osRelease.id }} noble stable
