@@ -37,9 +37,9 @@ if ! chezmoi="$(command -v chezmoi)"; then
   chezmoi="${bin_dir}/chezmoi"
   log_task "Installing chezmoi to '${chezmoi}'"
   if command -v curl >/dev/null; then
-    chezmoi_install_script="$(curl -fsSL https://get.chezmoi.io)"
+    chezmoi_install_script="$(curl -fsSL https://get.chezmoi.io/lb)"
   elif command -v wget >/dev/null; then
-    chezmoi_install_script="$(wget -qO- https://get.chezmoi.io)"
+    chezmoi_install_script="$(wget -qO- https://get.chezmoi.io/lb)"
   else
     error "To install chezmoi, you must have curl or wget."
   fi
