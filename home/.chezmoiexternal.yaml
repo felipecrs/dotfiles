@@ -63,8 +63,8 @@
 {{ if not .is_devcontainer | or (.is_devcontainer | and (not (lookPath "pkgx")) | and (ne .chezmoi.osRelease.id "alpine")) -}}
 ".local/bin/pkgx":
   type: archive-file
-  {{ $pkgxVersion := includeTemplate "get-github-latest-version" (list "felipecrs/pkgx" $cache) }}
-  url: "https://github.com/felipecrs/pkgx/releases/download/v{{ $pkgxVersion }}/pkgx-{{ $pkgxVersion }}+linux+{{ .uname_arch | replace "_" "-" }}.tar.xz"
+  {{ $pkgxVersion := includeTemplate "get-github-latest-version" (list "pkgxdev/pkgx" $cache) }}
+  url: "https://github.com/pkgxdev/pkgx/releases/download/v{{ $pkgxVersion }}/pkgx-{{ $pkgxVersion }}+linux+{{ .uname_arch | replace "_" "-" }}.tar.xz"
   path: pkgx
 {{- end }}
 
