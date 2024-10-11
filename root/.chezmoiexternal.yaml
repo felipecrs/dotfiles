@@ -12,7 +12,7 @@
 
 "usr/share/keyrings/git-core-ppa-archive-keyring.gpg":
   type: file
-  url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xE1DD270288B4E6030699E45FA1715D88E1DF1F24"
+  url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xE363C90F8F1B6217"
   filter:
     command: gpg
     args: ["--dearmor"]
