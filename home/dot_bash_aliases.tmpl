@@ -59,3 +59,9 @@ cdw() {
     cd "${win_home}"
 }
 # {{ end }}
+
+clean-repos() {
+  local exclude_dir=("$@")
+  cd "${HOME}/repos/dotfiles" || { echo "Fail to access dotfiles"; return; }
+  ./scripts/clean-local-repos.sh "${exclude_dir[@]}"
+}
