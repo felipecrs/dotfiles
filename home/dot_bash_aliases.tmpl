@@ -60,8 +60,7 @@ cdw() {
 }
 # {{ end }}
 
-clean-repos() {
+git-reset-all-repos() {
   local exclude_dir=("$@")
-  cd "${HOME}/repos/dotfiles" || { echo "Fail to access dotfiles"; return; }
-  ./scripts/clean-local-repos.sh "${exclude_dir[@]}"
+  ./home/dot_local/bin/executable_clean-local-repos.sh "${exclude_dir[@]}"
 }
