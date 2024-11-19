@@ -8,6 +8,7 @@ etc/ssh
 .chezmoiscripts/*-reload-sshd.sh
 {{ else }}
 etc/wsl.conf
+etc/apt/sources.list.d/wslu-ppa.list
 .chezmoiscripts/*-fix-permissions.sh
 .chezmoiscripts/*-restore-permissions.sh
 {{ end }}
