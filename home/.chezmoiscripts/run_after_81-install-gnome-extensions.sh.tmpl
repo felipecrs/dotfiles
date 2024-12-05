@@ -24,7 +24,7 @@ function is_gnome_extension_enabled() {
 wanted_extensions=(
   dash-to-panel@jderose9.github.com
   arcmenu@arcmenu.com
-  # {{ if semverCompare "<22.04" .chezmoi.osRelease.versionID }}
+  # {{ if lt .chezmoi.osRelease.versionID "22.04" }}
   # Ubuntu 22.04+ comes with a nice (already dark) default shell theme
   user-theme@gnome-shell-extensions.gcampax.github.com
   # {{ end }}
@@ -32,7 +32,7 @@ wanted_extensions=(
 
 unwanted_extensions=(
   clipboard-indicator@tudmotu.com
-  # {{ if semverCompare ">=22.04" .chezmoi.osRelease.versionID }}
+  # {{ if ge .chezmoi.osRelease.versionID "22.04" }}
   user-theme@gnome-shell-extensions.gcampax.github.com
   # {{ end }}
 )

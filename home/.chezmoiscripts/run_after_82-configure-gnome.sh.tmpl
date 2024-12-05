@@ -36,7 +36,7 @@ gsettings_ensure org.gnome.desktop.interface gtk-theme "Yaru-dark"
 gsettings_ensure org.gnome.desktop.interface icon-theme "Yaru"
 gsettings_ensure org.gnome.desktop.interface cursor-theme "Yaru"
 gsettings_ensure org.gnome.desktop.sound theme-name "Yaru"
-# {{ if semverCompare ">=22.04" .chezmoi.osRelease.versionID }}
+# {{ if ge .chezmoi.osRelease.versionID ">=22.04" }}
 gsettings_ensure org.gnome.desktop.interface color-scheme "prefer-dark"
 # {{ else }}
 # {{   if not .is_wsl }}
