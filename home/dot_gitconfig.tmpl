@@ -59,9 +59,14 @@ rr = "!f() { \
 
 pfor = "!f() { \
   set -ex; \
-  branch="$(echo "${1}" | cut -d'%' -f1)"; \
+  if echo "${1}" | grep -q %; then \
+    branch="$(echo "${1}" | cut -d'%' -f1)"; \
+    push_opts="$(echo "${1}" | cut -d'%' -f2-)"; \
+  else \
+    branch="${1}"; \
+    push_opts=""; \
+  fi; \
   branch="${branch:-"$(git current-branch)"}"; \
-  push_opts="$(echo "${1}" | cut -d'%' -f2-)"; \
   push_opts="${push_opts:+"%${push_opts}"}"; \
   remote="$(git remote-for-branch "${branch}")"; \
   git push "${remote}" "HEAD:refs/for/${branch}${push_opts}"; \
