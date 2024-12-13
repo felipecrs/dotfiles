@@ -59,3 +59,8 @@ cdw() {
     cd "${win_home}"
 }
 # {{ end }}
+
+git-reset-all-repos() {
+  local exclude_dir=("$@")
+  ./home/dot_local/bin/executable_clean-local-repos.sh "${exclude_dir[@]}"
+}
