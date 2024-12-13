@@ -43,11 +43,6 @@ if [ -d "${HOME}/.local/bin" ]; then
   export PATH="${HOME}/.local/bin:${PATH}"
 fi
 
-if [ -x "${HOME}/.local/bin/pkgx" ]; then
-  # shellcheck disable=SC2312
-  eval "$("${HOME}/.local/bin/pkgx" --shellcode)"
-fi
-
 export VISUAL="# {{ .editor }}"
 export EDITOR="# {{ .editor }}"
 
