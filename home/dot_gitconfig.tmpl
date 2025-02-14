@@ -1,7 +1,13 @@
+{{ if or .name .email -}}
 [user]
-name = {{ .name }}
-email = {{ .email }}
+{{- with .name }}
+name = {{ . }}
+{{- end }}
+{{- with .email }}
+email = {{ . }}
+{{- end }}
 
+{{ end -}}
 [core]
 editor = {{ .editor }}
 
