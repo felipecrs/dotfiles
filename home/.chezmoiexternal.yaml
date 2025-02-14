@@ -64,7 +64,7 @@
 ".local/bin/pkgx":
   type: archive-file
   {{/* TODO: upgrade to pkgx v2 */}}
-  {{ $pkgxVersion := "1.4.1" }}
+  {{ $pkgxVersion := "1.5.0" }}
   url: "https://github.com/pkgxdev/pkgx/releases/download/v{{ $pkgxVersion }}/pkgx-{{ $pkgxVersion }}+linux+{{ .uname_arch | replace "_" "-" }}.tar.xz"
   path: pkgx
 {{- end }}
