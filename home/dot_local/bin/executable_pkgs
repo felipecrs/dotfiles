@@ -76,7 +76,7 @@ async function install(pkgspecs: string[]) {
       }
 
       f.write({ force: true, text:
-        `#!/usr/bin/env -S pkgx -! -q +${pkgstr} -- ${program}\n\n${stringifyYaml(content)}`
+        `#!/usr/bin/env -S pkgx --shebang --quiet +${pkgstr} -- ${program}\n\n${stringifyYaml(content)}`
       }).chmod(0o755)
       console.error('pkgs: installed:', f)
       n++
@@ -204,7 +204,7 @@ async function isShim(f: Path): Promise<boolean> {
   if (!await isShebang(f)) return false
 
   const { value: shebang } = await f.readLines().next()
-  const shebangRegex = /^#!\/usr\/bin\/env -S pkgx -! /
+  const shebangRegex = /^#!\/usr\/bin\/env -S pkgx --shebang /
   if (!shebang.match(shebangRegex)) {
     return false
   }
