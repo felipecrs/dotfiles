@@ -46,5 +46,5 @@ done
 
 if [[ ${#missing_packages[@]} -gt 0 ]]; then
   log_task "Installing missing packages with pkgx: ${missing_packages[*]}"
-  pkgx install "${missing_packages[@]}"
+  pkgs install "${missing_packages[@]}"
 fi

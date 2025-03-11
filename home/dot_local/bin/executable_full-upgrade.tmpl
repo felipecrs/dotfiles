@@ -52,7 +52,7 @@ if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
   CONTINUE_FROM_DOTFILES=true exec "$0" "$@"
 fi
 
-if pkgx --version &>/dev/null; then
+if false && pkgx --version &>/dev/null; then
   log_task "Updating pkgx stubs"
 
   pkgx_packages="$(
