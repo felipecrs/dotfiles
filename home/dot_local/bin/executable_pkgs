@@ -7,7 +7,8 @@ import { stringify as stringifyYaml } from "jsr:@std/yaml@1.0.5";
 const help = "pkgs: usage: pkgs install|uninstall <pkgs>"
 
 const args = Deno.args
-if (args.length < 2) {
+
+if (args.length < 1) {
   console.error(help);
   Deno.exit(1)
 }
@@ -24,6 +25,9 @@ switch (cmd) {
   case "uninstall":
     await uninstall(pkgs)
     break
+  case "list":
+    await list()
+    break
   default:
     console.error(`pkgs: unknown command: ${cmd}`)
     Deno.exit(1)
@@ -35,6 +39,11 @@ type ShimContent = {
 
 async function install(pkgspecs: string[]) {
   const pkgs = await Promise.all(pkgspecs.map(x => parse_pkg_str(x, {latest: 'ok'})))
+
+  if (pkgs.length <= 0) {
+    console.error('pkgs: no pkgs specified')
+    Deno.exit(1)
+  }
 
   let n = 0
 
@@ -87,6 +96,11 @@ async function install(pkgspecs: string[]) {
 async function uninstall(pkgspecs: string[]) {
   const pkgs = await Promise.all(pkgspecs.map(x => parse_pkg_str(x, {latest: 'ok'})))
 
+  if (pkgs.length <= 0) {
+    console.error('pkgs: no pkgs specified')
+    Deno.exit(1)
+  }
+
   let n = 0
 
   for (const pkg of pkgs) {
@@ -119,6 +133,26 @@ async function uninstall(pkgspecs: string[]) {
 
   if (n == 0) {
     console.error('pkgs: nothing to uninstall');
+  }
+}
+
+async function list() {
+  if (!bindir.isDirectory()) {
+    console.error(`pkgs: ${bindir} is not a directory`);
+    Deno.exit(1)
+  }
+
+  let n = 0
+
+  for await (const [entry] of bindir.walk()) {
+    if (await isShim(entry)) {
+      console.log(entry)
+      n++
+    }
+  }
+
+  if (n == 0) {
+    console.error('pkgs: no programs installed');
   }
 }
 
@@ -170,13 +204,17 @@ async function isShim(f: Path): Promise<boolean> {
   if (!await isShebang(f)) return false
 
   const { value: shebang } = await f.readLines().next()
-  const shebangRegex = /^#!\/usr\/bin\/env -S pkgx /
+  const shebangRegex = /^#!\/usr\/bin\/env -S pkgx -! /
   if (!shebang.match(shebangRegex)) {
     return false
   }
 
-  const content = await f.readYAML() as ShimContent
-  if (!content.siblings) {
+  try {
+    const content = await f.readYAML() as ShimContent
+    if (!content.siblings) {
+      return false
+    }
+  } catch (_err) {
     return false
   }
 

@@ -74,7 +74,8 @@
     ".chezmoiignore": "helm",
     ".chezmoiremove": "helm",
     "**/.chezmoitemplates/*": "helm",
-    "**/.chezmoitemplates/*-library": "shellscript"
+    "**/.chezmoitemplates/*-library": "shellscript",
+    "**/home/dot_local/bin/executable_pkgs": "typescript"
   },
   "deno.enable": true
 }
