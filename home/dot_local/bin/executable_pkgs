@@ -1,7 +1,8 @@
 #!/usr/bin/env -S pkgx -q deno@2 run --ext=ts --allow-all
 
-import { PackageNotFoundError, PackageRequirement, PantryNotFoundError, Path, PkgxError, hooks, utils } from "https://deno.land/x/libpkgx@v0.20.3/mod.ts"
-import undent from "jsr:@cspotcode/outdent@0.8.0"
+import { PackageNotFoundError, PackageRequirement, PantryNotFoundError, Path, hooks, utils } from "https://deno.land/x/libpkgx@v0.20.3/mod.ts"
+import undent from "jsr:@cspotcode/outdent@0.8.0";
+import { stringify as stringifyYaml } from "jsr:@std/yaml@1.0.5";
 
 const args = Deno.args
 if (args.length < 2) {
@@ -14,6 +15,10 @@ if (args.length < 2) {
 
 const cmd = args[0]
 const pkgs = args.slice(1)
+
+type ShimContent = {
+  siblings: string[]
+}
 
 switch (cmd) {
   case "install":
@@ -30,26 +35,22 @@ switch (cmd) {
 async function install(pkgspecs: string[]) {
   const pkgs = await Promise.all(pkgspecs.map(x => parse_pkg_str(x, {latest: 'ok'})))
 
-  const usrlocal = new Path("/usr/local/bin")
   let n = 0
 
-  try {
+  if (Deno.uid() == 0) {
+    const usrlocal = new Path("/usr/local/bin")
     await write(usrlocal, pkgs)
-  } catch (err) {
-    //FIXME we should check if /usr/local/bin is writable, but were having trouble with that
-    if (err instanceof Deno.errors.PermissionDenied) {
-      const bindir = Path.home().join(".local/bin")
-      await write(bindir, pkgs)
-      if (n > 0 && !Deno.env.get("PATH")?.split(":").includes(bindir.string)) {
-        console.warn("pkgx: %c`%s` is not in `PATH`", 'color: red', bindir)
-      }
-    } else {
-      throw err
+  } else {
+    const bindir = Path.home().join(".local/bin")
+    await write(bindir, pkgs)
+    if (n > 0 && !Deno.env.get("PATH")?.split(":").includes(bindir.string)) {
+      console.warn("pkgx: %c`%s` is not in `PATH`", 'color: red', bindir)
     }
   }
 
   if (n == 0) {
     console.error('pkgx: no programs provided by pkgs')
+    Deno.exit(1)
   }
 
   async function write(dst: Path, pkgs: PackageRequirement[]) {
@@ -64,96 +65,63 @@ async function install(pkgspecs: string[]) {
         const f = dst.join(program)
 
         if (f.exists()) {
-          if (!f.isFile()) throw new PkgxError(`${f} already exists and is not a file`)
-
-          const fd = is_shebang(f).catch(() => undefined)
-          if (!fd) throw new PkgxError(`${f} already exists and is not a pkgx installation`)
-
-          const lines = f.readLines()
-          const { value: shebang } = await lines.next()
-          if (shebang != "#!/bin/sh") {
-            throw new PkgxError(`${f} already exists and is not a pkgx installation`)
+          if (!await isShim(f)) {
+            console.error(`pkgs: ${f} is already installed and is not a pkgx shim`);
+            Deno.exit(1)
           }
-          while (true) {
-            const { value, done } = await lines.next()
-            if (done) {
-              throw new PkgxError(`${f} already exists and is not a pkgx installation`)
-            }
-            const found = value.match(/^\s*exec pkgx \+([^ ]+)/);
-            if (found) {
-              await uninstall([pkgstr])
-              break
-            }
-          }
+          await uninstall([pkgstr]);
         }
       }
 
       for (const program of programs) {
         const f = dst.mkdir('p').join(program)
-        let script = ""
 
+        const content: ShimContent = {
+          siblings: programs
+        }
 
-        script = undent`
-          if [ "$PKGX_UNINSTALL" != 1 ]; then
-            exec pkgx +${pkgstr} -- ${program} "$@"
-          else
-            cd "$(dirname "$0")"
-            rm -f ${programs.map(p => `'${p}'`).join(' ')} && echo "uninstalled: ${pkgstr}" >&2
-          fi`
-
-        f.write({ force: true, text: undent`
-          #!/bin/sh
-          ${script}`
+        f.write({ force: true, text:
+          `#!/usr/bin/env -S pkgx -! -q +${pkgstr} -- ${program}\n\n${stringifyYaml(content)}`
         }).chmod(0o755)
         console.error('pkgx: installed:', f)
         n++
       }
     }
   }
-
-  async function is_shebang(path: Path): Promise<Deno.FsFile | undefined> {
-    const fd = await Deno.open(path.string)
-    const buf = new Uint8Array(2)
-
-    if (await fd.read(buf) !== 2) {
-      fd.close()
-      return  // empty file
-    }
-
-    if (buf[0] != 35 || buf[1] != 33) {
-      fd.close()
-      return  // not an executable script
-    }
-
-    return fd
-  }
 }
 
 async function uninstall(pkgspecs: string[]) {
   const pkgs = await Promise.all(pkgspecs.map(x => parse_pkg_str(x, {latest: 'ok'})))
 
-  await uninstall(new Path("/usr/local/bin"), pkgs)
-  await uninstall(Path.home().join(".local/bin"), pkgs)
+  if (Deno.uid() == 0) {
+    await uninstall(new Path("/usr/local/bin"), pkgs)
+  } else {
+    await uninstall(Path.home().join(".local/bin"), pkgs)
+  }
 
   async function uninstall(prefix: Path, pkgs: PackageRequirement[]) {
     for (const pkg of pkgs) {
       const programs = await hooks.usePantry().project(pkg).provides()
-      const pkgstr = utils.pkg.str(pkg)
-      const config = hooks.useConfig()
-      const pkgdir = pkgstr.split("/").slice(0, -1).join("/")
-      //FIXME: it removes the dir successfully. however, it still complains that it didn't delete that
-      try {
-        config.cache.join(`pkgx/envs/${pkgdir}`).rm({recursive: true})
-      } catch (e) {
-        console.warn(e);
-      }
       for (const program of programs) {
         const f = prefix.join(program)
-        if (f.isFile()) {
-          const cmd = new Deno.Command(f.string, {env: {PKGX_UNINSTALL: '1'}})
-          const proc = await cmd.spawn().status
-          if (!proc.success) {
-            throw new PkgxError(`Couldn’t uninstall: ${f}`)
+
+        if (!f.exists()) {
+          continue
+        }
+
+        if (!await isShim(f)) {
+          console.error(`pkgx: ${f} is not a pkgx shim`);
+          Deno.exit(1)
+        }
+
+        const content = await f.readYAML() as ShimContent
+
+        const programs = [f, ...content.siblings.map(x => prefix.join(x))]
+
+        for (const p of programs) {
+          if (p.exists()) {
+            p.rm()
+            console.error('pkgx: uninstalled:', p)
           }
         }
       }
@@ -172,8 +140,17 @@ async function parse_pkg_str(input: string, opts?: { latest: 'ok' }): Promise<Pa
   const rawpkg = utils.pkg.parse(input)
 
   const projects = await failsafe(() => hooks.usePantry().find(rawpkg.project))
-  if (projects.length <= 0) throw new ProvidesError(input)
-  if (projects.length > 1) throw new AmbiguityError(input, projects)
+  if (projects.length <= 0) {
+    console.error(`pkgs: nothing provides \`${input}\``)
+    Deno.exit(1)
+  }
+  if (projects.length > 1) {
+    console.error(undent`
+      pkgs: multiple projects provide \`${input}\`. please be more specific:
+
+      ${projects.map(p => `    pkgs +${p.project} ${Deno.args.join(' ')}`).join('\n')}
+      `)
+  }
 
   const project = projects[0].project //FIXME libpkgx forgets to correctly assign type
   const constraint = rawpkg.constraint
@@ -194,35 +171,39 @@ async function failsafe<T>(body: () => Promise<T>): Promise<T> {
   }
 }
 
-class AmbiguityError extends PkgxError {
-  projects: string[]
-  arg0: string
+async function isShim(f: Path): Promise<boolean> {
+  if (!f.isFile()) return false
 
-  constructor(arg0: string, pkgs: { project: string }[]) {
-    const projects = pkgs.map(x => x.project)
-    super(undent`
-      multiple projects provide \`${arg0}\`. please be more specific:
+  if (!await isShebang(f)) return false
 
-      ${projects.map(p => `    pkgx +${p} ${Deno.args.join(' ')}`).join('\n')}
-      `)
-    this.projects = projects
-    this.arg0 = arg0
+  const { value: shebang } = await f.readLines().next()
+  const shebangRegex = /^#!\/usr\/bin\/env -S pkgx /
+  if (!shebang.match(shebangRegex)) {
+    return false
   }
+
+  const content = await f.readYAML() as ShimContent
+  if (!content.siblings) {
+    return false
+  }
+
+  return true
 }
 
-class ProvidesError extends PkgxError {
-  constructor(arg0: string) {
-    //TODO if arg0 is in the parent PATH then scan it and find it
-    //TODO render errors with markdown there must be a pkg for that
+async function isShebang(path: Path): Promise<boolean> {
+  const fd = await Deno.open(path.string)
+  const buf = new Uint8Array(2)
 
-    super(undent`
-      # nothing provides \`${arg0}\`
-
-      > we haven’t pkgd this yet, can you add it to the pantry? [docs.pkgx.sh/pantry]
-      `)
-
-    this.arg0 = arg0
+  if (await fd.read(buf) !== 2) {
+    fd.close()
+    return false // empty file
   }
 
-  arg0: string
+  if (buf[0] != 35 || buf[1] != 33) {
+    fd.close()
+    return false // not an executable script
+  }
+
+  fd.close()
+  return true
 }
