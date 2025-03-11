@@ -4,21 +4,18 @@ import { PackageNotFoundError, PackageRequirement, PantryNotFoundError, Path, ho
 import undent from "jsr:@cspotcode/outdent@0.8.0";
 import { stringify as stringifyYaml } from "jsr:@std/yaml@1.0.5";
 
+const help = "pkgs: usage: pkgs install|uninstall <pkgs>"
+
 const args = Deno.args
 if (args.length < 2) {
-  console.error(undent`
-    usage: pkgs install ...
-           pkgs uninstall ...
-    `)
+  console.error(help);
   Deno.exit(1)
 }
 
 const cmd = args[0]
 const pkgs = args.slice(1)
 
-type ShimContent = {
-  siblings: string[]
-}
+const bindir = Deno.uid() == 0 ? new Path("/usr/local/bin") : Path.home().join(".local/bin")
 
 switch (cmd) {
   case "install":
@@ -32,100 +29,96 @@ switch (cmd) {
     Deno.exit(1)
 }
 
+type ShimContent = {
+  siblings: string[]
+}
+
 async function install(pkgspecs: string[]) {
   const pkgs = await Promise.all(pkgspecs.map(x => parse_pkg_str(x, {latest: 'ok'})))
 
   let n = 0
 
-  if (Deno.uid() == 0) {
-    const usrlocal = new Path("/usr/local/bin")
-    await write(usrlocal, pkgs)
-  } else {
-    const bindir = Path.home().join(".local/bin")
-    await write(bindir, pkgs)
-    if (n > 0 && !Deno.env.get("PATH")?.split(":").includes(bindir.string)) {
-      console.warn("pkgx: %c`%s` is not in `PATH`", 'color: red', bindir)
+  for (const pkg of pkgs) {
+    const programs = (await hooks.usePantry().project(pkg).provides()).filter(
+      // skip for now since we would require specific versions and we haven't really got that
+      p => !p.includes("{{")
+    )
+    const pkgstr = utils.pkg.str(pkg)
+
+    bindir.mkdir('p')
+
+    for (const program of programs) {
+      const f = bindir.join(program)
+
+      if (f.exists()) {
+        if (!await isShim(f)) {
+          console.error(`pkgs: ${f} already exists and is not a pkgx shim`);
+          Deno.exit(1)
+        }
+        await uninstall([pkgstr]);
+      }
+    }
+
+    for (const program of programs) {
+      const f = bindir.join(program)
+
+      const content: ShimContent = {
+        siblings: programs
+      }
+
+      f.write({ force: true, text:
+        `#!/usr/bin/env -S pkgx -! -q +${pkgstr} -- ${program}\n\n${stringifyYaml(content)}`
+      }).chmod(0o755)
+      console.error('pkgs: installed:', f)
+      n++
     }
   }
 
   if (n == 0) {
-    console.error('pkgx: no programs provided by pkgs')
+    console.error('pkgs: no programs provided by pkgs')
     Deno.exit(1)
   }
 
-  async function write(dst: Path, pkgs: PackageRequirement[]) {
-    for (const pkg of pkgs) {
-      const programs = (await hooks.usePantry().project(pkg).provides()).filter(
-        // skip for now since we would require specific versions and we haven't really got that
-        p => !p.includes("{{")
-      )
-      const pkgstr = utils.pkg.str(pkg)
-
-      for (const program of programs) {
-        const f = dst.join(program)
-
-        if (f.exists()) {
-          if (!await isShim(f)) {
-            console.error(`pkgs: ${f} is already installed and is not a pkgx shim`);
-            Deno.exit(1)
-          }
-          await uninstall([pkgstr]);
-        }
-      }
-
-      for (const program of programs) {
-        const f = dst.mkdir('p').join(program)
-
-        const content: ShimContent = {
-          siblings: programs
-        }
-
-        f.write({ force: true, text:
-          `#!/usr/bin/env -S pkgx -! -q +${pkgstr} -- ${program}\n\n${stringifyYaml(content)}`
-        }).chmod(0o755)
-        console.error('pkgx: installed:', f)
-        n++
-      }
-    }
+  if (n > 0 && !Deno.env.get("PATH")?.split(":").includes(bindir.string)) {
+    console.warn("pkgs: %c`%s` is not in `PATH`", 'color: red', bindir)
   }
 }
 
 async function uninstall(pkgspecs: string[]) {
   const pkgs = await Promise.all(pkgspecs.map(x => parse_pkg_str(x, {latest: 'ok'})))
 
-  if (Deno.uid() == 0) {
-    await uninstall(new Path("/usr/local/bin"), pkgs)
-  } else {
-    await uninstall(Path.home().join(".local/bin"), pkgs)
-  }
+  let n = 0
 
-  async function uninstall(prefix: Path, pkgs: PackageRequirement[]) {
-    for (const pkg of pkgs) {
-      const programs = await hooks.usePantry().project(pkg).provides()
-      for (const program of programs) {
-        const f = prefix.join(program)
+  for (const pkg of pkgs) {
+    const programs = await hooks.usePantry().project(pkg).provides()
+    for (const program of programs) {
+      const f = bindir.join(program)
 
-        if (!f.exists()) {
-          continue
-        }
+      if (!f.exists()) {
+        continue
+      }
 
-        if (!await isShim(f)) {
-          console.error(`pkgx: ${f} is not a pkgx shim`);
-          Deno.exit(1)
-        }
+      if (!await isShim(f)) {
+        console.error(`pkgs: ${f} is not a pkgx shim`);
+        Deno.exit(1)
+      }
 
-        const content = await f.readYAML() as ShimContent
+      const content = await f.readYAML() as ShimContent
 
-        const programs = [f, ...content.siblings.map(x => prefix.join(x))]
+      const programs = [f, ...content.siblings.map(x => bindir.join(x))]
 
-        for (const p of programs) {
-          if (p.exists()) {
-            p.rm()
-            console.error('pkgx: uninstalled:', p)
-          }
+      for (const p of programs) {
+        if (p.exists()) {
+          p.rm()
+          console.error('pkgs: uninstalled:', p)
+          n++
         }
       }
     }
+  }
+
+  if (n == 0) {
+    console.error('pkgs: nothing to uninstall');
   }
 }
 
