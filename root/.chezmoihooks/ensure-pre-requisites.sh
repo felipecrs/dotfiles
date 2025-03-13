@@ -27,4 +27,4 @@ source "${CHEZMOI_SOURCE_DIR?}/.chezmoitemplates/scripts-library"
 log_task "Installing missing pre-requisites with APT: ${missing_packages[*]}"
 
 c apt update
-c env DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends "${missing_packages[@]}"
+c DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends "${missing_packages[@]}"

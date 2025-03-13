@@ -22,6 +22,6 @@ for package in "${unwanted_packages[@]}"; do
   # shellcheck disable=SC2310
   if is_apt_package_installed "${package}"; then
     log_task "Removing unwanted package '${package}' installed with APT"
-    c env DEBIAN_FRONTEND=noninteractive apt remove --yes --auto-remove "${package}"
+    c DEBIAN_FRONTEND=noninteractive apt remove --yes --auto-remove "${package}"
   fi
 done
