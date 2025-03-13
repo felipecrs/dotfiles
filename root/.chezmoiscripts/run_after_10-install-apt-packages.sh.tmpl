@@ -81,5 +81,5 @@ if [[ ${#missing_packages[@]} -gt 0 ]]; then
     extra_args+=("--install-recommends")
   fi
 
-  c DEBIAN_FRONTEND=noninteractive apt install --yes "${extra_args[@]}" "${missing_packages[@]}"
+  c env DEBIAN_FRONTEND=noninteractive apt install --yes "${extra_args[@]}" "${missing_packages[@]}"
 fi
