@@ -29,4 +29,4 @@ source "${CHEZMOI_SOURCE_DIR?}/.chezmoitemplates/scripts-library"
 log_task "Installing missing packages with APT: ${missing_packages[*]}"
 
 c sudo apt update
-c sudo DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends "${missing_packages[@]}"
+c sudo env DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends "${missing_packages[@]}"
