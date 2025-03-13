@@ -78,7 +78,7 @@ DOTFILES_DIR="${HOME}/.dotfiles"
 if ! command -v git >/dev/null 2>&1; then
   log_task "Installing git with APT"
   sudo apt update
-  sudo DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends git
+  sudo env DEBIAN_FRONTEND=noninteractive apt install --yes --no-install-recommends git
 fi
 
 if [ -d "${DOTFILES_DIR}" ]; then

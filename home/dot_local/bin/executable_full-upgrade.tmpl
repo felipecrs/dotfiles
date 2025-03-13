@@ -115,8 +115,8 @@ fi
 if apt --version &>/dev/null; then
   log_task "Updating apt packages"
   c sudo apt update
-  c sudo DEBIAN_FRONTEND=noninteractive apt full-upgrade --yes
-  c sudo DEBIAN_FRONTEND=noninteractive apt autoremove --yes
+  c sudo env DEBIAN_FRONTEND=noninteractive apt full-upgrade --yes
+  c sudo env DEBIAN_FRONTEND=noninteractive apt autoremove --yes
 fi
 
 if timeout 2 snap warnings &>/dev/null; then
