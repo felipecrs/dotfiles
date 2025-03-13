@@ -63,10 +63,14 @@
 {{ if not .is_devcontainer | or (.is_devcontainer | and (not (lookPath "pkgx")) | and (ne .chezmoi.osRelease.id "alpine")) -}}
 ".local/bin/pkgx":
   type: archive-file
-  {{/* TODO: upgrade to pkgx v2 */}}
-  {{ $pkgxVersion := "1.5.0" }}
+  {{ $pkgxVersion := includeTemplate "get-github-latest-version" (list "pkgxdev/pkgx" $cache) }}
   url: "https://github.com/pkgxdev/pkgx/releases/download/v{{ $pkgxVersion }}/pkgx-{{ $pkgxVersion }}+linux+{{ .uname_arch | replace "_" "-" }}.tar.xz"
   path: pkgx
+".local/bin/pkgm":
+  type: archive-file
+  {{ $pkgmVersion := includeTemplate "get-github-latest-version" (list "pkgxdev/pkgm" $cache) }}
+  url: "https://github.com/pkgxdev/pkgm/releases/download/v{{ $pkgmVersion }}/pkgm-{{ $pkgmVersion }}.tgz"
+  path: pkgm
 {{- end }}
 
 {{ if not .is_devcontainer -}}
