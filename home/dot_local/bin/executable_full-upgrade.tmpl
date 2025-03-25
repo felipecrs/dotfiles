@@ -12,21 +12,24 @@ true || source ../../.chezmoitemplates/volta-library
 ensure_path_entry "${HOME}/.local/bin"
 
 if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
-  if brew --version &>/dev/null; then
-    (
-      export HOMEBREW_NO_AUTO_UPDATE=1
-      export HOMEBREW_NO_UPDATE_REPORT_NEW=1
-      export HOMEBREW_NO_ENV_HINTS=1
-
-      log_task "Updating brew"
-      c brew update
-
-      log_task "Updating brew packages"
-      c brew upgrade
-    )
-  fi
-
   if chezmoi --version &>/dev/null; then
+    log_task "Updating chezmoi"
+
+    current_version=$(chezmoi execute-template '{{ .chezmoi.version.version }}')
+    latest_version=$(curl -fsSL -o /dev/null -w "%{url_effective}" https://github.com/twpayne/chezmoi/releases/latest)
+    # remove everything after last slash
+    latest_version="${latest_version##*/}"
+    # remove leading v
+    latest_version="${latest_version#v}"
+    if [[ "${current_version}" == "${latest_version}" ]]; then
+      log_info "chezmoi is already up to date"
+    else
+      c curl -fsSL -o "${HOME}/.local/bin/chezmoi" \
+        "https://github.com/twpayne/chezmoi/releases/download/v${latest_version}/chezmoi-linux-amd64"
+      c chmod +x "${HOME}/.local/bin/chezmoi"
+    fi
+    unset current_version latest_version
+
     log_task "Updating dotfiles"
 
     if chezmoi git -- status --porcelain | grep -q .; then
@@ -110,6 +113,20 @@ if pkgx --version &>/dev/null; then
     unset pkgx_packages_to_update
   fi
   unset pkgx_packages
+fi
+
+if brew --version &>/dev/null; then
+  (
+    export HOMEBREW_NO_AUTO_UPDATE=1
+    export HOMEBREW_NO_UPDATE_REPORT_NEW=1
+    export HOMEBREW_NO_ENV_HINTS=1
+
+    log_task "Updating brew"
+    c brew update
+
+    log_task "Updating brew packages"
+    c brew upgrade
+  )
 fi
 
 if apt --version &>/dev/null; then
