@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 red() {
   printf '\e[31;1m%s\e[m\n' "$*"
