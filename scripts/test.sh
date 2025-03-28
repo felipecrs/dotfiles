@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ARG_OPTIONAL_REPEATED([variant],[v],[The variant of the test to run. Possible values: devcontainer, wsl, and gnome. Default: devcontainer.],[])
 # ARG_OPTIONAL_REPEATED([os],[o],[The OS to run the tests against. The list of possible values can be found at https://mcr.microsoft.com/v2/devcontainers/base/tags/list. Examples: ubuntu-24.04, alpine. Default: ubuntu-24.04.],[])
@@ -182,7 +182,7 @@ export IS_WSL=true
 sudo env DEBIAN_FRONTEND=noninteractive apt remove --yes --auto-remove zsh curl git gpg
 
 cat <<'EOM' | sudo tee /usr/local/bin/wslpath
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "Hello"
 EOM
@@ -190,7 +190,7 @@ EOM
 sudo chmod +x /usr/local/bin/wslpath
 
 cat <<'EOM' | sudo tee /usr/local/bin/wslvar
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "Hello"
 EOM

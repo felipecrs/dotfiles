@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # This script will only be run if chezmoi is older than 2.9.1,
 # because otherwise the .chezmoiroot file will be honored.

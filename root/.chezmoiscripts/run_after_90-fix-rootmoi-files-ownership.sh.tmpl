@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 chown --recursive '{{ .non_root_user }}' '{{ dir .chezmoi.configFile }}' '{{ .chezmoi.cacheDir }}'

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script must exit as fast as possible when pre-requisites are already
 # met, so we only import the scripts-library when we really need it.
