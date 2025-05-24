@@ -140,8 +140,8 @@ if pipx --version &>/dev/null; then
 fi
 
 if volta --version &>/dev/null; then
-  log_task "Updating node, npm and yarn with volta"
-  c volta install node npm yarn
+  log_task "Updating node, npm, yarn, and pnpm with volta"
+  c volta install node npm yarn pnpm
 fi
 
 if npm --version &>/dev/null; then
