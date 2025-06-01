@@ -1,34 +1,23 @@
 {
   "$help": "https://aka.ms/terminal-documentation",
   "$schema": "https://aka.ms/terminal-profiles-schema",
-  "actions": [
+  "copyFormatting": "none",
+  "copyOnSelect": false,
+  "keybindings": [
     {
-      "command": {
-        "action": "copy",
-        "singleLine": false
-      },
+      "id": "Terminal.CopyToClipboard",
       "keys": "ctrl+c"
     },
     {
-      "command": "paste",
+      "id": "Terminal.PasteFromClipboard",
       "keys": "ctrl+v"
     },
     {
-      "command": {
-        "action": "splitPane",
-        "split": "auto",
-        "splitMode": "duplicate"
-      },
+      "id": "Terminal.DuplicatePaneAuto",
       "keys": "alt+shift+d"
-    },
-    {
-      "command": "find",
-      "keys": "ctrl+shift+f"
     }
   ],
-  "copyFormatting": "none",
-  "copyOnSelect": false,
-  "defaultProfile": "{2c4de342-38b7-51cf-b940-2309a097f518}",
+  "defaultProfile": "{f35fc667-d3e6-567f-b82b-408e44d3e7f0}",
   "launchMode": "maximized",
   "newTabMenu": [
     {
@@ -47,10 +36,11 @@
     },
     "list": [
       {
-        "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
+        "guid": "{f35fc667-d3e6-567f-b82b-408e44d3e7f0}",
         "hidden": false,
         "name": "Ubuntu",
-        "source": "Windows.Terminal.Wsl"
+        "source": "Microsoft.WSL",
+        "closeOnExit": "graceful",
       },
       {
         "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
