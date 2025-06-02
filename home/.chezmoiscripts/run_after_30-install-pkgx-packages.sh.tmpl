@@ -7,23 +7,13 @@ true || source ../.chezmoitemplates/scripts-library
 
 ensure_path_entry "${HOME}/.local/bin"
 
-function is_pkgx_package_installed() {
-  local package="$1"
-
-  grep --quiet --recursive --binary-files=without-match --word-regexp \
-    "exec pkgx +${package}" "${HOME}/.local/bin"
-}
-
 readonly unwanted_packages=()
 
 for package in "${unwanted_packages[@]}"; do
   # shellcheck disable=SC2310
-  if is_pkgx_package_installed "${package}"; then
+  if pkgs installed "${package}" >/dev/null; then
     log_task "Removing unwanted package '${package}' installed with pkgx"
-    {
-      grep --recursive --binary-files=without-match --files-with-matches \
-        --word-regexp "exec pkgx +${package}" "${HOME}/.local/bin" || true
-    } | xargs --no-run-if-empty rm -f
+    pkgs uninstall "${package}"
   fi
 done
 
@@ -39,7 +29,7 @@ missing_packages=()
 
 for package in "${wanted_packages[@]}"; do
   # shellcheck disable=SC2310
-  if ! is_pkgx_package_installed "${package}"; then
+  if ! pkgs installed "${package}" >/dev/null; then
     missing_packages+=("${package}")
   fi
 done

@@ -52,39 +52,20 @@ if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
   CONTINUE_FROM_DOTFILES=true exec "$0" "$@"
 fi
 
-if false && pkgx --version &>/dev/null; then
-  log_task "Updating pkgx stubs"
+if command -v pkgs >/dev/null && pkgx --version &>/dev/null; then
+  log_task "Updating pkgx shims"
 
-  pkgx_packages="$(
-    {
-      grep --recursive --binary-files=without-match --no-filename \
-        --only-matching --perl-regexp --word-regexp \
-        'exec pkgx \+\K[^ ]+' "${HOME}/.local/bin" || true
-    } | sort --unique
-  )"
+  pkgx_packages="$(pkgs installed)"
 
   if [[ -z "${pkgx_packages}" ]]; then
     log_info "No pkgx packages found"
   else
     readarray -t pkgx_packages <<<"${pkgx_packages}"
 
-    # This removes all the stubs directly as depending on the version of pkgx
-    # used to create the stub, pkgx uninstall can't uninstall it
-    {
-      grep --recursive --binary-files=without-match --files-with-matches \
-        --extended-regexp --word-regexp \
-        'exec pkgx \+[^ ]+' "${HOME}/.local/bin" || true
-    } | xargs --no-run-if-empty rm -f
-
-    # This updates the pantry, which would be updated automatically otherwise,
-    # but better safe than sorry
-    pkgx --sync >/dev/null
-
-    # And finally this adds all the stubs back, updated
-
-    # This avoids outputting a bunch of "installed" messages which can be
-    # confusing as we are just updating the stubs that were already installed
-    if output=$(pkgx install "${pkgx_packages[@]}" 2>&1); then
+    # This avoids outputting a bunch of "uninstalling" and "installing"
+    # messages which can be confusing as we are just refreshing the stubs that
+    # were already installed
+    if output=$(pkgs install "${pkgx_packages[@]}" 2>&1); then
       unset output
     else
       # But in case of failure, we output everything to help debugging
@@ -104,7 +85,7 @@ if false && pkgx --version &>/dev/null; then
     done
 
     if [[ "${#pkgx_packages_to_update[@]}" -gt 0 ]]; then
-      c pkgx --update "${pkgx_packages_to_update[@]}" >/dev/null
+      c pkgx "${pkgx_packages_to_update[@]}" >/dev/null
     fi
 
     unset pkgx_packages_to_update

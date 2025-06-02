@@ -1,240 +1,198 @@
-#!/usr/bin/env -S pkgx -q deno@2 run --ext=ts --allow-all
+#!/usr/bin/env bash
 
-import { PackageNotFoundError, PackageRequirement, PantryNotFoundError, Path, hooks, utils } from "https://deno.land/x/libpkgx@v0.20.3/mod.ts"
-import undent from "jsr:@cspotcode/outdent@0.8.0";
-import { stringify as stringifyYaml } from "jsr:@std/yaml@1.0.5";
+set -euo pipefail
 
-const help = "pkgs: usage: pkgs install|uninstall <pkgs>"
-
-const args = Deno.args
-
-if (args.length < 1) {
-  console.error(help);
-  Deno.exit(1)
+usage() {
+  echo "Usage: ${0} install|uninstall|installed|installed-programs <pkgs>..." >&2
+  exit "${1}"
 }
 
-const cmd = args[0]
-const pkgs = args.slice(1)
+positional_args=()
+while [[ $# -gt 0 ]]; do
+  case $1 in
+  -*)
+    echo "Error: unknown option ${1}." >&2
+    usage 1
+    ;;
+  *)
+    positional_args+=("$1")
+    shift
+    ;;
+  esac
+done
 
-const bindir = Deno.uid() == 0 ? new Path("/usr/local/bin") : Path.home().join(".local/bin")
+set -- "${positional_args[@]}"
+unset positional_args
 
-switch (cmd) {
-  case "install":
-    await install(pkgs)
-    break
-  case "uninstall":
-    await uninstall(pkgs)
-    break
-  case "list":
-    await list()
-    break
-  default:
-    console.error(`pkgs: unknown command: ${cmd}`)
-    Deno.exit(1)
+if [[ $# -lt 1 ]]; then
+  usage 1
+fi
+
+action="$1"
+shift
+
+bin_dir="/usr/local/bin"
+uid=$(id -u)
+if [[ "${uid}" -ne 0 ]]; then
+  bin_dir="${HOME}/.local/bin"
+fi
+unset uid
+
+pantry_synced=false
+function sync_pantry_once() {
+  if [[ "${pantry_synced}" == false ]]; then
+    pkgx --sync --quiet
+    pantry_synced=true
+  fi
 }
 
-type ShimContent = {
-  siblings: string[]
+function resolve_pkg_spec() {
+  local pkg="${1}"
+  local pkg_suffix=""
+  if [[ "${pkg}" =~ ^[^@^~]+([@^~].+)?$ ]]; then
+    pkg_suffix="${BASH_REMATCH[1]:-}"
+  fi
+  sync_pantry_once
+  pkgx --query --json=v2 "${pkg}" | jq -er '.[0].project' | sed "s/$/${pkg_suffix}/"
 }
 
-async function install(pkgspecs: string[]) {
-  const pkgs = await Promise.all(pkgspecs.map(x => parse_pkg_str(x, {latest: 'ok'})))
-
-  if (pkgs.length <= 0) {
-    console.error('pkgs: no pkgs specified')
-    Deno.exit(1)
-  }
-
-  let n = 0
-
-  for (const pkg of pkgs) {
-    const programs = (await hooks.usePantry().project(pkg).provides()).filter(
-      // skip for now since we would require specific versions and we haven't really got that
-      p => !p.includes("{{")
-    )
-    const pkgstr = utils.pkg.str(pkg)
-
-    bindir.mkdir('p')
-
-    for (const program of programs) {
-      const f = bindir.join(program)
-
-      if (f.exists()) {
-        if (!await isShim(f)) {
-          console.error(`pkgs: ${f} already exists and is not a pkgx shim`);
-          Deno.exit(1)
-        }
-        await uninstall([pkgstr]);
-      }
-    }
-
-    for (const program of programs) {
-      const f = bindir.join(program)
-
-      const content: ShimContent = {
-        siblings: programs
-      }
-
-      f.write({ force: true, text:
-        `#!/usr/bin/env -S pkgx --shebang --quiet +${pkgstr} -- ${program}\n\n${stringifyYaml(content)}`
-      }).chmod(0o755)
-      console.error('pkgs: installed:', f)
-      n++
-    }
-  }
-
-  if (n == 0) {
-    console.error('pkgs: no programs provided by pkgs')
-    Deno.exit(1)
-  }
-
-  if (n > 0 && !Deno.env.get("PATH")?.split(":").includes(bindir.string)) {
-    console.warn("pkgs: %c`%s` is not in `PATH`", 'color: red', bindir)
-  }
+function is_shim() {
+  local shim="${1}"
+  local project="${2:-}"
+  grep -I -q . "${shim}" || return 1 # binary
+  if [[ -n "${project}" ]]; then
+    head -n 1 "${shim}" | grep "^#!/usr/bin/env -S pkgx --shebang " | grep -q -E " \+${project//"."/"\."}" && return 0
+    grep -q -E "exec pkgx \+${project//"."/"\."}" "${shim}" && return 0 # pkgx v1
+  else
+    head -n 1 "${shim}" | grep -q "^#!/usr/bin/env -S pkgx --shebang " && return 0
+    grep -q -E "exec pkgx \+[^ ]+" "${shim}" && return 0 # pkgx v1
+  fi
+  return 1
 }
 
-async function uninstall(pkgspecs: string[]) {
-  const pkgs = await Promise.all(pkgspecs.map(x => parse_pkg_str(x, {latest: 'ok'})))
-
-  if (pkgs.length <= 0) {
-    console.error('pkgs: no pkgs specified')
-    Deno.exit(1)
-  }
-
-  let n = 0
-
-  for (const pkg of pkgs) {
-    const programs = await hooks.usePantry().project(pkg).provides()
-    for (const program of programs) {
-      const f = bindir.join(program)
-
-      if (!f.exists()) {
-        continue
-      }
-
-      if (!await isShim(f)) {
-        console.error(`pkgs: ${f} is not a pkgx shim`);
-        Deno.exit(1)
-      }
-
-      const content = await f.readYAML() as ShimContent
-
-      const programs = [f, ...content.siblings.map(x => bindir.join(x))]
-
-      for (const p of programs) {
-        if (p.exists()) {
-          p.rm()
-          console.error('pkgs: uninstalled:', p)
-          n++
-        }
-      }
-    }
-  }
-
-  if (n == 0) {
-    console.error('pkgs: nothing to uninstall');
-  }
+function get_shim_pkg_spec() {
+  local shim="${bin_dir}/${1}"
+  head -n 1 "${shim}" | grep "^#!/usr/bin/env -S pkgx --shebang " | grep -o -P ' \+\K[^ ]+' && return 0
+  grep -o -m1 -P "exec pkgx \+\K[^ ]+" "${shim}" && return 0 # pkgx v1
+  return 1
 }
 
-async function list() {
-  if (!bindir.isDirectory()) {
-    console.error(`pkgs: ${bindir} is not a directory`);
-    Deno.exit(1)
-  }
-
-  let n = 0
-
-  for await (const [entry] of bindir.walk()) {
-    if (await isShim(entry)) {
-      console.log(entry)
-      n++
-    }
-  }
-
-  if (n == 0) {
-    console.error('pkgs: no programs installed');
-  }
+function programs_installed() {
+  if [[ ! -d "${bin_dir}" ]]; then
+    return
+  fi
+  local pkg_specs=()
+  if [[ $# -gt 0 ]]; then
+    local pkg
+    for pkg in "$@"; do
+      pkg_specs+=("$(resolve_pkg_spec "${pkg}")")
+    done
+  fi
+  (
+    export -f is_shim
+    find "${bin_dir}" -mindepth 1 -maxdepth 1 -type f -executable -exec bash -c 'is_shim "${@}"' -- {} "${pkg_specs[@]}" ';' -print0 | xargs -0 --no-run-if-empty -n 1 -- basename
+  )
 }
 
-async function parse_pkg_str(input: string, opts?: { latest: 'ok' }): Promise<PackageRequirement & { update?: boolean }> {
-  let update = false
-
-  if (opts?.latest && input.endsWith("@latest")) {
-    input = input.slice(0, -7)
-    update = true
-  }
-
-  const rawpkg = utils.pkg.parse(input)
-
-  const projects = await failsafe(() => hooks.usePantry().find(rawpkg.project))
-  if (projects.length <= 0) {
-    console.error(`pkgs: nothing provides \`${input}\``)
-    Deno.exit(1)
-  }
-  if (projects.length > 1) {
-    console.error(undent`
-      pkgs: multiple projects provide \`${input}\`. please be more specific:
-
-      ${projects.map(p => `    pkgs +${p.project} ${Deno.args.join(' ')}`).join('\n')}
-      `)
-  }
-
-  const project = projects[0].project //FIXME libpkgx forgets to correctly assign type
-  const constraint = rawpkg.constraint
-
-  return { project, constraint, update }
+function pkgs_installed() {
+  (
+    export -f get_shim_pkg_spec
+    export bin_dir
+    # shellcheck disable=SC2016
+    programs_installed "${@}" | xargs --no-run-if-empty -n 1 -- bash -c 'get_shim_pkg_spec "${@}"' -- | sort -u
+  )
 }
 
-async function failsafe<T>(body: () => Promise<T>): Promise<T> {
-  try {
-    return await body()
-  } catch (err) {
-    if (err instanceof PackageNotFoundError || err instanceof PantryNotFoundError) {
-      await hooks.useSync()
-      return body()
-    } else {
-      throw err
-    }
-  }
+function uninstall() {
+  local pkg_specs=()
+  if [[ $# -gt 0 ]]; then
+    local pkg
+    for pkg in "$@"; do
+      pkg_specs+=("$(resolve_pkg_spec "${pkg}")")
+    done
+  fi
+
+  # shellcheck disable=SC2310
+  for pkg_spec in "${pkg_specs[@]}"; do
+    local installed_pkg_spec
+    if installed_pkg_spec=$(pkgs_installed "${pkg_spec}" | grep .); then
+      local programs_text programs program
+      programs_text=$(programs_installed "${installed_pkg_spec}" | grep .)
+      readarray -t programs <<<"${programs_text}"
+      unset programs_text
+      echo "uninstalling ${installed_pkg_spec} (${programs[*]})"
+      for program in "${programs[@]}"; do
+        rm -f "${bin_dir}/${program}"
+      done
+    fi
+  done
 }
 
-async function isShim(f: Path): Promise<boolean> {
-  if (!f.isFile()) return false
+case "${action}" in
+install)
+  if [[ $# -eq 0 ]]; then
+    # reinstall all installed packages
+    pkgs_text=$(pkgs_installed | grep .)
+    readarray -t pkgs <<<"${pkgs_text}"
+    unset pkgs_text
+  else
+    pkgs=("$@")
+  fi
+  sync_pantry_once
+  for pkg in "${pkgs[@]}"; do
+    if [[ "${pkg}" =~ ^[^@^~]+([@^~].+)?$ ]]; then
+      pkg_suffix="${BASH_REMATCH[1]:-}"
+    else
+      pkg_suffix=""
+    fi
+    pkg_json=$(pkgx --query --json=v2 "${pkg}" | jq -e '.[0]')
+    project=$(echo "${pkg_json}" | jq -er '.project')
 
-  if (!await isShebang(f)) return false
+    # uninstall if some version is already installed
+    uninstall "${project}"
 
-  const { value: shebang } = await f.readLines().next()
-  const shebangRegex = /^#!\/usr\/bin\/env -S pkgx --shebang /
-  if (!shebang.match(shebangRegex)) {
-    return false
-  }
+    pkg_spec="${project}${pkg_suffix}"
+    programs_text=$(echo "${pkg_json}" | jq -er '.programs[]')
+    readarray -t programs <<<"${programs_text}"
+    unset programs_text
 
-  try {
-    const content = await f.readYAML() as ShimContent
-    if (!content.siblings) {
-      return false
-    }
-  } catch (_err) {
-    return false
-  }
+    for program in "${programs[@]}"; do
+      bin="${bin_dir}/${program}"
+      if [[ -e "${bin}" ]]; then
+        echo "Error: ${bin} already exists and is not a pkgx shim." >&2
+        exit 1
+      fi
+    done
 
-  return true
-}
+    echo "installing ${pkg_spec} (${programs[*]})"
+    for program in "${programs[@]}"; do
+      bin="${bin_dir}/${program}"
+      bin_tmp=$(mktemp "${bin}.tmp.XXXXXX")
+      tee "${bin_tmp}" >/dev/null <<EOF
+#!/usr/bin/env -S pkgx --shebang --quiet +${pkg_spec} -- ${program}
+EOF
+      mkdir -p "$(dirname "${bin}")"
+      install "${bin_tmp}" "${bin}"
+      rm -f "${bin_tmp}"
+    done
+  done
 
-async function isShebang(path: Path): Promise<boolean> {
-  const fd = await Deno.open(path.string)
-  const buf = new Uint8Array(2)
+  if [[ ":${PATH}:" != *":${bin_dir}:"* ]]; then
+    echo "Warning: ${bin_dir} is not in the PATH. You may need to add it manually." >&2
+  fi
 
-  if (await fd.read(buf) !== 2) {
-    fd.close()
-    return false // empty file
-  }
-
-  if (buf[0] != 35 || buf[1] != 33) {
-    fd.close()
-    return false // not an executable script
-  }
-
-  fd.close()
-  return true
-}
+  ;;
+uninstall)
+  uninstall "${@}"
+  ;;
+installed-programs)
+  programs_installed "${@}" | grep .
+  ;;
+installed)
+  pkgs_installed "${@}" | grep .
+  ;;
+*)
+  echo "Error: unknown action ${action}." >&2
+  usage 1
+  ;;
+esac
