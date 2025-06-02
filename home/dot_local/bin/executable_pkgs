@@ -113,18 +113,15 @@ function uninstall() {
   fi
 
   # shellcheck disable=SC2310
-  for pkg_spec in "${pkg_specs[@]}"; do
-    local installed_pkg_spec
-    if installed_pkg_spec=$(pkgs_installed "${pkg_spec}" | grep .); then
-      local programs_text programs program
-      programs_text=$(programs_installed "${installed_pkg_spec}" | grep .)
-      readarray -t programs <<<"${programs_text}"
-      unset programs_text
-      echo "uninstalling ${installed_pkg_spec} (${programs[*]})"
-      for program in "${programs[@]}"; do
-        rm -f "${bin_dir}/${program}"
-      done
-    fi
+  for pkg_spec in $(pkgs_installed "${pkg_specs[@]}"); do
+    local programs_text programs program
+    programs_text=$(programs_installed "${pkg_spec}" | grep .)
+    readarray -t programs <<<"${programs_text}"
+    unset programs_text
+    echo "uninstalling ${pkg_spec} (${programs[*]})"
+    for program in "${programs[@]}"; do
+      rm -f "${bin_dir}/${program}"
+    done
   done
 }
 
