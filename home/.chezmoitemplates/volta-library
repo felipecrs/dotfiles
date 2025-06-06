@@ -1,3 +1,6 @@
 # shellcheck shell=bash
 
 ensure_path_entry "${HOME}/.volta/bin"
+
+# https://docs.volta.sh/advanced/pnpm
+export VOLTA_FEATURE_PNPM=1
