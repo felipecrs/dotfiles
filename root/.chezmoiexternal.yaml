@@ -27,7 +27,7 @@
 {{ end }}
 
 {{ if .is_gnome }}
-"usr/share/keyrings/vscode-archive-keyring.gpg":
+"usr/share/keyrings/microsoft.gpg":
   type: file
   url: "https://packages.microsoft.com/keys/microsoft.asc"
   filter:
