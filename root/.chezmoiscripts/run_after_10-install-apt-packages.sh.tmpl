@@ -52,7 +52,9 @@ readonly wanted_packages=(
   # {{ if .is_wsl }}
   wslu
   # {{ else }}
-  # {{   if eq .chezmoi.osRelease.versionCodename "jammy" }}
+  # {{   if eq .chezmoi.osRelease.versionCodename "noble" }}
+  linux-generic-hwe-24.04
+  # {{   else if eq .chezmoi.osRelease.versionCodename "jammy" }}
   linux-generic-hwe-22.04
   # {{   else if eq .chezmoi.osRelease.versionCodename "focal" }}
   linux-generic-hwe-20.04
