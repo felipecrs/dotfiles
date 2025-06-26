@@ -13,6 +13,10 @@
       "keys": "ctrl+v"
     },
     {
+      "id": "Terminal.FindText",
+      "keys": "ctrl+f"
+    },
+    {
       "id": "Terminal.DuplicatePaneAuto",
       "keys": "alt+shift+d"
     }
