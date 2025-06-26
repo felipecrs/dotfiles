@@ -1,6 +1,3 @@
-{{- $name := "Felipe Santos" -}}
-{{- $email := "felipecassiors@gmail.com" -}}
-
 {{- $chezmoiForce := or (has "--force" .chezmoi.args) (has "--force=true" .chezmoi.args) -}}
 {{- $interactive := and stdinIsATTY (not $chezmoiForce) -}}
 
@@ -10,8 +7,7 @@
 {{- $gnome := lookPath "gnome-shell" | not | not -}}
 {{- $headless := or (env "SSH_CLIENT" | not | not) (not (or (env "DISPLAY") (env "WAYLAND_DISPLAY"))) -}}
 
-{{- $minimum := or $devcontainer (not $ubuntu) -}}
-
+{{- $name := "" -}}
 {{- if hasKey . "name" -}}
 {{-   $name = .name -}}
 {{- end -}}
@@ -37,6 +33,7 @@
 {{-   end -}}
 {{- end -}}
 
+{{- $email := "" -}}
 {{- if hasKey . "email" -}}
 {{-   $email = .email -}}
 {{- end -}}
@@ -63,6 +60,7 @@
 {{-   end -}}
 {{- end -}}
 
+{{- $minimum := or $devcontainer (not $ubuntu) -}}
 {{- if hasKey . "is_devcontainer" -}}
 {{-   $minimum = .is_devcontainer -}}
 {{- end -}}
