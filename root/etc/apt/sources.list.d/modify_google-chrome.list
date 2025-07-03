@@ -1,0 +1,17 @@
+{{- /* chezmoi:modify-template */ -}}
+
+{{- /* Comment out all non-empty and non-comment lines */ -}}
+{{- $result := list -}}
+{{- range splitList "\n" .chezmoi.stdin -}}
+{{-   if or (empty .) (hasPrefix "#" .) -}}
+{{-     $result = append $result . -}}
+{{-   else -}}
+{{-     $result = append $result (printf "# %s" .) -}}
+{{-   end -}}
+{{- end -}}
+{{- $result = join "\n" $result -}}
+
+{{- /* If there is no output, chezmoi deletes the file */ -}}
+{{- if trim $result -}}
+{{-   $result -}}
+{{- end -}}
