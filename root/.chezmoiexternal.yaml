@@ -3,43 +3,28 @@
 
 {{- template "read-versions-and-revisions-cache" $cache -}}
 
-"usr/share/keyrings/docker-archive-keyring.gpg":
+"usr/share/keyrings/docker.asc":
   type: file
   url: "https://download.docker.com/linux/{{ .chezmoi.osRelease.id }}/gpg"
-  filter:
-    command: gpg
-    args: ["--dearmor"]
 
-"usr/share/keyrings/git-core-ppa-archive-keyring.gpg":
+"usr/share/keyrings/git-core-ppa.asc":
   type: file
   url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xF911AB184317630C59970973E363C90F8F1B6217"
-  filter:
-    command: gpg
-    args: ["--dearmor"]
 
 {{ if .is_wsl }}
-"usr/share/keyrings/wslu-ppa-archive-keyring.gpg":
+"usr/share/keyrings/wslu-ppa.asc":
   type: file
   url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x254F460F2970E18123046570C1D0E7E6AB4095D6"
-  filter:
-    command: gpg
-    args: ["--dearmor"]
 {{ end }}
 
 {{ if .is_gnome }}
-"usr/share/keyrings/microsoft.gpg":
+"usr/share/keyrings/microsoft.asc":
   type: file
   url: "https://packages.microsoft.com/keys/microsoft.asc"
-  filter:
-    command: gpg
-    args: ["--dearmor"]
 
-"usr/share/keyrings/google-chrome-archive-keyring.gpg":
+"usr/share/keyrings/google.asc":
   type: file
   url: "https://dl.google.com/linux/linux_signing_key.pub"
-  filter:
-    command: gpg
-    args: ["--dearmor"]
 {{ end }}
 
 "usr/local/bin/docker-compose":

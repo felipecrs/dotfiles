@@ -12,7 +12,13 @@ usr/local/share/gcm-core
 
 # Migrated to vscode.sources and microsoft.gpg
 etc/apt/sources.list.d/vscode.list
+
+# Migrated to .asc
+usr/share/keyrings/docker-archive-keyring.gpg
+usr/share/keyrings/git-core-ppa-archive-keyring.gpg
+usr/share/keyrings/wslu-ppa-archive-keyring.gpg
 usr/share/keyrings/vscode-archive-keyring.gpg
+usr/share/keyrings/google-chrome-archive-keyring.gpg
 
 # These files are known to be installed by Docker Desktop and they
 # conflict with the ones installed by APT.

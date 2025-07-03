@@ -179,7 +179,7 @@ for variant in "${variants[@]}"; do
 export IS_WSL=true
 
 # Exercises install-pre-requisites.sh
-sudo env DEBIAN_FRONTEND=noninteractive apt remove --yes --auto-remove zsh curl git gpg
+sudo env DEBIAN_FRONTEND=noninteractive apt remove --yes --auto-remove zsh curl git
 
 cat <<'EOM' | sudo tee /usr/local/bin/wslpath
 #!/usr/bin/env bash
