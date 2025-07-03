@@ -1,4 +1,6 @@
 {{ if not .is_gnome }}
+etc/apt/sources.list.d/vscode-custom.list
+etc/apt/sources.list.d/google-chrome-custom.list
 etc/apt/sources.list.d/vscode.sources
 etc/apt/sources.list.d/google-chrome.list
 {{ end }}

@@ -6,7 +6,8 @@
 set -eu
 
 wanted_packages=(
-  gpg # used to decrypt the gpg keys of the apt repositories
+  # None for now :-)
+  # TODO: consider removing this script
 )
 
 missing_packages=()
