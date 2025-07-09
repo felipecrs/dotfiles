@@ -4,7 +4,7 @@
 {{- if hasKey $versions $repo -}}
 {{-   get $versions $repo -}}
 {{- else -}}
-{{-   $result := output "curl" "-fsSL" "-o" "/dev/null" "-w" "%{url_effective}" (printf "https://github.com/%s/releases/latest" $repo) | trim | base | trimPrefix "v" -}}
+{{-   $result := getRedirectedURL (printf "https://github.com/%s/releases/latest" $repo) | base | trimPrefix "v" -}}
 {{-   $_ := set $versions $repo $result -}}
 {{-   $result -}}
 {{- end -}}
