@@ -1,10 +1,1 @@
-{{- $repo := index . 0 -}}
-{{- $cache := index . 1 -}}
-{{- $versions := get $cache "versions" -}}
-{{- if hasKey $versions $repo -}}
-{{-   get $versions $repo -}}
-{{- else -}}
-{{-   $result := getRedirectedURL (printf "https://github.com/%s/releases/latest" $repo) | base | trimPrefix "v" -}}
-{{-   $_ := set $versions $repo $result -}}
-{{-   $result -}}
-{{- end -}}
+{{- printf "https://github.com/%s/releases/latest" . | getRedirectedURL | base | trimPrefix "v" -}}

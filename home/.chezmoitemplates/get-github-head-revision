@@ -1,10 +1,1 @@
-{{- $repo := index . 0 -}}
-{{- $cache := index . 1 -}}
-{{- $revisions := get $cache "revisions" -}}
-{{- if hasKey $revisions $repo -}}
-{{-   get $revisions $repo -}}
-{{- else -}}
-{{-   $result := getRedirectedURL (printf "https://github.com/%s/raw/HEAD/README.md" $repo) | trimSuffix "/README.md" | base -}}
-{{-   $_ := set $revisions $repo $result -}}
-{{-   $result -}}
-{{- end -}}
+{{- printf "https://github.com/%s/raw/HEAD/README.md" . | getRedirectedURL | trimSuffix "/README.md" | base -}}
