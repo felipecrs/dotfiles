@@ -25,3 +25,6 @@ usr/share/keyrings/google-chrome-archive-keyring.gpg
 usr/local/lib/docker/cli-plugins/docker-buildx
 usr/local/lib/docker/cli-plugins/docker-compose
 usr/local/lib/docker/cli-plugins/docker-scan
+
+# No longer used
+{{ joinPath (.chezmoi.cacheDir | trimPrefix .chezmoi.homeDir | trimPrefix "/") "external/versions_and_revisions.yaml" }}
