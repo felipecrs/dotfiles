@@ -13,9 +13,13 @@
 {{ end }}
 
 {{ if .is_gnome }}
-"usr/share/keyrings/microsoft.asc":
+# https://github.com/microsoft/vscode/issues/255581
+"usr/share/keyrings/microsoft.gpg":
   type: file
   url: "https://packages.microsoft.com/keys/microsoft.asc"
+  filter:
+    command: gpg
+    args: ["--dearmor"]
 
 "usr/share/keyrings/google.asc":
   type: file
