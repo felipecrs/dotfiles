@@ -1,3 +1,0 @@
-{{- /* chezmoi:modify-template */ -}}
-
-{{- ensureLinePrefix "#" "# " .chezmoi.stdin -}}

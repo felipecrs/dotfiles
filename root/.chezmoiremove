@@ -20,6 +20,10 @@ usr/share/keyrings/wslu-ppa-archive-keyring.gpg
 usr/share/keyrings/vscode-archive-keyring.gpg
 usr/share/keyrings/google-chrome-archive-keyring.gpg
 
+# https://github.com/microsoft/vscode/issues/255581
+etc/apt/sources.list.d/vscode-custom.list
+usr/share/keyrings/microsoft.asc
+
 # These files are known to be installed by Docker Desktop and they
 # conflict with the ones installed by APT.
 usr/local/lib/docker/cli-plugins/docker-buildx

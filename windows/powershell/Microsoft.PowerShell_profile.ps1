@@ -35,6 +35,10 @@ if (Test-Path "C:\Program Files\PowerToys\WinGetCommandNotFound.psd1") {
 }
 #34de4b3d-13a8-4540-b76d-b9e8d3851756
 
+function Refresh-Path {
+  $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+}
+
 # gsudo (https://github.com/gerardog/gsudo)
 # Installation: winget install gerardog.gsudo
 # PSWindowsUpdate (https://github.com/mgajda83/PSWindowsUpdate)
