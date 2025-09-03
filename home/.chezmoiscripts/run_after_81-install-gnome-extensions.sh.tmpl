@@ -8,7 +8,9 @@ true || source ../.chezmoitemplates/scripts-library
 ensure_path_entry "${HOME}/.local/bin"
 
 # TODO: install the .pyz instead after https://github.com/essembeh/gnome-extensions-cli/issues/40
-alias gext='uvx gnome-extensions-cli'
+function gext() {
+  uvx gnome-extensions-cli "$@"
+}
 
 function is_gnome_extension_installed() {
   local extension="$1"
