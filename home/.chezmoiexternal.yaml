@@ -64,11 +64,18 @@
 {{- end }}
 
 {{ if not .is_devcontainer -}}
-".local/bin/pipx":
-  type: file
-  {{ $pipxVersion := includeTemplate "get-github-latest-version" "pypa/pipx" }}
-  url: "https://github.com/pypa/pipx/releases/download/{{ $pipxVersion }}/pipx.pyz"
-  executable: true
+".local/bin/uv":
+  type: archive-file
+  {{ $uvVersion := includeTemplate "get-github-latest-version" "astral-sh/uv" }}
+  url: "https://github.com/astral-sh/uv/releases/download/{{ $uvVersion }}/uv-{{ .uname_arch }}-unknown-linux-gnu.tar.gz"
+  stripComponents: 1
+  path: uv
+
+".local/bin/uvx":
+  type: archive-file
+  url: "https://github.com/astral-sh/uv/releases/download/{{ $uvVersion }}/uv-{{ .uname_arch }}-unknown-linux-gnu.tar.gz"
+  stripComponents: 1
+  path: uvx
 
 ".local/bin/kubecolor":
   type: archive-file
