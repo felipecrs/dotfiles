@@ -27,6 +27,10 @@
 # now we use gext instead
 .local/bin/gnome-shell-extension-installer
 
+# now we use uv instead
+.local/bin/pipx
+.local/share/pipx
+
 # tea got renamed to pkgx
 .local/bin/tea
 .tea

@@ -7,6 +7,11 @@ true || source ../.chezmoitemplates/scripts-library
 
 ensure_path_entry "${HOME}/.local/bin"
 
+# TODO: install the .pyz instead after https://github.com/essembeh/gnome-extensions-cli/issues/40
+function gext() {
+  uvx gnome-extensions-cli "$@"
+}
+
 function is_gnome_extension_installed() {
   local extension="$1"
 
@@ -42,11 +47,6 @@ disabled_extensions=(
 )
 
 missing_extensions=()
-
-if ! command -v gext >/dev/null; then
-  log_task "Installing gnome-extensions-cli"
-  c pipx install --force gnome-extensions-cli
-fi
 
 for extension in "${wanted_extensions[@]}"; do
   # shellcheck disable=SC2310
