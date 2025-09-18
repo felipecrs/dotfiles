@@ -112,7 +112,6 @@ function uninstall() {
     done
   fi
 
-  # shellcheck disable=SC2310
   for pkg_spec in $(pkgs_installed "${pkg_specs[@]}"); do
     local programs_text programs program
     programs_text=$(programs_installed "${pkg_spec}" | grep .)

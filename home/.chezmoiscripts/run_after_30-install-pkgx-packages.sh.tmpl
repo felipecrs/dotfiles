@@ -10,7 +10,6 @@ ensure_path_entry "${HOME}/.local/bin"
 readonly unwanted_packages=()
 
 for package in "${unwanted_packages[@]}"; do
-  # shellcheck disable=SC2310
   if pkgs installed "${package}" >/dev/null; then
     log_task "Removing unwanted package '${package}' installed with pkgx"
     pkgs uninstall "${package}"
@@ -28,7 +27,6 @@ readonly wanted_packages=(
 missing_packages=()
 
 for package in "${wanted_packages[@]}"; do
-  # shellcheck disable=SC2310
   if ! pkgs installed "${package}" >/dev/null; then
     missing_packages+=("${package}")
   fi

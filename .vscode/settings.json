@@ -75,6 +75,5 @@
     ".chezmoiremove": "helm",
     "**/.chezmoitemplates/*": "helm",
     "**/.chezmoitemplates/*-library": "shellscript"
-  },
-  "deno.enable": true
+  }
 }
