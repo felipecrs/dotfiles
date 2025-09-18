@@ -1,0 +1,2 @@
+prompt:
+  disable: true # powerlevel10k already does this
