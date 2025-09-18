@@ -56,12 +56,12 @@
 {{- end }}
 
 {{ if not .is_devcontainer | or (.is_devcontainer | and (not (lookPath "pkgx")) | and (ne .chezmoi.osRelease.id "alpine")) -}}
+# Using my fork until https://github.com/pkgxdev/pkgx/pull/1187 is merged and released
 ".local/bin/pkgx":
-  type: archive-file
-  {{/* TODO: upgrade to pkgx v2 */}}
-  {{ $pkgxVersion := "1.5.0" }}
-  url: "https://github.com/pkgxdev/pkgx/releases/download/v{{ $pkgxVersion }}/pkgx-{{ $pkgxVersion }}+linux+{{ .uname_arch | replace "_" "-" }}.tar.xz"
-  path: pkgx
+  type: file
+  {{ $pkgxVersion := includeTemplate "get-github-latest-version" "felipecrs/pkgx" }}
+  url: "https://github.com/felipecrs/pkgx/releases/download/v{{ $pkgxVersion }}/pkgx-linux-{{ .chezmoi.arch }}"
+  executable: true
 {{- end }}
 
 {{ if not .is_devcontainer -}}

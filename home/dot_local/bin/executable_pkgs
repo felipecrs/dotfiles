@@ -1,0 +1,194 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+  echo "Usage: ${0} install|uninstall|installed|installed-programs <pkgs>..." >&2
+  exit "${1}"
+}
+
+positional_args=()
+while [[ $# -gt 0 ]]; do
+  case $1 in
+  -*)
+    echo "Error: unknown option ${1}." >&2
+    usage 1
+    ;;
+  *)
+    positional_args+=("$1")
+    shift
+    ;;
+  esac
+done
+
+set -- "${positional_args[@]}"
+unset positional_args
+
+if [[ $# -lt 1 ]]; then
+  usage 1
+fi
+
+action="$1"
+shift
+
+bin_dir="/usr/local/bin"
+uid=$(id -u)
+if [[ "${uid}" -ne 0 ]]; then
+  bin_dir="${HOME}/.local/bin"
+fi
+unset uid
+
+pantry_synced=false
+function sync_pantry_once() {
+  if [[ "${pantry_synced}" == false ]]; then
+    pkgx --sync --quiet
+    pantry_synced=true
+  fi
+}
+
+function resolve_pkg_spec() {
+  local pkg="${1}"
+  local pkg_suffix=""
+  if [[ "${pkg}" =~ ^[^@^~]+([@^~].+)?$ ]]; then
+    pkg_suffix="${BASH_REMATCH[1]:-}"
+  fi
+  sync_pantry_once
+  pkgx --query --json=v2 "${pkg}" | jq -er '.[0].project' | sed "s/$/${pkg_suffix}/"
+}
+
+function is_shim() {
+  local shim="${1}"
+  local project="${2:-}"
+  grep -I -q . "${shim}" || return 1 # binary
+  if [[ -n "${project}" ]]; then
+    head -n 1 "${shim}" | grep "^#!/usr/bin/env -S pkgx --shebang " | grep -q -E " \+${project//"."/"\."}" && return 0
+    grep -q -E "exec pkgx \+${project//"."/"\."}" "${shim}" && return 0 # pkgx v1
+  else
+    head -n 1 "${shim}" | grep -q "^#!/usr/bin/env -S pkgx --shebang " && return 0
+    grep -q -E "exec pkgx \+[^ ]+" "${shim}" && return 0 # pkgx v1
+  fi
+  return 1
+}
+
+function get_shim_pkg_spec() {
+  local shim="${bin_dir}/${1}"
+  head -n 1 "${shim}" | grep "^#!/usr/bin/env -S pkgx --shebang " | grep -o -P ' \+\K[^ ]+' && return 0
+  grep -o -m1 -P "exec pkgx \+\K[^ ]+" "${shim}" && return 0 # pkgx v1
+  return 1
+}
+
+function programs_installed() {
+  if [[ ! -d "${bin_dir}" ]]; then
+    return
+  fi
+  local pkg_specs=()
+  if [[ $# -gt 0 ]]; then
+    local pkg
+    for pkg in "$@"; do
+      pkg_specs+=("$(resolve_pkg_spec "${pkg}")")
+    done
+  fi
+  (
+    export -f is_shim
+    find "${bin_dir}" -mindepth 1 -maxdepth 1 -type f -executable -exec bash -c 'is_shim "${@}"' -- {} "${pkg_specs[@]}" ';' -print0 | xargs -0 --no-run-if-empty -n 1 -- basename
+  )
+}
+
+function pkgs_installed() {
+  (
+    export -f get_shim_pkg_spec
+    export bin_dir
+    # shellcheck disable=SC2016
+    programs_installed "${@}" | xargs --no-run-if-empty -n 1 -- bash -c 'get_shim_pkg_spec "${@}"' -- | sort -u
+  )
+}
+
+function uninstall() {
+  local pkg_specs=()
+  if [[ $# -gt 0 ]]; then
+    local pkg
+    for pkg in "$@"; do
+      pkg_specs+=("$(resolve_pkg_spec "${pkg}")")
+    done
+  fi
+
+  for pkg_spec in $(pkgs_installed "${pkg_specs[@]}"); do
+    local programs_text programs program
+    programs_text=$(programs_installed "${pkg_spec}" | grep .)
+    readarray -t programs <<<"${programs_text}"
+    unset programs_text
+    echo "uninstalling ${pkg_spec} (${programs[*]})"
+    for program in "${programs[@]}"; do
+      rm -f "${bin_dir}/${program}"
+    done
+  done
+}
+
+case "${action}" in
+install)
+  if [[ $# -eq 0 ]]; then
+    # reinstall all installed packages
+    pkgs_text=$(pkgs_installed | grep .)
+    readarray -t pkgs <<<"${pkgs_text}"
+    unset pkgs_text
+  else
+    pkgs=("$@")
+  fi
+  sync_pantry_once
+  for pkg in "${pkgs[@]}"; do
+    if [[ "${pkg}" =~ ^[^@^~]+([@^~].+)?$ ]]; then
+      pkg_suffix="${BASH_REMATCH[1]:-}"
+    else
+      pkg_suffix=""
+    fi
+    pkg_json=$(pkgx --query --json=v2 "${pkg}" | jq -e '.[0]')
+    project=$(echo "${pkg_json}" | jq -er '.project')
+
+    # uninstall if some version is already installed
+    uninstall "${project}"
+
+    pkg_spec="${project}${pkg_suffix}"
+    programs_text=$(echo "${pkg_json}" | jq -er '.programs[]')
+    readarray -t programs <<<"${programs_text}"
+    unset programs_text
+
+    for program in "${programs[@]}"; do
+      bin="${bin_dir}/${program}"
+      if [[ -e "${bin}" ]]; then
+        echo "Error: ${bin} already exists and is not a pkgx shim." >&2
+        exit 1
+      fi
+    done
+
+    echo "installing ${pkg_spec} (${programs[*]})"
+    for program in "${programs[@]}"; do
+      bin="${bin_dir}/${program}"
+      bin_tmp=$(mktemp "${bin}.tmp.XXXXXX")
+      tee "${bin_tmp}" >/dev/null <<EOF
+#!/usr/bin/env -S pkgx --shebang --quiet +${pkg_spec} -- ${program}
+EOF
+      mkdir -p "$(dirname "${bin}")"
+      install "${bin_tmp}" "${bin}"
+      rm -f "${bin_tmp}"
+    done
+  done
+
+  if [[ ":${PATH}:" != *":${bin_dir}:"* ]]; then
+    echo "Warning: ${bin_dir} is not in the PATH. You may need to add it manually." >&2
+  fi
+
+  ;;
+uninstall)
+  uninstall "${@}"
+  ;;
+installed-programs)
+  programs_installed "${@}" | grep .
+  ;;
+installed)
+  pkgs_installed "${@}" | grep .
+  ;;
+*)
+  echo "Error: unknown action ${action}." >&2
+  usage 1
+  ;;
+esac
