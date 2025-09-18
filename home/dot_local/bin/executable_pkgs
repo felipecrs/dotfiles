@@ -37,6 +37,7 @@ if [[ "${uid}" -ne 0 ]]; then
   bin_dir="${HOME}/.local/bin"
 fi
 unset uid
+mkdir -p "${bin_dir}"
 
 pantry_synced=false
 function sync_pantry_once() {
