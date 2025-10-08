@@ -1,0 +1,13 @@
+{{- /* chezmoi:modify-template */ -}}
+
+{{- /* Load existing configuration */ -}}
+{{- $result := dict -}}
+{{- if not (.chezmoi.stdin | trim | empty) -}}
+{{-   $result = fromIni .chezmoi.stdin -}}
+{{- end -}}
+
+{{- /* Load default configuration */ -}}
+{{- $default := (includeTemplate ".gitconfig.tmpl" . | fromIni) -}}
+{{- $result = merge $default $result -}}
+
+{{- toIni $result -}}

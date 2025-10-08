@@ -38,26 +38,26 @@ caa = commit --amend --all
 caane = commit --amend --all --no-edit
 cob = checkout -b
 
-apply-gitignore = "!f() { \
+apply-gitignore = !f() { \
   set -ex; \
   git rm -r --cached . >/dev/null; \
   git add .; \
-};f"
+};f
 
-remote-for-branch = "!f() { \
+remote-for-branch = !f() { \
   set -ex; \
   branch="${1:-"$(git current-branch)"}"; \
-  git rev-parse --abbrev-ref --symbolic-full-name "${branch}@{upstream}" | sed -n 's,^\\(\\S*\\)/'"${branch}"'$,\\1,p' | grep .; \
-};f"
+  git rev-parse --abbrev-ref --symbolic-full-name "${branch}@{upstream}" | sed -n 's,^\(\S*\)/'"${branch}"'$,\1,p' | grep .; \
+};f
 
-rr = "!f() { \
+rr = !f() { \
   set -ex; \
   branch="${1:-"$(git current-branch)"}"; \
   remote="$(git remote-for-branch "${branch}")"; \
   git reset --hard "${remote}/${branch}"; \
-};f"
+};f
 
-pfor = "!f() { \
+pfor = !f() { \
   set -ex; \
   if echo "${1}" | grep -q %; then \
     branch="$(echo "${1}" | cut -d'%' -f1)"; \
@@ -70,15 +70,15 @@ pfor = "!f() { \
   push_opts="${push_opts:+"%${push_opts}"}"; \
   remote="$(git remote-for-branch "${branch}")"; \
   git push "${remote}" "HEAD:refs/for/${branch}${push_opts}"; \
-};f"
+};f
 
-psfor = "!f() { \
+psfor = !f() { \
   set -ex; \
   git caane; \
   git pfor "$@"; \
-};f"
+};f
 
-cptob = "!f() { \
+cptob = !f() { \
   set -ex; \
   commit="${1}"; \
   shift; \
@@ -97,4 +97,4 @@ cptob = "!f() { \
     git cp "${commit}"; \
     git pfor "${branch}${push_opts}"; \
   done; \
-};f"
+};f
