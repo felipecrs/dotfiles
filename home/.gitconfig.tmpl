@@ -50,7 +50,7 @@ remote-for-branch = !f() { \
   git rev-parse --abbrev-ref --symbolic-full-name "${branch}@{upstream}" | sed -n 's,^\(\S*\)/'"${branch}"'$,\1,p' | grep .; \
 };f
 
-rr = !f() { \
+rhu = !f() { \
   set -ex; \
   branch="${1:-"$(git current-branch)"}"; \
   remote="$(git remote-for-branch "${branch}")"; \
