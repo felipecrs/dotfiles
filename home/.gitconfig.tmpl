@@ -92,7 +92,7 @@ cptob = !f() { \
   \
   for branch in "${@}"; do \
     git co "${branch}"; \
-    git rr "${branch}"; \
+    git rhu "${branch}"; \
     git pr; \
     git cp "${commit}"; \
     git pfor "${branch}${push_opts}"; \
