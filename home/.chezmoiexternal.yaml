@@ -84,31 +84,11 @@
   url: "https://github.com/kubecolor/kubecolor/releases/download/v{{ $kubecolorVersion }}/kubecolor_{{ $kubecolorVersion }}_linux_{{ .chezmoi.arch }}.tar.gz"
   path: kubecolor
 
-".local/bin/kubectx":
-  type: archive-file
-  {{ $kubectxVersion := includeTemplate "get-github-latest-version" "ahmetb/kubectx" }}
-  url: "https://github.com/ahmetb/kubectx/releases/download/v{{ $kubectxVersion }}/kubectx_v{{ $kubectxVersion }}_linux_{{ .uname_arch }}.tar.gz"
-  path: kubectx
-
-".oh-my-zsh/custom/plugins/my-completions/_kubectx.zsh":
+".local/bin/kubie":
   type: file
-  url: "https://github.com/ahmetb/kubectx/raw/v{{ $kubectxVersion }}/completion/_kubectx.zsh"
-
-".local/bin/kubens":
-  type: archive-file
-  url: "https://github.com/ahmetb/kubectx/releases/download/v{{ $kubectxVersion }}/kubens_v{{ $kubectxVersion }}_linux_{{ .uname_arch }}.tar.gz"
-  path: kubens
-
-".oh-my-zsh/custom/plugins/my-completions/_kubens.zsh":
-  type: file
-  url: "https://github.com/ahmetb/kubectx/raw/v{{ $kubectxVersion }}/completion/_kubens.zsh"
-
-# Required by kubectx and kubens
-".local/bin/fzf":
-  type: archive-file
-  {{ $fzfVersion := includeTemplate "get-github-latest-version" "junegunn/fzf" }}
-  url: "https://github.com/junegunn/fzf/releases/download/v{{ $fzfVersion }}/fzf-{{ $fzfVersion }}-linux_{{ .chezmoi.arch }}.tar.gz"
-  path: fzf
+  {{ $kubieVersion := includeTemplate "get-github-latest-version" "sbstp/kubie" }}
+  url: "https://github.com/sbstp/kubie/releases/download/v{{ $kubieVersion }}/kubie-linux-{{ .chezmoi.arch }}"
+  executable: true
 
 ".local/bin/stern":
   type: archive-file
