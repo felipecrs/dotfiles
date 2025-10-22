@@ -59,14 +59,18 @@ function resolve_pkg_spec() {
 
 function is_shim() {
   local shim="${1}"
-  local project="${2:-}"
+  shift
+  local projects=("${@}")
   grep -I -q . "${shim}" || return 1 # binary
-  if [[ -n "${project}" ]]; then
+  if [[ ${#projects[@]} -gt 0 ]]; then
+    local project
     local escaped_project
-    # https://stackoverflow.com/a/29613573/12156188
-    escaped_project=$(sed 's/[^^]/[&]/g; s/\^/\\^/g' <<<"${project}")
-    head -n 1 "${shim}" | grep "^#!/usr/bin/env -S pkgx --shebang " | grep -q -E " \+${escaped_project//"."/"\."}" && return 0
-    grep -q -E "exec pkgx \+${escaped_project//"."/"\."}" "${shim}" && return 0 # pkgx v1
+    for project in "${projects[@]}"; do
+      # https://stackoverflow.com/a/29613573/12156188
+      escaped_project=$(sed 's/[^^]/[&]/g; s/\^/\\^/g' <<<"${project}")
+      head -n 1 "${shim}" | grep "^#!/usr/bin/env -S pkgx --shebang " | grep -q -E " \+${escaped_project//"."/"\."}" && return 0
+      grep -q -E "exec pkgx \+${escaped_project//"."/"\."}" "${shim}" && return 0 # pkgx v1
+    done
   else
     head -n 1 "${shim}" | grep -q "^#!/usr/bin/env -S pkgx --shebang " && return 0
     grep -q -E "exec pkgx \+[^ ]+" "${shim}" && return 0 # pkgx v1
@@ -92,19 +96,43 @@ function programs_installed() {
       pkg_specs+=("$(resolve_pkg_spec "${pkg}")")
     done
   fi
-  (
-    export -f is_shim
-    find "${bin_dir}" -mindepth 1 -maxdepth 1 -type f -executable -exec bash -c 'is_shim "${@}"' -- {} "${pkg_specs[@]}" ';' -print0 | xargs -0 --no-run-if-empty -n 1 -- basename
-  )
+
+  local bins
+  bins="$(find "${bin_dir}" -mindepth 1 -maxdepth 1 -type f -executable)"
+  if [[ -z "${bins}" ]]; then
+    return
+  fi
+  readarray -t bins <<<"${bins}"
+
+  local bin
+  local programs=()
+  for bin in "${bins[@]}"; do
+    if
+      # shellcheck disable=SC2310
+      is_shim "${bin}" "${pkg_specs[@]}"
+    then
+      programs+=("$(basename "${bin}")")
+    fi
+  done
+
+  printf '%s\n' "${programs[@]}" | sort -u
 }
 
 function pkgs_installed() {
-  (
-    export -f get_shim_pkg_spec
-    export bin_dir
-    # shellcheck disable=SC2016
-    programs_installed "${@}" | xargs -d '\n' --no-run-if-empty -n 1 -- bash -c 'get_shim_pkg_spec "${@}"' -- | sort -u
-  )
+  local programs
+  programs=$(programs_installed "${@}")
+  if [[ -z "${programs}" ]]; then
+    return
+  fi
+  readarray -t programs <<<"${programs}"
+
+  local program
+  local pkg_specs=()
+  for program in "${programs[@]}"; do
+    pkg_specs+=("$(get_shim_pkg_spec "${program}")")
+  done
+
+  printf '%s\n' "${pkg_specs[@]}" | sort -u
 }
 
 function uninstall() {
@@ -116,12 +144,24 @@ function uninstall() {
     done
   fi
 
-  for pkg_spec in $(pkgs_installed "${pkg_specs[@]}"); do
-    local programs_text programs program
-    programs_text=$(programs_installed "${pkg_spec}" | grep .)
-    readarray -t programs <<<"${programs_text}"
-    unset programs_text
+  local pkg_specs
+  pkg_specs=$(pkgs_installed "${pkg_specs[@]}")
+  if [[ -z "${pkg_specs}" ]]; then
+    return
+  fi
+  readarray -t pkg_specs <<<"${pkg_specs}"
+
+  local pkg_spec
+  for pkg_spec in "${pkg_specs[@]}"; do
+    local programs
+    programs=$(programs_installed "${pkg_spec}" | grep .)
+    if [[ -z "${programs}" ]]; then
+      continue
+    fi
+    readarray -t programs <<<"${programs}"
+
     echo "uninstalling ${pkg_spec} (${programs[*]})"
+    local program
     for program in "${programs[@]}"; do
       rm -f "${bin_dir}/${program}"
     done
