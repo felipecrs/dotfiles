@@ -62,8 +62,11 @@ function is_shim() {
   local project="${2:-}"
   grep -I -q . "${shim}" || return 1 # binary
   if [[ -n "${project}" ]]; then
-    head -n 1 "${shim}" | grep "^#!/usr/bin/env -S pkgx --shebang " | grep -q -E " \+${project//"."/"\."}" && return 0
-    grep -q -E "exec pkgx \+${project//"."/"\."}" "${shim}" && return 0 # pkgx v1
+    local escaped_project
+    # https://stackoverflow.com/a/29613573/12156188
+    escaped_project=$(sed 's/[^^]/[&]/g; s/\^/\\^/g' <<<"${project}")
+    head -n 1 "${shim}" | grep "^#!/usr/bin/env -S pkgx --shebang " | grep -q -E " \+${escaped_project//"."/"\."}" && return 0
+    grep -q -E "exec pkgx \+${escaped_project//"."/"\."}" "${shim}" && return 0 # pkgx v1
   else
     head -n 1 "${shim}" | grep -q "^#!/usr/bin/env -S pkgx --shebang " && return 0
     grep -q -E "exec pkgx \+[^ ]+" "${shim}" && return 0 # pkgx v1
