@@ -103,7 +103,7 @@ function pkgs_installed() {
     export -f get_shim_pkg_spec
     export bin_dir
     # shellcheck disable=SC2016
-    programs_installed "${@}" | xargs --no-run-if-empty -n 1 -- bash -c 'get_shim_pkg_spec "${@}"' -- | sort -u
+    programs_installed "${@}" | xargs -d '\n' --no-run-if-empty -n 1 -- bash -c 'get_shim_pkg_spec "${@}"' -- | sort -u
   )
 }
 
