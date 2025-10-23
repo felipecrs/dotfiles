@@ -6,6 +6,9 @@
 {{-   $result = fromIni .chezmoi.stdin -}}
 {{- end -}}
 
+{{- /* Delete alias.rr as it is renamed to alias.rhu */ -}}
+{{- $result = deleteValueAtPath "alias.rr" $result -}}
+
 {{- /* Load default configuration */ -}}
 {{- $default := (includeTemplate ".gitconfig.tmpl" . | fromIni) -}}
 {{- $result = merge $default $result -}}
