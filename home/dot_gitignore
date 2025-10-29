@@ -1,0 +1,6 @@
+# misc
+*.log
+*.tmp
+
+# direnv
+.envrc
