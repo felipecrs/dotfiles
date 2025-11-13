@@ -125,14 +125,6 @@ fpath+="${ZSH_CUSTOM:-"${ZSH}/custom"}/plugins/zsh-completions/src"
 
 source "${ZSH}/oh-my-zsh.sh"
 
-# https://github.com/microsoft/vscode/issues/153400#issue-1286534600
-if [[ "${TERM_PROGRAM}" == "vscode" ]]; then
-  ITERM_SHELL_INTEGRATION_INSTALLED="Yes"
-  # Helps with the following, but only in VS Code terminal
-  # https://github.com/romkatv/powerlevel10k/blob/da9b03777c4f2390c7e3f5c720ee4689336f811b/README.md#horrific-mess-when-resizing-terminal-window
-  POWERLEVEL9K_TERM_SHELL_INTEGRATION="true"
-fi
-
 # Fix kubectl completion with kubecolor
 if command -v kubectl >/dev/null; then
   compdef kubecolor=kubectl
