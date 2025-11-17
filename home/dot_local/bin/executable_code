@@ -47,6 +47,15 @@ if [ -n "${NO_REMOTE:-}" ]; then
   remote=false
 fi
 
+is_vscode_terminal=false
+is_vscode_terminal_native=false
+if [ "${TERM_PROGRAM:-}" = "vscode" ]; then
+  is_vscode_terminal=true
+  if [ -z "${VSCODE_IPC_HOOK_CLI:-}" ]; then
+    is_vscode_terminal_native=true
+  fi
+fi
+
 is_wsl=false
 if [ -n "${WSL_DISTRO_NAME:-}" ] || [ -n "${IS_WSL:-}" ]; then
   is_wsl=true
@@ -113,18 +122,47 @@ exec_code() {
   exec "${code}" --folder-uri "vscode-remote://dev-container%2B${devcontainer_path_id}${devcontainer_remote_id}${devcontainer_workspace_folder}"
 }
 
+# When called from within VS Code Insiders terminal, prefer using code-insiders
+if [ "${is_vscode_terminal}" = true ] && echo "${TERM_PROGRAM_VERSION:-}" | grep -q -- "-insider$"; then
+  # shellcheck disable=SC2230
+  executables=$(which -a code-insiders)
+else
+  # Only consider next "code"s in PATH
+  this_script=$(realpath "$0")
+  executables=$(
+    # shellcheck disable=SC2230
+    which -a code | grep -A99 "${this_script}" | grep -v "${this_script}" || true
+  )
+  unset this_script
+fi
+
 vscode_server_dir="${HOME}/.vscode-server"
 
-# Handle vscode ssh, unless NO_REMOTE is set
-if [ "${remote}" = true ] && [ -z "${VSCODE_IPC_HOOK_CLI:-}" ] && who -m | grep -q .; then
-  # We will try to find an existing connection and reuse it. This allows
+if [ "${remote}" = false ]; then
+  echo "INFO(dotfiles-code): using code from linux" >&2
+  # Avoids reopening the remote session if called from within the remote session
+  unset VSCODE_IPC_HOOK_CLI
+  if [ "${is_wsl}" = true ]; then
+    export DONT_PROMPT_WSL_INSTALL=1
+    executables=$(echo "${executables}" | grep -v '^/mnt/.*$' || true)
+  fi
+  executables=$(echo "${executables}" | grep -v "${vscode_server_dir}" || true)
+elif [ "${is_wsl}" = true ]; then
+  if [ "${is_vscode_terminal_native}" = true ]; then
+    # Already inside native VS Code terminal, no need to warn again
+    export DONT_PROMPT_WSL_INSTALL=1
+  else
+    echo "INFO(dotfiles-code): using code from windows (set NO_REMOTE=1 to disable this)" >&2
+    executables=$(echo "${executables}" | grep '^/mnt/.*$' || true)
+  fi
+elif [ "${is_vscode_terminal}" = false ] && who -m | grep -q .; then
+  # We will try to find an existing SSH connection and reuse it. This allows
   # opening VS Code windows from a SSH remote session even out of the VS Code
   # integrated terminal.
   # PS: this only works if there is at least one VS Code window already
   # connected to this machine.
   echo "INFO(dotfiles-code): ssh session detected, searching for vscode remote sessions (set NO_REMOTE=1 to disable this)" >&2
   no_sockets_message="no vscode remote sessions found"
-
   code_search_dir="${vscode_server_dir}/cli/servers"
   if [ -d "${code_search_dir}" ]; then
     # Find the most recent directory inside of code_search_dir
@@ -169,28 +207,7 @@ if [ "${remote}" = true ] && [ -z "${VSCODE_IPC_HOOK_CLI:-}" ] && who -m | grep 
     fi
   fi
   echo "WARNING(dotfiles-code): ${no_sockets_message}" >&2
-  unset code_search_dir
-fi
-
-# Only consider next "code"s in PATH
-this_script=$(realpath "$0")
-executables=$(
-  # shellcheck disable=SC2230
-  which -a code | grep -A99 "${this_script}" | grep -v "${this_script}" || true
-)
-
-if [ "${remote}" = false ]; then
-  echo "INFO(dotfiles-code): using code from linux" >&2
-  # Avoids reopening the remote session if called from within the remote session
-  unset VSCODE_IPC_HOOK_CLI
-  if [ "${is_wsl}" = true ]; then
-    export DONT_PROMPT_WSL_INSTALL=1
-    executables=$(echo "${executables}" | grep -v '^/mnt/.*$' || true)
-  fi
-  executables=$(echo "${executables}" | grep -v "${vscode_server_dir}" || true)
-elif [ "${is_wsl}" = true ]; then
-  echo "INFO(dotfiles-code): using code from windows (set NO_REMOTE=1 to disable this)" >&2
-  executables=$(echo "${executables}" | grep '^/mnt/.*$' || true)
+  unset code_search_dir no_sockets_message
 fi
 
 if code=$(echo "${executables}" | head -1 | grep .); then
