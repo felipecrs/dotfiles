@@ -151,7 +151,7 @@ elif [ "${is_wsl}" = true ]; then
   if [ "${is_vscode_terminal_native}" = true ]; then
     # Already inside native VS Code terminal, no need to warn again
     export DONT_PROMPT_WSL_INSTALL=1
-  else
+  elif [ "${is_vscode_terminal}" = false ]; then
     echo "INFO(dotfiles-code): using code from windows (set NO_REMOTE=1 to disable this)" >&2
     executables=$(echo "${executables}" | grep '^/mnt/.*$' || true)
   fi
