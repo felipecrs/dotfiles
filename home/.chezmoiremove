@@ -48,6 +48,10 @@
 .local/share/fonts/Fira Code * Nerd Font Complete*.ttf
 !.local/share/fonts/Fira Code Regular Nerd Font Complete Mono.ttf
 
+# Now using oh-my-zsh plugins
+.oh-my-zsh/custom/plugins/my-completions/_deno
+.oh-my-zsh/custom/plugins/my-completions/_volta
+
 # No longer used
 {{ joinPath (.chezmoi.cacheDir | trimPrefix .chezmoi.homeDir | trimPrefix "/") "external/versions_and_revisions.yaml" }}
 {{- end -}}

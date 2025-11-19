@@ -105,12 +105,19 @@ DISABLE_MAGIC_FUNCTIONS="true"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  gh
   web-search
   docker
   docker-compose
   kubectl
   helm
   npm
+  volta
+  deno
+  uv
+  mvn
+  ssh
+  gitignore
   command-not-found
   common-aliases
   ubuntu
