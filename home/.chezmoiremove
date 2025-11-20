@@ -31,6 +31,13 @@
 .local/bin/pipx
 .local/share/pipx
 
+# now we use kubie
+.local/bin/kubectx
+.local/bin/kubens
+.local/bin/fzf
+.oh-my-zsh/custom/plugins/my-completions/_kubectx.zsh
+.oh-my-zsh/custom/plugins/my-completions/_kubens.zsh
+
 # tea got renamed to pkgx
 .local/bin/tea
 .tea
