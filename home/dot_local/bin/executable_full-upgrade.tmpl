@@ -107,7 +107,8 @@ fi
 
 if flatpak --version &>/dev/null; then
   log_task "Updating flatpak packages"
-  c sudo flatpak update --assumeyes
+  c flatpak update --user --assumeyes
+  c sudo flatpak update --system --assumeyes
 fi
 
 if gext --version &>/dev/null; then
