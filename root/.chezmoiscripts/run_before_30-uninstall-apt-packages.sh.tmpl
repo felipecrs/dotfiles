@@ -16,6 +16,8 @@ readonly unwanted_packages=(
   docker-scan-plugin
   # It is now installed as a chezmoiexternal
   pipx
+  # Replaced by bind9-dnsutils
+  dnsutils
 )
 
 for package in "${unwanted_packages[@]}"; do
