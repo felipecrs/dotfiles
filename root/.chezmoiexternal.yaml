@@ -41,7 +41,7 @@
 
 {{ $dockerCredVersion := includeTemplate "get-github-latest-version" "docker/docker-credential-helpers" }}
 {{ $gcmVersion := includeTemplate "get-github-latest-version" "GitCredentialManager/git-credential-manager" }}
-{{ $gcmArch := ternary "x64" .uname_arch (eq $gcmArch "x86_64") }}
+{{ $gcmArch := ternary "x64" .uname_arch (eq .uname_arch "x86_64") }}
 {{ if .is_wsl }}
 "usr/bin/docker-credential-wincred.exe":
   type: file
