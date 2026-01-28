@@ -41,6 +41,7 @@
 
 {{ $dockerCredVersion := includeTemplate "get-github-latest-version" "docker/docker-credential-helpers" }}
 {{ $gcmVersion := includeTemplate "get-github-latest-version" "GitCredentialManager/git-credential-manager" }}
+{{ $gcmArch := ternary "x64" .uname_arch (eq $gcmArch "x86_64") }}
 {{ if .is_wsl }}
 "usr/bin/docker-credential-wincred.exe":
   type: file
@@ -54,7 +55,7 @@
 {{ else }}
 "usr/local/share/gcm":
   type: archive
-  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ $gcmVersion }}/gcm-linux_{{ .chezmoi.arch }}.{{ $gcmVersion }}.tar.gz"
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ $gcmVersion }}/gcm-linux-{{ $gcmArch }}-{{ $gcmVersion }}.tar.gz"
   exact: true
 
 {{   if .is_gnome }}
