@@ -47,6 +47,14 @@ function sync_pantry_once() {
   fi
 }
 
+function jq() {
+  if type -P jq >/dev/null; then
+    command jq "$@"
+  else
+    pkgx --quiet +stedolan.github.io/jq@1 -- jq "$@"
+  fi
+}
+
 function resolve_pkg_spec() {
   local pkg="${1}"
   local pkg_suffix=""
