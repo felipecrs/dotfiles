@@ -29,6 +29,12 @@ Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
     }
 }
 
+function Reinstall-WinGet {
+  curl.exe -fL "-#" -o "$env:USERPROFILE\Downloads\winget.msixbundle" "https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+  Add-AppxPackage -Path "$env:USERPROFILE\Downloads\winget.msixbundle"
+  Remove-Item -Force "$env:USERPROFILE\Downloads\winget.msixbundle"
+}
+
 #34de4b3d-13a8-4540-b76d-b9e8d3851756 PowerToys CommandNotFound module
 if (Test-Path "C:\Program Files\PowerToys\WinGetCommandNotFound.psd1") {
   Import-Module "C:\Program Files\PowerToys\WinGetCommandNotFound.psd1"
