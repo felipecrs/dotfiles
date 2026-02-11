@@ -46,16 +46,15 @@ function Refresh-Path {
 function Full-Upgrade {
   gsudo {
     if (Get-Command choco -ErrorAction SilentlyContinue) {
-      Write-Host '-> Upgrading Chocolatey packages'
+      Write-Host '-> Updating Chocolatey packages'
       choco upgrade all --yes
     }
 
-    Write-Host '-> Upgrading WinGet packages'
+    Write-Host '-> Updating WinGet packages'
     winget upgrade --all
 
-    Write-Host '-> Triggering Microsoft Store updates'
-    # Source: https://social.technet.microsoft.com/Forums/windows/en-US/5ac7daa9-54e6-43c0-9746-293dcb8ef2ec
-    Get-CimInstance -Namespace "Root\cimv2\mdm\dmmap" -ClassName "MDM_EnterpriseModernAppManagement_AppManagement01" | Invoke-CimMethod -MethodName UpdateScanMethod > $null
+    Write-Host '-> Updating Microsoft Store apps'
+    store updates --apply
 
     Write-Host '-> Installing Windows updates'
     Get-WindowsUpdate -Install -AcceptAll
