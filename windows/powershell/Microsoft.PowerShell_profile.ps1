@@ -8,9 +8,25 @@ Set-PSReadLineOption -PredictionSource History
 Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 
-# WSL Interop (https://github.com/mikebattista/PowerShell-WSL-Interop)
-# Installation: Install-Module WslInterop -Force
-Import-WslCommand "cat", "cp", "echo", "find", "grep", "head", "ls", "mv", "rm", "sed", "touch", "tree", "which"
+# Uutils Coreutils (https://github.com/uutils/coreutils)
+# Installation: winget install uutils.coreutils
+if (Get-Command coreutils -ErrorAction SilentlyContinue) {
+  function Import-CoreutilsCommand {
+    [CmdletBinding()]
+    Param(
+      [Parameter(Mandatory = $true)]
+      [ValidateNotNullOrEmpty()]
+      [string[]]$Command
+    )
+
+    foreach ($commandName in $Command) {
+      Remove-Alias $commandName -Scope Global -Force -ErrorAction Ignore
+      Invoke-Expression "function global:$commandName { coreutils $commandName `@args }"
+    }
+  }
+
+  Import-CoreutilsCommand "cat", "cksum", "cp", "cut", "date", "df", "du", "echo", "env", "false", "head", "ln", "ls", "md5sum", "mkdir", "mktemp", "mv", "nproc", "printenv", "printf", "realpath", "rm", "sed", "sha256sum", "sha512sum", "sleep" "sort", "tail", "tee", "timeout", "touch", "tr",  "true", "uname", "uniq", "wc", "whoami", "yes"
+}
 
 # Chocolatey (https://github.com/chocolatey/choco)
 # Installation: https://chocolatey.org/install#individual
