@@ -1,7 +1,3 @@
-# Oh My Posh (https://github.com/JanDeDobbeleer/oh-my-posh)
-# Installation: winget install JanDeDobbeleer.OhMyPosh
-oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\powerlevel10k_lean.omp.json" | Invoke-Expression
-
 # PSReadLine (https://github.com/PowerShell/PSReadLine)
 # Installation: Install-Module PSReadLine -Force
 Set-PSReadLineOption -PredictionSource History
@@ -85,3 +81,8 @@ function Full-Upgrade {
     Update-Module -Confirm:$false
   }
 }
+
+# Oh My Posh (https://github.com/JanDeDobbeleer/oh-my-posh)
+# Installation: winget install JanDeDobbeleer.OhMyPosh
+# Must be the last line of the profile
+oh-my-posh init pwsh --config powerlevel10k_lean | Invoke-Expression
