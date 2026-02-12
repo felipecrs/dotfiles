@@ -1,6 +1,9 @@
 # PSReadLine (https://github.com/PowerShell/PSReadLine)
 # Installation: Install-Module PSReadLine -Force
+Import-Module PSReadline
+Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 Set-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -HistorySearchCursorMovesToEnd
 Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 
