@@ -25,7 +25,7 @@ if (Get-Command coreutils -ErrorAction SilentlyContinue) {
     }
   }
 
-  Import-CoreutilsCommand "cat", "cksum", "cp", "cut", "date", "df", "du", "echo", "env", "false", "head", "ln", "ls", "md5sum", "mkdir", "mktemp", "mv", "nproc", "printenv", "printf", "realpath", "rm", "sed", "sha256sum", "sha512sum", "sleep" "sort", "tail", "tee", "timeout", "touch", "tr",  "true", "uname", "uniq", "wc", "whoami", "yes"
+  Import-CoreutilsCommand "cat", "cksum", "cp", "cut", "date", "df", "du", "echo", "env", "false", "head", "ln", "ls", "md5sum", "mkdir", "mktemp", "mv", "nproc", "printenv", "printf", "realpath", "rm", "sha256sum", "sha512sum", "sleep", "sort", "tail", "tee", "timeout", "touch", "tr",  "true", "uname", "uniq", "wc", "whoami", "yes"
 }
 
 # Chocolatey (https://github.com/chocolatey/choco)
