@@ -50,6 +50,7 @@ readonly wanted_packages=(
   # {{ if .is_wsl }}
   wslu
   # {{ else }}
+  earlyoom
   # {{   if eq .chezmoi.osRelease.versionCodename "noble" }}
   linux-generic-hwe-24.04
   # {{   else if eq .chezmoi.osRelease.versionCodename "jammy" }}
