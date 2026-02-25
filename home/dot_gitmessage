@@ -1,0 +1,56 @@
+##################################################
+# Title: What does this commit do?
+# - Start with an uppercase imperative verb.
+# - Do not end with a period.
+# - Limit to 50 characters (the width of the line below).
+##################################################
+
+
+########################################################################
+# Body: Why is this change happening?
+# - Describe the purpose, goal, use case, or user story.
+# - Leave a blank line above to separate from the title.
+# - Wrap lines at 72 characters (the width of the line below).
+########################################################################
+
+
+########################################################################
+# Body: How is this change happening?
+# - Describe relevant algorithms, protocols, or implementation details.
+# - Leave a blank line above to separate from the previous section.
+# - Wrap lines at 72 characters (the width of the line below).
+########################################################################
+
+
+########################################################################
+# Trailers: What references are relevant? (optional)
+# - Must be the last part of the commit message.
+# - Leave a blank line above to separate from the body.
+# - URLs in trailers do not need to be wrapped.
+#
+# Examples:
+#
+# Closes: #123
+# See: https://example.com/long-url-that-does-not-need-to-be-wrapped
+# Co-authored-by: Name <name@example.com>
+#
+########################################################################
+
+
+########################################################################
+# Reference: Imperative verbs for the title
+# Add      = Create a capability (feature, test, dependency)
+# Drop     = Delete a capability (feature, test, dependency)
+# Fix      = Fix an issue (bug, typo, accident, misstatement)
+# Bump     = Increase the version of a dependency
+# Make     = Change the build process, tools, or infrastructure
+# Start    = Begin doing something (enable a toggle, feature flag)
+# Stop     = End doing something (disable a toggle, feature flag)
+# Optimize = Improve performance
+# Document = Change documentation
+# Refactor = Restructure code without changing behavior
+# Reformat = Adjust formatting (indentation, spacing)
+# Rephrase = Reword text (comments, docs)
+#
+# Full guide: https://chris.beams.io/git-commit
+########################################################################
