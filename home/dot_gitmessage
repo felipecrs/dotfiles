@@ -26,6 +26,7 @@
 # Trailers: What references are relevant? (optional)
 # - Must be the last part of the commit message.
 # - Leave a blank line above to separate from the body.
+# - Do not leave blank lines between trailers.
 # - URLs in trailers do not need to be wrapped.
 #
 # Examples:
