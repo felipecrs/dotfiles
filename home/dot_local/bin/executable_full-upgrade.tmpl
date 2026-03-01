@@ -29,6 +29,8 @@ if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
   if chezmoi --version &>/dev/null; then
     log_task "Updating dotfiles"
 
+    dotfiles_old_hash="$(chezmoi git -- rev-parse HEAD 2>/dev/null || true)"
+
     if chezmoi git -- status --porcelain | grep -q .; then
       log_manual_action "Skipping chezmoi update as uncommitted changes were found"
     elif
@@ -42,6 +44,21 @@ if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
       # Pull latest changes from dotfiles repo
       c chezmoi update --apply=false
     fi
+
+    dotfiles_new_hash="$(chezmoi git -- rev-parse HEAD 2>/dev/null || true)"
+    if [[ -n "${dotfiles_old_hash}" && "${dotfiles_old_hash}" != "${dotfiles_new_hash}" ]]; then
+      echo >&2
+      log_green "📢 What's new?"
+      echo >&2
+      PAGER="cat" chezmoi git -- log \
+        --oneline \
+        --no-decorate \
+        --color=always \
+        --format="%C(yellow)%h%Creset %C(bold white)%s%Creset %C(dim)(%cr)%Creset" \
+        "${dotfiles_old_hash}..${dotfiles_new_hash}" >&2
+      echo >&2
+    fi
+    unset dotfiles_old_hash dotfiles_new_hash
 
     # Apply changes to chezmoi config
     c chezmoi init --force
