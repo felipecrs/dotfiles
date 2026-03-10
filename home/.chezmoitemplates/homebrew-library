@@ -4,3 +4,18 @@ readonly home_homebrew_prefix="${HOME}/.linuxbrew"
 readonly root_homebrew_prefix="/home/linuxbrew/.linuxbrew"
 
 ensure_path_entry "${home_homebrew_prefix}/bin" "${root_homebrew_prefix}/bin"
+
+# https://github.com/Homebrew/brew/issues/17905#issuecomment-3342150232
+function faketty() {
+  local _system
+  _system="$(uname -s)"
+  if [[ ${_system} == Darwin ]]; then
+    script -qF /dev/null "$(printf "%q " "$@")"
+  else
+    script -qefc "$(printf "%q " "$@")" /dev/null
+  fi
+}
+
+function brew() {
+  faketty brew "${@}"
+}

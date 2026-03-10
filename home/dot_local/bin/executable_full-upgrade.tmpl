@@ -12,6 +12,9 @@ true || source ../../.chezmoitemplates/volta-library
 ensure_path_entry "${HOME}/.local/bin"
 
 if [[ "${CONTINUE_FROM_DOTFILES:-false}" == false ]]; then
+  # Request password early if needed
+  sudo true
+
   if brew --version &>/dev/null; then
     (
       export HOMEBREW_NO_AUTO_UPDATE=1
