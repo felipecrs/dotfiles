@@ -31,7 +31,7 @@
   ],
   "profiles": {
     "defaults": {
-      "backgroundImage": "C:\\Users\\eecflro\\OneDrive - Ericsson\\OneDrive - Inatel\\Pictures\\Wallpapers\\daft_punk.jpg",
+      "backgroundImage": "desktopWallpaper",
       "backgroundImageOpacity": 0.1,
       "colorScheme": "Material Palenight High Contrast",
       "font": {
@@ -82,13 +82,6 @@
         "hidden": true,
         "name": "Ubuntu",
         "source": "CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc"
-      },
-      {
-        "commandline": "ssh HomeAssistant",
-        "guid": "{fc9202a4-d64d-493e-a3cd-563b0aac1464}",
-        "hidden": false,
-        "icon": "\ud83c\udfe0",
-        "name": "Home Assistant"
       }
     ]
   },
