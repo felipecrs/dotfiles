@@ -4,7 +4,7 @@
   "actions": [],
   "copyFormatting": "none",
   "copyOnSelect": false,
-  "defaultProfile": "{f35fc667-d3e6-567f-b82b-408e44d3e7f0}",
+  "defaultProfile": "{2c4de342-38b7-51cf-b940-2309a097f518}",
   "keybindings": [
     {
       "id": "Terminal.CopyToClipboard",
@@ -42,10 +42,10 @@
     "list": [
       {
         "closeOnExit": "graceful",
-        "guid": "{f35fc667-d3e6-567f-b82b-408e44d3e7f0}",
+        "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
         "hidden": false,
         "name": "Ubuntu",
-        "source": "Microsoft.WSL"
+        "source": "Windows.Terminal.Wsl"
       },
       {
         "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
