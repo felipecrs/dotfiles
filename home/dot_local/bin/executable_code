@@ -43,7 +43,7 @@ unset arg
 
 # Decide whether we want to try opening remote sessions or not
 remote=true
-if [ -n "${NO_REMOTE:-}" ]; then
+if [ -n "${CODE_NATIVE:-}" ]; then
   remote=false
 fi
 
@@ -152,7 +152,7 @@ elif [ "${is_wsl}" = true ]; then
     # Already inside native VS Code terminal, no need to warn again
     export DONT_PROMPT_WSL_INSTALL=1
   elif [ "${is_vscode_terminal}" = false ]; then
-    echo "INFO(dotfiles-code): using code from windows (set NO_REMOTE=1 to disable this)" >&2
+    echo "INFO(dotfiles-code): using code from windows (set CODE_NATIVE=1 to disable this)" >&2
     executables=$(echo "${executables}" | grep '^/mnt/.*$' || true)
   fi
 elif [ "${is_vscode_terminal}" = false ] && who -m | grep -q .; then
@@ -161,7 +161,7 @@ elif [ "${is_vscode_terminal}" = false ] && who -m | grep -q .; then
   # integrated terminal.
   # PS: this only works if there is at least one VS Code window already
   # connected to this machine.
-  echo "INFO(dotfiles-code): ssh session detected, searching for vscode remote sessions (set NO_REMOTE=1 to disable this)" >&2
+  echo "INFO(dotfiles-code): ssh session detected, searching for vscode remote sessions (set CODE_NATIVE=1 to disable this)" >&2
   no_sockets_message="no vscode remote sessions found"
   code_search_dir="${vscode_server_dir}/cli/servers"
   if [ -d "${code_search_dir}" ]; then
@@ -214,9 +214,9 @@ if code=$(echo "${executables}" | head -1 | grep .); then
   exec_code "${code}" "$@"
 fi
 
-# When NO_REMOTE is set, we should not try to fallback because the user has
+# When CODE_NATIVE is set, we should not try to fallback because the user has
 # explicitly requested an intention to use code.
-if [ "${remote}" = false ]; then
+if [ "${CODE_NATIVE:-}" = true ]; then
   echo "ERROR(dotfiles-code): code is not available" >&2
   exit 127
 fi
