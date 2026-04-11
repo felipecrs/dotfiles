@@ -1,19 +1,5 @@
 function Refresh-Path {
-  $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-}
-
-function Import-CoreutilsCommand {
-  [CmdletBinding()]
-  Param(
-    [Parameter(Mandatory = $true)]
-    [ValidateNotNullOrEmpty()]
-    [string[]]$Command
-  )
-
-  foreach ($commandName in $Command) {
-    Remove-Alias $commandName -Scope Global -Force -ErrorAction Ignore
-    Invoke-Expression "function global:$commandName { coreutils $commandName `@args }"
-  }
+  $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 }
 
 function Reinstall-WinGet {
@@ -49,8 +35,45 @@ function Full-Upgrade {
 
 # Uutils Coreutils (https://github.com/uutils/coreutils)
 # Installation: winget install uutils.coreutils
-if (Get-Command coreutils -ErrorAction SilentlyContinue) {
-  Import-CoreutilsCommand "cat", "cksum", "cp", "cut", "date", "df", "du", "echo", "env", "false", "head", "ln", "ls", "md5sum", "mkdir", "mktemp", "mv", "nproc", "printenv", "printf", "realpath", "rm", "sha256sum", "sha512sum", "sleep", "sort", "tail", "tee", "timeout", "touch", "tr",  "true", "uname", "uniq", "wc", "whoami", "yes"
+foreach ($commandName in "cat", "cksum", "cp", "cut", "date", "df", "du", "echo", "env", "false", "head", "ln", "ls", "md5sum", "mkdir", "mktemp", "mv", "nproc", "printenv", "printf", "realpath", "rm", "sha256sum", "sha512sum", "sleep", "sort", "tail", "tee", "timeout", "touch", "tr", "true", "uname", "uniq", "wc", "whoami", "yes") {
+  Remove-Alias $commandName -Scope Global -Force -ErrorAction Ignore
+  Remove-Alias $commandName -Scope Local -Force -ErrorAction SilentlyContinue
+}
+
+# https://dev.to/ankitg12/getting-unix-tools-to-work-in-powershell-a-debugging-war-story-1ipl
+function ls {
+  $flags = ""; $paths = @()
+  foreach ($a in $args) {
+    if ($a -match '^-') { $flags += $a.TrimStart('-') } else { $paths += $a }
+  }
+  if ($paths.Count -eq 0) { $paths = @('.') }
+  $showHidden = $flags -match 'a'; $longFormat = $flags -match 'l'
+  $sortByTime = $flags -match 't'; $reverse = $flags -match 'r'
+  foreach ($p in $paths) {
+    $items = Get-ChildItem -Path $p -Force:$showHidden
+    if ($sortByTime) { $items = $items | Sort-Object LastWriteTime -Descending:(!$reverse) }
+    else { $items = $items | Sort-Object Name -Descending:$reverse }
+    if ($longFormat) {
+      $items | Select-Object Mode,
+      @{N = 'Modified'; E = { $_.LastWriteTime.ToString('yyyy-MM-dd HH:mm') } },
+      @{N = 'Size'; E = { if ($_.PSIsContainer) { '<DIR>' }else { $_.Length } } }, Name
+    }
+    else { $items.Name }
+  }
+}
+
+function cdr {
+  param(
+    [ArgumentCompleter({
+        param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+        $reposDir = "$env:USERPROFILE\repos"
+        if (Test-Path $reposDir) {
+          Get-ChildItem -Path $reposDir -Directory -Filter "$wordToComplete*" | Select-Object -ExpandProperty Name
+        }
+      })]
+    [string]$repo = ""
+  )
+  Set-Location "$env:USERPROFILE\repos\$repo"
 }
 
 # Chocolatey (https://github.com/chocolatey/choco)
@@ -62,12 +85,12 @@ if (Get-Command choco -ErrorAction SilentlyContinue) {
 # WinGet (https://github.com/microsoft/winget-cli)
 Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
   param($wordToComplete, $commandAst, $cursorPosition)
-    [Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
-    $Local:word = $wordToComplete.Replace('"', '""')
-    $Local:ast = $commandAst.ToString().Replace('"', '""')
-    winget complete --word="$Local:word" --commandline "$Local:ast" --position $cursorPosition | ForEach-Object {
-      [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
-    }
+  [Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
+  $Local:word = $wordToComplete.Replace('"', '""')
+  $Local:ast = $commandAst.ToString().Replace('"', '""')
+  winget complete --word="$Local:word" --commandline "$Local:ast" --position $cursorPosition | ForEach-Object {
+    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+  }
 }
 
 #34de4b3d-13a8-4540-b76d-b9e8d3851756 PowerToys CommandNotFound module
