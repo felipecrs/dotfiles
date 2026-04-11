@@ -90,7 +90,7 @@
         "source": "Windows.Terminal.VisualStudio"
       },
       {
-        "commandline": "ssh HomeAssistant",
+        "commandline": "ssh homeassistant",
         "guid": "{fc9202a4-d64d-493e-a3cd-563b0aac1464}",
         "hidden": false,
         "icon": "\ud83c\udfe0",
