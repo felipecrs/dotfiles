@@ -1,8 +1,7 @@
 {{- $name := "Felipe Santos" -}}
 {{- $email := "felipecassiors@gmail.com" -}}
 
-{{- $chezmoiForce := or (has "--force" .chezmoi.args) (has "--force=true" .chezmoi.args) -}}
-{{- $interactive := and stdinIsATTY (not $chezmoiForce) -}}
+{{- $interactive := and stdinIsATTY (not .chezmoi.flags.force) -}}
 
 {{- $ubuntu := hasKey .chezmoi.osRelease "ubuntuCodename" -}}
 {{- $wsl := or (env "WSL_DISTRO_NAME") (env "IS_WSL") | not | not -}}
