@@ -4,7 +4,7 @@
 # anything else. It is meant for handling the migration of data
 # which cannot be managed by chezmoi itself.
 
-# {{ include (joinPath .chezmoi.sourceDir ".chezmoitemplates/scripts-library") }}
+# {{ template "scripts-library" }}
 
 # The following line is for ShellCheck to correctly identify the above included library
 true || source ../.chezmoitemplates/scripts-library

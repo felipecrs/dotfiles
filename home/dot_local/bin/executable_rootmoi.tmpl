@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# {{ include (joinPath .chezmoi.sourceDir ".chezmoitemplates/scripts-library") }}
+# {{ template "scripts-library" }}
 
 # The following line is for ShellCheck to correctly identify the above include
 true || source ../../.chezmoitemplates/scripts-library
