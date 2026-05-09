@@ -2,12 +2,12 @@
 
 # {{ template "scripts-library" }}
 # {{ template "homebrew-library" }}
-# {{ template "volta-library" }}
+# {{ template "mise-library" }}
 
 # The following line is for ShellCheck to correctly identify the above include
 true || source ../../.chezmoitemplates/scripts-library
 true || source ../../.chezmoitemplates/homebrew-library
-true || source ../../.chezmoitemplates/volta-library
+true || source ../../.chezmoitemplates/mise-library
 
 ensure_path_entry "${HOME}/.local/bin"
 
@@ -141,12 +141,10 @@ if pipx --version &>/dev/null; then
   c pipx upgrade-all
 fi
 
-if volta --version &>/dev/null; then
-  log_task "Updating node, npm, yarn, and pnpm with volta"
-  c volta install node npm yarn pnpm
-fi
-
-if npm --version &>/dev/null; then
+if mise --version &>/dev/null; then
+  log_task "Updating mise tools"
+  c mise upgrade
+elif npm --version &>/dev/null; then
   log_task "Updating npm packages"
   c npm update --global
 fi

@@ -52,6 +52,9 @@
 .oh-my-zsh/custom/plugins/my-completions/_deno
 .oh-my-zsh/custom/plugins/my-completions/_volta
 
+# Let's use mise instead
+.volta/
+
 # No longer used
 {{ joinPath (.chezmoi.cacheDir | trimPrefix .chezmoi.homeDir | trimPrefix "/") "external/versions_and_revisions.yaml" }}
 {{- end -}}

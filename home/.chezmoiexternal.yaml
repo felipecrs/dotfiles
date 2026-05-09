@@ -115,10 +115,12 @@
   url: "https://github.com/stern/stern/releases/download/v{{ $sternVersion }}/stern_{{ $sternVersion }}_linux_{{ .chezmoi.arch }}.tar.gz"
   path: stern
 
-".volta/bin":
-  type: archive
-  {{ $voltaVersion := includeTemplate "get-github-latest-version" "volta-cli/volta" }}
-  url: "https://github.com/volta-cli/volta/releases/download/v{{ $voltaVersion }}/volta-{{ $voltaVersion }}-linux.tar.gz"
+".local/bin/mise":
+  type: archive-file
+  {{ $miseVersion := includeTemplate "get-github-latest-version" "jdx/mise" }}
+  {{ $miseArch := ternary "x64" .uname_arch (eq .uname_arch "x86_64") }}
+  url: "https://github.com/jdx/mise/releases/download/v{{ $miseVersion }}/mise-v{{ $miseVersion }}-linux-{{ $miseArch }}.tar.xz"
+  path: mise/bin/mise
 
 {{   if .is_gnome -}}
 ".local/share/nautilus-python/extensions/code-nautilus.py":

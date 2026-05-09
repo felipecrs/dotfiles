@@ -9,11 +9,12 @@ elif [ -x "${HOME}/.linuxbrew/bin/brew" ]; then
   eval "$("${HOME}/.linuxbrew/bin/brew" shellenv)"
 fi
 
+if [ -d "${HOME}/.local/share/mise/shims" ]; then
+  export PATH="${HOME}/.local/share/mise/shims:${PATH}"
+fi
+
 if [ -d "${HOME}/.volta/bin" ]; then
-  export VOLTA_HOME="${HOME}/.volta"
-  export PATH="${VOLTA_HOME}/bin:${PATH}"
-  # https://docs.volta.sh/advanced/pnpm
-  export VOLTA_FEATURE_PNPM=1
+  export PATH="${HOME}/.volta/bin:${PATH}"
 fi
 
 if [ -d "${HOME}/.deno/bin" ]; then

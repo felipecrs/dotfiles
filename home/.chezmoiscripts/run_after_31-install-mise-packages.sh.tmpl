@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# {{ template "scripts-library" }}
+# {{ template "mise-library" }}
+
+# The following line is for ShellCheck to correctly identify the above include
+true || source ../.chezmoitemplates/scripts-library
+true || source ../.chezmoitemplates/mise-library
+
+function is_mise_package_installed() {
+  local package="$1"
+
+  package="${package%%@*}"
+  mise ls --global --installed --no-header "${package}" | grep --quiet .
+}
+
+readonly unwanted_packages=()
+readonly uninstall_packages=()
+
+for package in "${unwanted_packages[@]}"; do
+  # shellcheck disable=SC2310
+  if is_mise_package_installed "${package}"; then
+    package="${package%%@*}"
+    uninstall_packages+=("${package}")
+  fi
+done
+
+if [[ ${#uninstall_packages[@]} -gt 0 ]]; then
+  log_task "Uninstalling unwanted packages with mise: ${uninstall_packages[*]}"
+  c mise unuse --global --yes "${uninstall_packages[@]}"
+fi
+
+readonly wanted_packages=(
+  node@lts
+  npm
+  yarn
+  pnpm
+  npm:@devcontainers/cli
+)
+
+missing_packages=()
+
+for package in "${wanted_packages[@]}"; do
+  # shellcheck disable=SC2310
+  if ! is_mise_package_installed "${package}"; then
+    missing_packages+=("${package}")
+  fi
+done
+
+if [[ ${#missing_packages[@]} -gt 0 ]]; then
+  log_task "Installing missing packages with mise: ${missing_packages[*]}"
+  c mise use --global --yes "${missing_packages[@]}"
+fi

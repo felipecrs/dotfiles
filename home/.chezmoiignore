@@ -1,6 +1,5 @@
 {{ if .is_devcontainer -}}
 .local/bin/code
-.volta/bin
 
 .chezmoiscripts/*
 !.chezmoiscripts/*-initialize-zsh.sh

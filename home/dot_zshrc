@@ -115,7 +115,7 @@ plugins=(
   kubectl
   helm
   npm
-  volta
+  mise
   deno
   uv
   mvn
