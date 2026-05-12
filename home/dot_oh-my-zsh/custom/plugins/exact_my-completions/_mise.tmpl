@@ -1,0 +1,4 @@
+{{- $bin := lookPath (joinPath .chezmoi.homeDir ".local/bin/mise") | or (lookPath "mise") -}}
+{{- if $bin -}}
+{{- output $bin "completions" "zsh" -}}
+{{- end -}}
