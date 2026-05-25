@@ -1,0 +1,9 @@
+#compdef cdr
+
+local repos_dir="${HOME}/repos"
+
+if [[ -d "${repos_dir}" ]]; then
+  _path_files -W "${repos_dir}" -/
+else
+  _message "no repos directory"
+fi
