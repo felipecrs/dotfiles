@@ -33,35 +33,6 @@ function Full-Upgrade {
   }
 }
 
-# Uutils Coreutils (https://github.com/uutils/coreutils)
-# Installation: winget install uutils.coreutils
-foreach ($commandName in "cat", "cksum", "cp", "cut", "date", "df", "du", "echo", "env", "false", "head", "ln", "ls", "md5sum", "mkdir", "mktemp", "mv", "nproc", "printenv", "printf", "realpath", "rm", "sha256sum", "sha512sum", "sleep", "sort", "tail", "tee", "timeout", "touch", "tr", "true", "uname", "uniq", "wc", "whoami", "yes") {
-  Remove-Alias $commandName -Scope Global -Force -ErrorAction Ignore
-  Remove-Alias $commandName -Scope Local -Force -ErrorAction SilentlyContinue
-}
-
-# https://dev.to/ankitg12/getting-unix-tools-to-work-in-powershell-a-debugging-war-story-1ipl
-function ls {
-  $flags = ""; $paths = @()
-  foreach ($a in $args) {
-    if ($a -match '^-') { $flags += $a.TrimStart('-') } else { $paths += $a }
-  }
-  if ($paths.Count -eq 0) { $paths = @('.') }
-  $showHidden = $flags -match 'a'; $longFormat = $flags -match 'l'
-  $sortByTime = $flags -match 't'; $reverse = $flags -match 'r'
-  foreach ($p in $paths) {
-    $items = Get-ChildItem -Path $p -Force:$showHidden
-    if ($sortByTime) { $items = $items | Sort-Object LastWriteTime -Descending:(!$reverse) }
-    else { $items = $items | Sort-Object Name -Descending:$reverse }
-    if ($longFormat) {
-      $items | Select-Object Mode,
-      @{N = 'Modified'; E = { $_.LastWriteTime.ToString('yyyy-MM-dd HH:mm') } },
-      @{N = 'Size'; E = { if ($_.PSIsContainer) { '<DIR>' }else { $_.Length } } }, Name
-    }
-    else { $items.Name }
-  }
-}
-
 function cdr {
   param(
     [ArgumentCompleter({
