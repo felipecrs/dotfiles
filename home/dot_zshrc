@@ -134,6 +134,9 @@ fpath+="${ZSH_CUSTOM:-"${ZSH}/custom"}/plugins/zsh-completions/src"
 
 source "${ZSH}/oh-my-zsh.sh"
 
+# https://github.com/ohmyzsh/ohmyzsh/pull/13792
+unalias grok
+
 # Fix kubectl completion with kubecolor
 if command -v kubectl >/dev/null; then
   compdef kubecolor=kubectl
