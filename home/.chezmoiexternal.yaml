@@ -144,7 +144,7 @@
 "{{ joinPath .fontsDir .terminalFont.fileName }}":
   type: file
   {{ $nerdFontsVersion := includeTemplate "get-github-latest-version" "ryanoasis/nerd-fonts" }}
-  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/v{{ $nerdFontsVersion }}/patched-fonts/FiraCode/Regular/FiraCodeNerdFontMono-Regular.ttf"
+  url: "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/v{{ $nerdFontsVersion }}/patched-fonts/FiraCode/FiraCodeNerdFontMono-Regular.ttf"
 
 {{    if .is_wsl -}}
 {{    $externalScriptsDir := includeTemplate "get-external-scripts-dir" . }}
