@@ -7,6 +7,9 @@
 true || source ../.chezmoitemplates/scripts-library
 true || source ../.chezmoitemplates/homebrew-library
 
+export HOMEBREW_NO_ENV_HINTS=1
+export HOMEBREW_NO_ASK=1
+
 function is_root_homebrew_prefix_writable() {
   if [[ -d "${root_homebrew_prefix}" ]]; then
     return 0
