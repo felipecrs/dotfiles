@@ -50,7 +50,7 @@
 
 "usr/local/share/gcm":
   type: archive
-  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ $gcmVersion }}/gcm-win-x86-{{ $gcmVersion }}.zip"
+  url: "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v{{ $gcmVersion }}/gcm-win-{{ $gcmArch }}-{{ $gcmVersion }}.zip"
   exact: true
 {{ else }}
 "usr/local/share/gcm":
