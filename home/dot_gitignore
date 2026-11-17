@@ -4,3 +4,6 @@
 
 # direnv
 .envrc
+
+# claude
+.claude/worktrees/
